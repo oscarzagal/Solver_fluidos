@@ -1,0 +1,208 @@
+//
+// Created by oscar on 1/06/25.
+//
+
+#include <iostream>
+#include <string>
+
+#include "malla_por_bloques.hpp"
+#include "config_malla.hpp"
+#include "condiciones_de_frontera.hpp"
+#include "esquemas_de_discretizacion.hpp"
+#include "config_control.hpp"
+#include "solvers_lineales.hpp"
+#include "calculo_del_error.hpp"
+#include "escritura.hpp"
+
+
+int main() {
+
+    //--------------------------Creacion de la malla----------------------------
+
+    // Creacion del objeto que representa la malla actual
+    Malla::Mallador malla
+    (
+        nodos_en_x,
+        nodos_en_y,
+        coordenadas_en_x,
+        coordenadas_en_y,
+        nombres_frontera_norte,
+        nombres_frontera_sur,
+        nombres_frontera_este,
+        nombres_frontera_oeste
+    );
+
+    // Primero tienes que preparar para luego obtener las coordenadas persistentes
+    malla.preparar_coordenadas_persistentes();
+
+    // Numero de nodos en x
+    const int nx = static_cast<int>(malla.obtener_coordenadas_tmp_x().size());
+
+    // Numero de nodos en y
+    const int ny = static_cast<int>(malla.obtener_coordenadas_tmp_y().size());
+
+    // Coordenadas persistentes
+    const std::vector<double> x = malla.obtener_coord_pers_x();
+    const std::vector<double> y = malla.obtener_coord_pers_y();
+
+    // Solo se debe usar una vez para evitar duplicaciones y cosas raras
+    malla.preparar_parches_fronteras();
+
+    // Obtener parches para su uso futuro
+    almacenar Parches_norte=malla.obtener_parches(Malla::Frontera::Norte);
+    almacenar Parches_sur=malla.obtener_parches(Malla::Frontera::Sur);
+    almacenar Parches_este=malla.obtener_parches(Malla::Frontera::Este);
+    almacenar Parches_oeste=malla.obtener_parches(Malla::Frontera::Oeste);
+
+    //------------------------Fin creacion de la malla--------------------------
+
+    //--------------------------Definicion de campos----------------------------
+
+    // Campos de temperaturas
+    std::vector<double> T(nx*ny,0.0);
+    std::vector<double> Told(nx*ny,0.0);
+
+    // Otra inicializacion de prueba
+    for (int j = 1; j < ny-1; ++j) {
+      for (int i = 1; i < nx-1; ++i) {
+          T[i+nx*j]=24.0;
+      }
+    }
+
+    //------------------------Fin definicion de campos--------------------------
+
+    //-----------------Asignacion de condiciones de frontera--------------------
+
+    std::vector<Condicion_frontera::Dirichlet> lista_parches_dirichlet;
+
+    // zero_neumann, neumann, robin
+    std::vector<std::unique_ptr<Condicion_frontera::Base>> lista_parches_dinamicos;
+
+
+    // Frontera norte
+    Condicion_frontera::asignar_condiciones_de_frontera
+    (
+        Parches_norte,
+        T,
+        nx,
+        lista_parches_dirichlet,
+        lista_parches_dinamicos
+    );
+
+    // Frontera sur
+    Condicion_frontera::asignar_condiciones_de_frontera
+    (
+        Parches_sur,
+        T,
+        nx,
+        lista_parches_dirichlet,
+        lista_parches_dinamicos
+    );
+
+    // Frontera este
+    Condicion_frontera::asignar_condiciones_de_frontera
+    (
+        Parches_este,
+        T,
+        nx,
+        lista_parches_dirichlet,
+        lista_parches_dinamicos
+    );
+
+    // Frontera oeste
+    Condicion_frontera::asignar_condiciones_de_frontera
+    (
+        Parches_oeste,
+        T,
+        nx,
+        lista_parches_dirichlet,
+        lista_parches_dinamicos
+    );
+
+    //--------------Fin de asignacion de condiciones de frontera----------------
+
+
+    // Aplicacion de las condiciones de frontera al campo
+    for (int i=0; i<lista_parches_dirichlet.size(); ++i ) {
+        lista_parches_dirichlet[i].aplicar();
+    }
+
+    // Actualizacion de condiciones de frontera dinamicas
+    for (int i = 0; i < lista_parches_dinamicos.size(); ++i) {
+        lista_parches_dinamicos[i]->aplicar();
+    }
+
+    for (int j=0; j<ny; ++j) {
+        for (int i=0; i<nx; ++i) {
+            printf("T[%d] = %f\n", i+nx*j, T[i+nx*j]);
+        }
+    }
+
+
+    // struct Coeficientes_velocidad_u {
+    //     std::vector<double> ap;
+    //     std::vector<double> ae;
+    //     std::vector<double> aw;
+    //     std::vector<double> an;
+    //     std::vector<double> as;
+    //     std::vector<double> b;
+    // };
+    //
+    // Coeficientes_velocidad_u A_vel_u;
+    //
+    // // Calculo de los coeficientes agrupados
+    // esquema_lineal_laplaciano(nx,ny,k,A_vel_u,malla);
+    //
+    // // Creacion del campo de temperaturas
+    // std::unique_ptr<Solver_lineal::Base> campoT;
+    //
+    // // Asignacion de los coeficientes agrupados al solver lineal
+    // Solver_lineal::asignar
+    // (
+    //     nx,
+    //     ny,
+    //     T,
+    //     Told,
+    //     A_vel_u.ap,
+    //     A_vel_u.ae,
+    //     A_vel_u.aw,
+    //     A_vel_u.an,
+    //     A_vel_u.as,
+    //     A_vel_u.b,
+    //     campoT
+    // );
+    //
+    //
+    // int numit=0;
+    // double error_mayor=1.0;
+    //
+    // while (error_mayor>tolerancia) {
+    //
+    //     campoT->resolver();
+    //
+    //     // Actualizacion de condiciones de frontera dinamicas
+    //     for (int i = 0; i < lista_parches_dinamicos.size(); ++i) {
+    //         lista_parches_dinamicos[i]->aplicar();
+    //     }
+    //
+    //     error_mayor=calcular_error_mayor(nx,ny,T,Told);
+    //
+    //     ++numit;
+    //
+    //     printf("Iteracion = %d, Error maximo = %e\n",numit,error_mayor);
+    //
+    //     Told=T;
+    //
+    //     if (numit==num_iteraciones_max) break;
+    //
+    // }
+    //
+    // std::cout << "\n\n";
+    //
+    // std::cout << "Numeros de elementos en x: " << nx << "\n";
+    // std::cout << "Numeros de elementos en y: " << ny << "\n";
+    //
+    // escribir("T.dat","T",x,y,nx,ny,T);
+
+    return 0;
+}
