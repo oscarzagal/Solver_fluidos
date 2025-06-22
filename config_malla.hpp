@@ -10,10 +10,10 @@ typedef std::vector<std::string> asignacion_de;
 typedef std::vector<Malla::Mallador::Parche> almacenar;
 
 /* Nodos por cada parche en la direccion x */
-cantidad_de nodos_en_x = {5};
+cantidad_de nodos_en_x = {50};
 
 /* Nodos por cada parche en la direccion y */
-cantidad_de nodos_en_y = {5};
+cantidad_de nodos_en_y = {50};
 
 /* TODO: buscar la manera de tirar una excepcion ante la configuracion
  erronea en las coordenadas, por ejemplo:

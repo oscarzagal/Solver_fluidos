@@ -69,7 +69,8 @@ namespace Condicion_frontera {
         const std::pair<std::string, int> &tipo,
         const Malla::Mallador::Parche &parche,
         std::vector<double> &phi,
-        const int &nx
+        const int &nx,
+        const std::array<CF_Zero_Neumann, limite_num_parches> &g_zero_neumann
     )
     {
         if (tipo.first == "zero_neumann") {
@@ -95,7 +96,9 @@ namespace Condicion_frontera {
         std::vector<double>& phi,
         const int& nx,
         std::vector<Dirichlet>& lista_dirichlet,
-        std::vector<std::unique_ptr<Base>>& lista_parches_dinamicos
+        std::vector<std::unique_ptr<Base>>& lista_parches_dinamicos,
+        const std::array<CF_Dirichlet, limite_num_parches>& g_dirichlet,
+        const std::array<CF_Zero_Neumann, limite_num_parches>& g_zero_neumann
     )
     {
         for (int i = 0; i < parches.size(); ++i) {
@@ -113,7 +116,7 @@ namespace Condicion_frontera {
 
             } else if (tipo.first == "zero_neumann") {
 
-                lista_parches_dinamicos.push_back(Fabrica_de_CF::crear(tipo,parches[i],phi,nx));
+                lista_parches_dinamicos.push_back(Fabrica_de_CF::crear(tipo,parches[i],phi,nx,g_zero_neumann));
 
             } else {
                 throw std::runtime_error
@@ -128,14 +131,14 @@ namespace Condicion_frontera {
 
     std::pair<std::string,int> que_tipo_es(const std::string& nombre) {
 
-        for (int i=0; i<g_dirichlet.size(); ++i) {
-            if (g_dirichlet[i].nombre == nombre) {
+        for (int i=0; i<g_dirichlet_T.size(); ++i) {
+            if (g_dirichlet_T[i].nombre == nombre) {
                 return {"dirichlet",i};
             }
         }
 
-        for (int i=0; i<g_zero_neumann.size(); ++i) {
-            if (g_zero_neumann[i].nombre == nombre) {
+        for (int i=0; i<g_zero_neumann_T.size(); ++i) {
+            if (g_zero_neumann_T[i].nombre == nombre) {
                 return {"zero_neumann",i};
             }
         }
@@ -143,6 +146,70 @@ namespace Condicion_frontera {
         return {nombre,{}};
 
     }
+
+    void construir_condiciones_de_frontera
+    (
+        std::vector<Malla::Mallador::Parche>& Parches_norte,
+        std::vector<Malla::Mallador::Parche>& Parches_sur,
+        std::vector<Malla::Mallador::Parche>& Parches_este,
+        std::vector<Malla::Mallador::Parche>& Parches_oeste,
+        std::vector<double>& phi,
+        const int& nx,
+        std::vector<Dirichlet>& lista_parches_dirichlet,
+        std::vector<std::unique_ptr<Base>>& lista_parches_dinamicos,
+        const std::array<CF_Dirichlet, limite_num_parches>& g_dirichlet,
+        const std::array<CF_Zero_Neumann, limite_num_parches>& g_zero_neumann
+    )
+    {
+        // Frontera norte
+        asignar_condiciones_de_frontera
+        (
+            Parches_norte,
+            phi,
+            nx,
+            lista_parches_dirichlet,
+            lista_parches_dinamicos,
+            g_dirichlet,
+            g_zero_neumann
+        );
+
+        // Frontera sur
+        asignar_condiciones_de_frontera
+        (
+            Parches_sur,
+            phi,
+            nx,
+            lista_parches_dirichlet,
+            lista_parches_dinamicos,
+            g_dirichlet,
+            g_zero_neumann
+        );
+
+        // Frontera este
+        asignar_condiciones_de_frontera
+        (
+            Parches_este,
+            phi,
+            nx,
+            lista_parches_dirichlet,
+            lista_parches_dinamicos,
+            g_dirichlet,
+            g_zero_neumann
+        );
+
+        // Frontera oeste
+        asignar_condiciones_de_frontera
+        (
+            Parches_oeste,
+            phi,
+            nx,
+            lista_parches_dirichlet,
+            lista_parches_dinamicos,
+            g_dirichlet,
+            g_zero_neumann
+        );
+    }
+
 
 
 } // Fin namespace Condicion_frontera

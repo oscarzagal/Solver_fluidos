@@ -10,6 +10,7 @@
 #include <string>
 
 #include "malla_por_bloques.hpp"
+#include "config_CF.hpp"
 
 namespace Condicion_frontera {
 
@@ -87,7 +88,8 @@ namespace Condicion_frontera {
             const std::pair<std::string,int> &tipo,
             const Malla::Mallador::Parche& parche,
             std::vector<double>& phi,
-            const int& nx
+            const int& nx,
+            const std::array<CF_Zero_Neumann, limite_num_parches>& g_zero_neumann
         );
 
     };
@@ -100,12 +102,30 @@ namespace Condicion_frontera {
         std::vector<double>& phi,
         const int& nx,
         std::vector<Dirichlet>& lista_dirichlet,
-        std::vector<std::unique_ptr<Base>>& lista_parches_dinamicos
+        std::vector<std::unique_ptr<Base>>& lista_parches_dinamicos,
+        const std::array<CF_Dirichlet, limite_num_parches>& g_dirichlet,
+        const std::array<CF_Zero_Neumann, limite_num_parches>& g_zero_neumann
     );
 
     // Funcion que retorna el tipo de CF. En caso de no encontrar el parche
     // retorna su nombre
     std::pair<std::string,int> que_tipo_es(const std::string& nombre);
+
+    // Funcion contenedor que asigna las condiciones de frontera para evitar
+    // codigo muy gordo en el main
+    void construir_condiciones_de_frontera
+    (
+        std::vector<Malla::Mallador::Parche>& Parches_norte,
+        std::vector<Malla::Mallador::Parche>& Parches_sur,
+        std::vector<Malla::Mallador::Parche>& Parches_este,
+        std::vector<Malla::Mallador::Parche>& Parches_oeste,
+        std::vector<double>& phi,
+        const int& nx,
+        std::vector<Dirichlet>& lista_parches_dirichlet,
+        std::vector<std::unique_ptr<Base>>& lista_parches_dinamicos,
+        const std::array<CF_Dirichlet, limite_num_parches>& g_dirichlet,
+        const std::array<CF_Zero_Neumann, limite_num_parches>& g_zero_neumann
+    );
 
 
 } // Fin namespace Condicion_frontera

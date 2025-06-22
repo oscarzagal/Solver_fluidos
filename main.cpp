@@ -13,6 +13,7 @@
 #include "solvers_lineales.hpp"
 #include "calculo_del_error.hpp"
 #include "escritura.hpp"
+#include "config_CF.hpp"
 
 
 int main() {
@@ -73,64 +74,36 @@ int main() {
 
     //-----------------Asignacion de condiciones de frontera--------------------
 
-    std::vector<Condicion_frontera::Dirichlet> lista_parches_dirichlet;
+    std::vector<Condicion_frontera::Dirichlet> lista_parches_dirichlet_T;
 
     // zero_neumann, neumann, robin
-    std::vector<std::unique_ptr<Condicion_frontera::Base>> lista_parches_dinamicos;
+    std::vector<std::unique_ptr<Condicion_frontera::Base>> lista_parches_dinamicos_T;
 
-
-    // Frontera norte
-    Condicion_frontera::asignar_condiciones_de_frontera
+    // Construccion de condiciones de frontera para T
+    Condicion_frontera::construir_condiciones_de_frontera
     (
         Parches_norte,
-        T,
-        nx,
-        lista_parches_dirichlet,
-        lista_parches_dinamicos
-    );
-
-    // Frontera sur
-    Condicion_frontera::asignar_condiciones_de_frontera
-    (
         Parches_sur,
-        T,
-        nx,
-        lista_parches_dirichlet,
-        lista_parches_dinamicos
-    );
-
-    // Frontera este
-    Condicion_frontera::asignar_condiciones_de_frontera
-    (
         Parches_este,
-        T,
-        nx,
-        lista_parches_dirichlet,
-        lista_parches_dinamicos
-    );
-
-    // Frontera oeste
-    Condicion_frontera::asignar_condiciones_de_frontera
-    (
         Parches_oeste,
         T,
         nx,
-        lista_parches_dirichlet,
-        lista_parches_dinamicos
+        lista_parches_dirichlet_T,
+        lista_parches_dinamicos_T,
+        g_dirichlet_T,
+        g_zero_neumann_T
     );
+
+
 
     //--------------Fin de asignacion de condiciones de frontera----------------
 
 
     // Aplicacion de las condiciones de frontera al campo
-    for (int i=0; i<lista_parches_dirichlet.size(); ++i ) {
-        lista_parches_dirichlet[i].aplicar();
+    for (int i=0; i<lista_parches_dirichlet_T.size(); ++i ) {
+        lista_parches_dirichlet_T[i].aplicar();
     }
 
-    // Actualizacion de condiciones de frontera dinamicas
-    for (int i = 0; i < lista_parches_dinamicos.size(); ++i) {
-        lista_parches_dinamicos[i]->aplicar();
-    }
 
     for (int j=0; j<ny; ++j) {
         for (int i=0; i<nx; ++i) {
@@ -139,70 +112,70 @@ int main() {
     }
 
 
-    // struct Coeficientes_velocidad_u {
-    //     std::vector<double> ap;
-    //     std::vector<double> ae;
-    //     std::vector<double> aw;
-    //     std::vector<double> an;
-    //     std::vector<double> as;
-    //     std::vector<double> b;
-    // };
-    //
-    // Coeficientes_velocidad_u A_vel_u;
-    //
-    // // Calculo de los coeficientes agrupados
-    // esquema_lineal_laplaciano(nx,ny,k,A_vel_u,malla);
-    //
-    // // Creacion del campo de temperaturas
-    // std::unique_ptr<Solver_lineal::Base> campoT;
-    //
-    // // Asignacion de los coeficientes agrupados al solver lineal
-    // Solver_lineal::asignar
-    // (
-    //     nx,
-    //     ny,
-    //     T,
-    //     Told,
-    //     A_vel_u.ap,
-    //     A_vel_u.ae,
-    //     A_vel_u.aw,
-    //     A_vel_u.an,
-    //     A_vel_u.as,
-    //     A_vel_u.b,
-    //     campoT
-    // );
-    //
-    //
-    // int numit=0;
-    // double error_mayor=1.0;
-    //
-    // while (error_mayor>tolerancia) {
-    //
-    //     campoT->resolver();
-    //
-    //     // Actualizacion de condiciones de frontera dinamicas
-    //     for (int i = 0; i < lista_parches_dinamicos.size(); ++i) {
-    //         lista_parches_dinamicos[i]->aplicar();
-    //     }
-    //
-    //     error_mayor=calcular_error_mayor(nx,ny,T,Told);
-    //
-    //     ++numit;
-    //
-    //     printf("Iteracion = %d, Error maximo = %e\n",numit,error_mayor);
-    //
-    //     Told=T;
-    //
-    //     if (numit==num_iteraciones_max) break;
-    //
-    // }
-    //
-    // std::cout << "\n\n";
-    //
-    // std::cout << "Numeros de elementos en x: " << nx << "\n";
-    // std::cout << "Numeros de elementos en y: " << ny << "\n";
-    //
-    // escribir("T.dat","T",x,y,nx,ny,T);
+    struct Coeficientes_energia {
+        std::vector<double> ap;
+        std::vector<double> ae;
+        std::vector<double> aw;
+        std::vector<double> an;
+        std::vector<double> as;
+        std::vector<double> b;
+    };
+
+    Coeficientes_energia A_energia;
+
+    // Calculo de los coeficientes agrupados
+    esquema_lineal_laplaciano(nx,ny,k,A_energia,malla);
+
+    // Creacion del campo de temperaturas
+    std::unique_ptr<Solver_lineal::Base> campoT;
+
+    // Asignacion de los coeficientes agrupados al solver lineal
+    Solver_lineal::asignar
+    (
+        nx,
+        ny,
+        T,
+        Told,
+        A_energia.ap,
+        A_energia.ae,
+        A_energia.aw,
+        A_energia.an,
+        A_energia.as,
+        A_energia.b,
+        campoT
+    );
+
+
+    int numit=0;
+    double error_mayor=1.0;
+
+    while (error_mayor>tolerancia) {
+
+        campoT->resolver();
+
+        // Actualizacion de condiciones de frontera dinamicas
+        for (int i = 0; i < lista_parches_dinamicos_T.size(); ++i) {
+            lista_parches_dinamicos_T[i]->aplicar();
+        }
+
+        error_mayor=calcular_error_mayor(nx,ny,T,Told);
+
+        ++numit;
+
+        printf("Iteracion = %d, Error maximo = %e\n",numit,error_mayor);
+
+        Told=T;
+
+        if (numit==num_iteraciones_max) break;
+
+    }
+
+    std::cout << "\n\n";
+
+    std::cout << "Numeros de elementos en x: " << nx << "\n";
+    std::cout << "Numeros de elementos en y: " << ny << "\n";
+
+    escribir("T.dat","T",x,y,nx,ny,T);
 
     return 0;
 }
