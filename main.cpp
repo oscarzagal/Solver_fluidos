@@ -14,6 +14,8 @@
 #include "calculo_del_error.hpp"
 #include "escritura.hpp"
 #include "config_CF.hpp"
+#include "Campo.hpp"
+#include "ecuaciones_gobernantes.hpp"
 
 
 int main() {
@@ -74,25 +76,48 @@ int main() {
 
     //-----------------Asignacion de condiciones de frontera--------------------
 
-    std::vector<Condicion_frontera::Dirichlet> lista_parches_dirichlet_T;
+    // std::vector<Condicion_frontera::Dirichlet> lista_parches_dirichlet_T;
+    //
+    // // zero_neumann, neumann, robin
+    // std::vector<std::unique_ptr<Condicion_frontera::Base>> lista_parches_dinamicos_T;
+    //
+    // // Construccion de condiciones de frontera para T
+    // Condicion_frontera::construir_condiciones_de_frontera
+    // (
+    //     Parches_norte,
+    //     Parches_sur,
+    //     Parches_este,
+    //     Parches_oeste,
+    //     T,
+    //     nx,
+    //     lista_parches_dirichlet_T,
+    //     lista_parches_dinamicos_T,
+    //     g_dirichlet_T,
+    //     g_zero_neumann_T
+    // );
 
-    // zero_neumann, neumann, robin
-    std::vector<std::unique_ptr<Condicion_frontera::Base>> lista_parches_dinamicos_T;
 
-    // Construccion de condiciones de frontera para T
-    Condicion_frontera::construir_condiciones_de_frontera
+    // Instancia de la ecuacion de energia que sirve para ensamblar la ecuacion
+    Ecuaciones_gobernantes::Energia ecuacion_energia(malla);
+
+    // Creacion del campo escalar T
+    Campo::Escalar Temp
     (
         Parches_norte,
         Parches_sur,
         Parches_este,
         Parches_oeste,
-        T,
-        nx,
-        lista_parches_dirichlet_T,
-        lista_parches_dinamicos_T,
         g_dirichlet_T,
-        g_zero_neumann_T
+        g_zero_neumann_T,
+        malla,
+        ecuacion_energia
     );
+
+    Temp.construir_condiciones_de_frontera();
+
+    Temp.construir_ecuacion();
+
+
 
 
 
@@ -172,8 +197,8 @@ int main() {
 
     std::cout << "\n\n";
 
-    std::cout << "Numeros de elementos en x: " << nx << "\n";
-    std::cout << "Numeros de elementos en y: " << ny << "\n";
+    std::cout << "Numero de elementos en x: " << nx << "\n";
+    std::cout << "Numero de elementos en y: " << ny << "\n";
 
     escribir("T.dat","T",x,y,nx,ny,T);
 

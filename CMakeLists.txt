@@ -21,4 +21,8 @@ add_executable(main config_malla.hpp config_CF.hpp malla_por_bloques.cpp malla_p
         escritura.cpp
         escritura.hpp
         solvers_lineales.cpp
+        Campo.cpp
+        Campo.hpp
+        ecuaciones_gobernantes.cpp
+        ecuaciones_gobernantes.hpp
 )
