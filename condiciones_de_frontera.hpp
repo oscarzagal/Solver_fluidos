@@ -83,7 +83,7 @@ namespace Condicion_frontera {
 
         // Los argumentos de la funcion deben de ser los mismos para todos los
         // tipos de condiciones de frontera dinamicos
-        static std::unique_ptr<Base> crear
+        static std::shared_ptr<Base> crear
         (
             const std::pair<std::string,int> &tipo,
             const Malla::Mallador::Parche& parche,
@@ -102,7 +102,7 @@ namespace Condicion_frontera {
         std::vector<double>& phi,
         const int& nx,
         std::vector<Dirichlet>& lista_dirichlet,
-        std::vector<std::unique_ptr<Base>>& lista_parches_dinamicos,
+        std::vector<std::shared_ptr<Base>>& lista_parches_dinamicos,
         const std::array<CF_Dirichlet, limite_num_parches>& g_dirichlet,
         const std::array<CF_Zero_Neumann, limite_num_parches>& g_zero_neumann
     );
@@ -122,7 +122,7 @@ namespace Condicion_frontera {
         std::vector<double>& phi,
         const int& nx,
         std::vector<Dirichlet>& lista_parches_dirichlet,
-        std::vector<std::unique_ptr<Base>>& lista_parches_dinamicos,
+        std::vector<std::shared_ptr<Base>>& lista_parches_dinamicos,
         const std::array<CF_Dirichlet, limite_num_parches>& g_dirichlet,
         const std::array<CF_Zero_Neumann, limite_num_parches>& g_zero_neumann
     );

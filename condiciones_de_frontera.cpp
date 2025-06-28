@@ -5,6 +5,9 @@
 #include <stdexcept>
 
 #include "condiciones_de_frontera.hpp"
+
+#include <iostream>
+
 #include "config_CF.hpp"
 
 namespace Condicion_frontera {
@@ -22,9 +25,18 @@ namespace Condicion_frontera {
     {}
 
     void Dirichlet::aplicar() {
+
+        std::cerr << "Entrando a Dirichlet::aplicar\n";
+
+        if (phi.empty()) {
+            std::cerr << "ERROR: Dirichlet::aplicar::phi esta vacio\n";
+        }
+
         for (const int& index : nodos_del_parche) {
             phi[index]=valor;
         }
+
+        std::cerr << "Salí de Dirichlet::aplicar\n";
     }
 
     // Lista de inicializacion
@@ -64,7 +76,7 @@ namespace Condicion_frontera {
         }
     }
 
-    std::unique_ptr<Base> Fabrica_de_CF::crear
+    std::shared_ptr<Base> Fabrica_de_CF::crear
     (
         const std::pair<std::string, int> &tipo,
         const Malla::Mallador::Parche &parche,
@@ -96,7 +108,7 @@ namespace Condicion_frontera {
         std::vector<double>& phi,
         const int& nx,
         std::vector<Dirichlet>& lista_dirichlet,
-        std::vector<std::unique_ptr<Base>>& lista_parches_dinamicos,
+        std::vector<std::shared_ptr<Base>>& lista_parches_dinamicos,
         const std::array<CF_Dirichlet, limite_num_parches>& g_dirichlet,
         const std::array<CF_Zero_Neumann, limite_num_parches>& g_zero_neumann
     )
@@ -156,7 +168,7 @@ namespace Condicion_frontera {
         std::vector<double>& phi,
         const int& nx,
         std::vector<Dirichlet>& lista_parches_dirichlet,
-        std::vector<std::unique_ptr<Base>>& lista_parches_dinamicos,
+        std::vector<std::shared_ptr<Base>>& lista_parches_dinamicos,
         const std::array<CF_Dirichlet, limite_num_parches>& g_dirichlet,
         const std::array<CF_Zero_Neumann, limite_num_parches>& g_zero_neumann
     )

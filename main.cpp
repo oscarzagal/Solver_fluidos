@@ -8,7 +8,6 @@
 #include "malla_por_bloques.hpp"
 #include "config_malla.hpp"
 #include "condiciones_de_frontera.hpp"
-#include "esquemas_de_discretizacion.hpp"
 #include "config_control.hpp"
 #include "solvers_lineales.hpp"
 #include "calculo_del_error.hpp"
@@ -76,27 +75,6 @@ int main() {
 
     //-----------------Asignacion de condiciones de frontera--------------------
 
-    // std::vector<Condicion_frontera::Dirichlet> lista_parches_dirichlet_T;
-    //
-    // // zero_neumann, neumann, robin
-    // std::vector<std::unique_ptr<Condicion_frontera::Base>> lista_parches_dinamicos_T;
-    //
-    // // Construccion de condiciones de frontera para T
-    // Condicion_frontera::construir_condiciones_de_frontera
-    // (
-    //     Parches_norte,
-    //     Parches_sur,
-    //     Parches_este,
-    //     Parches_oeste,
-    //     T,
-    //     nx,
-    //     lista_parches_dirichlet_T,
-    //     lista_parches_dinamicos_T,
-    //     g_dirichlet_T,
-    //     g_zero_neumann_T
-    // );
-
-
     // Instancia de la ecuacion de energia que sirve para ensamblar la ecuacion
     Ecuaciones_gobernantes::Energia ecuacion_energia(malla);
 
@@ -107,78 +85,45 @@ int main() {
         Parches_sur,
         Parches_este,
         Parches_oeste,
+        T,
+        Told,
         g_dirichlet_T,
         g_zero_neumann_T,
         malla,
-        ecuacion_energia
+        ecuacion_energia,
+        solver_elegido_Temp
     );
+
 
     Temp.construir_condiciones_de_frontera();
 
+    std::vector<Condicion_frontera::Dirichlet> lista_parches_dirichlet_T
+    = Temp.obtener_parches_dirichlet();
+
+    std::vector<std::shared_ptr<Condicion_frontera::Base>> lista_parches_dinamicos_T
+    = Temp.obtener_parches_dinamicos();
+
     Temp.construir_ecuacion();
-
-
-
-
 
     //--------------Fin de asignacion de condiciones de frontera----------------
 
-
     // Aplicacion de las condiciones de frontera al campo
+
     for (int i=0; i<lista_parches_dirichlet_T.size(); ++i ) {
         lista_parches_dirichlet_T[i].aplicar();
     }
-
-
-    for (int j=0; j<ny; ++j) {
-        for (int i=0; i<nx; ++i) {
-            printf("T[%d] = %f\n", i+nx*j, T[i+nx*j]);
-        }
-    }
-
-
-    struct Coeficientes_energia {
-        std::vector<double> ap;
-        std::vector<double> ae;
-        std::vector<double> aw;
-        std::vector<double> an;
-        std::vector<double> as;
-        std::vector<double> b;
-    };
-
-    Coeficientes_energia A_energia;
-
-    // Calculo de los coeficientes agrupados
-    esquema_lineal_laplaciano(nx,ny,k,A_energia,malla);
-
-    // Creacion del campo de temperaturas
-    std::unique_ptr<Solver_lineal::Base> campoT;
-
-    // Asignacion de los coeficientes agrupados al solver lineal
-    Solver_lineal::asignar
-    (
-        nx,
-        ny,
-        T,
-        Told,
-        A_energia.ap,
-        A_energia.ae,
-        A_energia.aw,
-        A_energia.an,
-        A_energia.as,
-        A_energia.b,
-        campoT
-    );
-
 
     int numit=0;
     double error_mayor=1.0;
 
     while (error_mayor>tolerancia) {
 
-        campoT->resolver();
+        // std::cerr << "Entrando a Temp.resolver()\n";
+        Temp.resolver();
+        // std::cerr << "Saliendo de Temp.resolver()\n";
 
         // Actualizacion de condiciones de frontera dinamicas
+
         for (int i = 0; i < lista_parches_dinamicos_T.size(); ++i) {
             lista_parches_dinamicos_T[i]->aplicar();
         }

@@ -17,7 +17,7 @@ inline constexpr double tolerancia = 1e-10;
 
 // Resolución del sistema de ecuaciones
 // Solver lineal
-inline std::string solver_elegido = "SOR";
+inline std::string solver_elegido_Temp = "SOR";
 
 // Factor de relajacion
 inline constexpr double lambdaT = 1.5;

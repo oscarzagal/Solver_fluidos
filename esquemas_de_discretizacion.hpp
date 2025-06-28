@@ -34,6 +34,7 @@ namespace Esquemas_discretizacion {
         c.ap.resize(nx * ny);
         c.b.resize(nx * ny);
 
+        // TODO: reducir este bucle anidado a un solo for
         for (int j = 1; j < ny - 1; j++) {
             for (int i = 1; i < nx - 1; i++) {
                 c.ae[i + nx * j] = k * deltay[j] / (x[i + 1] - x[i]);

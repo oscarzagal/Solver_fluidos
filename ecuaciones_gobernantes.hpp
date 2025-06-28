@@ -30,11 +30,11 @@ namespace Ecuaciones_gobernantes {
     public:
 
         // Constructor
-        explicit Energia(Malla::Mallador&);
+        explicit Energia(Malla::Mallador &);
 
         void ensamblar() override;
 
-         A_coef obtener_coeficientes() override;
+        A_coef obtener_coeficientes() override;
 
         A_coef A;
 

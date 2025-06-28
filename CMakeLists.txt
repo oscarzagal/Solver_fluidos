@@ -14,13 +14,11 @@ add_executable(main config_malla.hpp config_CF.hpp malla_por_bloques.cpp malla_p
         main.cpp
         esquemas_de_discretizacion.hpp
         config_control.hpp
-        solvers_lineales.cpp
         solvers_lineales.hpp
         calculo_del_error.cpp
         calculo_del_error.hpp
         escritura.cpp
         escritura.hpp
-        solvers_lineales.cpp
         Campo.cpp
         Campo.hpp
         ecuaciones_gobernantes.cpp
