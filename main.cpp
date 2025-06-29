@@ -118,12 +118,9 @@ int main() {
 
     while (error_mayor>tolerancia) {
 
-        // std::cerr << "Entrando a Temp.resolver()\n";
         Temp.resolver();
-        // std::cerr << "Saliendo de Temp.resolver()\n";
 
         // Actualizacion de condiciones de frontera dinamicas
-
         for (int i = 0; i < lista_parches_dinamicos_T.size(); ++i) {
             lista_parches_dinamicos_T[i]->aplicar();
         }

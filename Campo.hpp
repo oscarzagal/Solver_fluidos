@@ -38,8 +38,6 @@ namespace Campo {
 
         void resolver() const;
 
-        std::vector<double> obtener_campo();
-
         std::vector<Condicion_frontera::Dirichlet> obtener_parches_dirichlet();
 
         std::vector<std::shared_ptr<Condicion_frontera::Base>> obtener_parches_dinamicos();

@@ -105,20 +105,9 @@ namespace Campo {
 
     void Escalar::resolver() const {
 
-        // if (campo == nullptr) {
-        //     std::cerr << "ERROR: campo es nullptr" << std::endl;
-        //     return;
-        // }
-
-        // FIXME: cuando entra aqui a veces truena el programa
         campo->resolver();
 
-        // std::cerr << "Salí de Escalar::resolver()\n";
-
     }
 
-    std::vector<double> Escalar::obtener_campo() {
-        return phi_new;
-    }
 
 } // Fin namespace Campos

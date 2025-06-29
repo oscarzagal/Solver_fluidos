@@ -58,7 +58,7 @@ namespace Condicion_frontera {
             std::vector<double>&,
             const std::vector<int>&,
             const std::string&,
-            const int&
+            int
         );
 
         void aplicar() override;
@@ -74,7 +74,7 @@ namespace Condicion_frontera {
         const std::string& frontera_fisica;
 
         // Numero de nodos en la direccion "x"
-        const int& nx;
+        const int nx;
 
     };
 
@@ -88,7 +88,7 @@ namespace Condicion_frontera {
             const std::pair<std::string,int> &tipo,
             const Malla::Mallador::Parche& parche,
             std::vector<double>& phi,
-            const int& nx,
+            int nx,
             const std::array<CF_Zero_Neumann, limite_num_parches>& g_zero_neumann
         );
 

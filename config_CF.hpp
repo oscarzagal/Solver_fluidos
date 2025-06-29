@@ -16,14 +16,18 @@ struct CF_Zero_Neumann {
 
 // Parametros para la condicion de frontera tipo Dirichlet para T
 inline std::array<CF_Dirichlet, limite_num_parches> g_dirichlet_T = {{
-    {"norte", 100.0},
-    {"sur", 0.0},
-    {"este", 0.0},
+    {"norte_derecha", 0.0},
+    {"este_arriba", 0.0},
+    {"sur_izquierda", 100.0},
+    {"oeste_abajo", 100.0}
     }
 };
 
 // Parametros para la condicion de frontera tipo zero_neumann para T
 inline std::array<CF_Zero_Neumann, limite_num_parches> g_zero_neumann_T = { {
-    {"oeste", "oeste"}
+    {"oeste_arriba", "oeste"},
+    {"norte_izquierda", "norte"},
+    {"este_abajo", "este"},
+    {"sur_derecha","sur"}
     }
 };

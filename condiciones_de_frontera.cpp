@@ -26,17 +26,10 @@ namespace Condicion_frontera {
 
     void Dirichlet::aplicar() {
 
-        std::cerr << "Entrando a Dirichlet::aplicar\n";
-
-        if (phi.empty()) {
-            std::cerr << "ERROR: Dirichlet::aplicar::phi esta vacio\n";
-        }
-
         for (const int& index : nodos_del_parche) {
             phi[index]=valor;
         }
 
-        std::cerr << "Salí de Dirichlet::aplicar\n";
     }
 
     // Lista de inicializacion
@@ -45,7 +38,7 @@ namespace Condicion_frontera {
         std::vector<double>& phi_,
         const std::vector<int>& nodos_de_parche_,
         const std::string& frontera_fisica_,
-        const int& nx_
+        const int nx_
     ) :
     phi(phi_),
     nodos_del_parche(nodos_de_parche_),
@@ -74,6 +67,7 @@ namespace Condicion_frontera {
         for (const int& index : nodos_del_parche) {
             phi[index] = phi[index+desfase];
         }
+
     }
 
     std::shared_ptr<Base> Fabrica_de_CF::crear
@@ -81,7 +75,7 @@ namespace Condicion_frontera {
         const std::pair<std::string, int> &tipo,
         const Malla::Mallador::Parche &parche,
         std::vector<double> &phi,
-        const int &nx,
+        int nx,
         const std::array<CF_Zero_Neumann, limite_num_parches> &g_zero_neumann
     )
     {
