@@ -14,6 +14,8 @@ struct CF_Zero_Neumann {
     const std::string localizacion_fisica;
 };
 
+// TODO: mandar una excepcion al inicializar dos parches con el mismo nombre
+// en ambos arrays
 // Parametros para la condicion de frontera tipo Dirichlet para T
 inline std::array<CF_Dirichlet, limite_num_parches> g_dirichlet_T = {{
     {"norte_derecha", 0.0},
