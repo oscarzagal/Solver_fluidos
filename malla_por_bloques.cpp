@@ -299,6 +299,23 @@ namespace Malla {
 
   }
 
+  std::vector<double> Mallador::obtener_volumenes() {
+
+    std::vector<double> vol;
+
+    const int nx = static_cast<int>(this->obtener_coordenadas_tmp_x().size());
+    const int ny = static_cast<int>(this->obtener_coordenadas_tmp_y().size());
+
+    for (int j = 0; j < ny; ++j) {
+      for (int i = 0; i < nx; ++i) {
+        vol.push_back(deltax[i] * deltay[j]);
+      }
+    }
+
+    return vol;
+  }
+
+
   void Mallador::asignar_coord_pers_x(const std::vector<double>& x_) {
     x=x_;
   }
@@ -336,16 +353,6 @@ namespace Malla {
         y.push_back(y_tmp[j]);
       }
     }
-
-    // for (int j = 0; j < ny; ++j) {
-    //   for (int i = 0; i < nx; ++i) {
-    //     printf(
-    //       "x[%d] = %f, y[%d] = %f\n", i+nx*j,
-    //       x[i+nx*j], i+nx*j,
-    //       y[i+nx*j]
-    //     );
-    //   }
-    // }
 
     // Asignacion de coordenadas
     asignar_coord_pers_x(x);

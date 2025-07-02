@@ -43,6 +43,14 @@ int main() {
     // Numero de nodos en y
     const int ny = static_cast<int>(malla.obtener_coordenadas_tmp_y().size());
 
+    const std::vector<double> vol = malla.obtener_volumenes();
+
+    for (int j=0; j<ny; ++j) {
+        for (int i=0; i<nx; ++i) {
+            printf("vol[%d] = %f\n",i+nx*j,vol[i+nx*j]);
+        }
+    }
+
     // Coordenadas persistentes
     const std::vector<double> x = malla.obtener_coord_pers_x();
     const std::vector<double> y = malla.obtener_coord_pers_y();

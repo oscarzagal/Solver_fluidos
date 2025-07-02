@@ -10,10 +10,10 @@ typedef std::vector<std::string> asignacion_de;
 typedef std::vector<Malla::Mallador::Parche> almacenar;
 
 /* Nodos por cada parche en la direccion x */
-cantidad_de nodos_en_x = {27,27};
+cantidad_de nodos_en_x = {5,5};
 
 /* Nodos por cada parche en la direccion y */
-cantidad_de nodos_en_y = {27,27};
+cantidad_de nodos_en_y = {5,5};
 
 /* TODO: buscar la manera de tirar una excepcion ante la configuracion
  erronea en las coordenadas, por ejemplo:
@@ -41,8 +41,6 @@ par_de coordenadas_en_y = {
 };
 
 /* Nombres de los parches horizontales */
-// TODO: ver como hacerle para evitar poner el tipo de CF. Solo seria necesario
-// el nombre del parche
 asignacion_de nombres_frontera_norte = {
     {"norte_izquierda"},
     {"norte_derecha"}

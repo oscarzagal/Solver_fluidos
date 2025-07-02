@@ -5,6 +5,8 @@
 #ifndef ESQUEMAS_DE_DISCRETIZACION_HPP
 #define ESQUEMAS_DE_DISCRETIZACION_HPP
 
+#include <iostream>
+
 #include "malla_por_bloques.hpp"
 
 namespace Esquemas_discretizacion {
@@ -34,7 +36,6 @@ namespace Esquemas_discretizacion {
         c.ap.resize(nx * ny);
         c.b.resize(nx * ny);
 
-        // TODO: reducir este bucle anidado a un solo for
         for (int j = 1; j < ny - 1; j++) {
             for (int i = 1; i < nx - 1; i++) {
                 c.ae[i + nx * j] = k * deltay[j] / (x[i + 1] - x[i]);

@@ -48,6 +48,10 @@
 
   Se tendran tantas coordenadas como aristas.
 
+  La asignación de los nombres de los parches debe de ser de izquierda a derecha
+  para las fronteras horizontales y de abajo a arriba para las fronteras
+  verticales
+
   TODO: escribir ejemplos
 
  */
@@ -144,6 +148,9 @@ namespace Malla {
     // Coordenadas temporales para y
     [[nodiscard]] std::vector<double> obtener_coordenadas_tmp_y();
 
+    // Debe de ser llamada despues de "obtener_coordenadas_tmp_x" y "obtener_coordenadas_tmp_y"
+    [[nodiscard]] std::vector<double> obtener_volumenes();
+
     // Asignacion de coordenadas persistentes
     void preparar_coordenadas_persistentes();
 
@@ -156,6 +163,7 @@ namespace Malla {
 
     // Asignacion de parches frontera
     void preparar_parches_fronteras();
+
 
 
     struct Parche {
