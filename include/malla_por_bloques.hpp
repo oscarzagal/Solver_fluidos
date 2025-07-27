@@ -148,8 +148,8 @@ namespace Malla {
     // Coordenadas temporales para y
     [[nodiscard]] std::vector<double> obtener_coordenadas_tmp_y();
 
-    // Debe de ser llamada despues de "obtener_coordenadas_tmp_x" y "obtener_coordenadas_tmp_y"
     [[nodiscard]] std::vector<double> obtener_volumenes();
+
 
     // Asignacion de coordenadas persistentes
     void preparar_coordenadas_persistentes();
@@ -175,8 +175,16 @@ namespace Malla {
 
     };
 
-    // Obtencion de los parches
+    struct Interpolacion {
+
+      // Factores de interpolacion para las caras de las celdas del elemnto C
+      std::vector<double> ge,gw,gn,gs;
+
+    };
+
     [[nodiscard]] std::vector<Parche> obtener_parches(Frontera frontera) const;
+
+    [[nodiscard]] static Interpolacion obtener_factores_de_interpolacion(Mallador& malla);
 
     // Vector de deltas para su posterior uso en los esquemas de discretizacion
     std::vector<double> deltax;

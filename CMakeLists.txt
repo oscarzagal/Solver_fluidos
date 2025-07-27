@@ -8,19 +8,8 @@ project(solver_fluidos VERSION 1.0)
 # Flags de compilación adicionales (útil para depurar)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -g")
 
-add_executable(main config_malla.hpp config_CF.hpp malla_por_bloques.cpp malla_por_bloques.hpp
-        condiciones_de_frontera.cpp
-        condiciones_de_frontera.hpp
-        main.cpp
-        esquemas_de_discretizacion.hpp
-        config_control.hpp
-        solvers_lineales.hpp
-        calculo_del_error.cpp
-        calculo_del_error.hpp
-        escritura.cpp
-        escritura.hpp
-        Campo.cpp
-        Campo.hpp
-        ecuaciones_gobernantes.cpp
-        ecuaciones_gobernantes.hpp
-)
+file(GLOB_RECURSE SRC_FILES src/*.cpp)
+set(CMAKE_BUILD_TYPE Debug)
+add_executable(main main.cpp ${SRC_FILES}
+        include/utilidades.hpp)
+target_include_directories(main PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

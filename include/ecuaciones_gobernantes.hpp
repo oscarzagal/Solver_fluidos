@@ -46,6 +46,25 @@ namespace Ecuaciones_gobernantes {
 
     };
 
+    class Momentum : public Base {
+    public:
+        // Constructor
+        explicit Momentum(Malla::Mallador &);
+
+        void ensamblar() override;
+
+        A_coef obtener_coeficientes() override;
+
+        A_coef A;
+
+    private:
+
+        void asignar_matriz(const A_coef& A_paso);
+
+        Malla::Mallador& malla;
+
+    };
+
 } // Fin namespace Ecuaciones_gobernantes
 
 #endif //ECUACIONES_GOBERNANTES_HPP

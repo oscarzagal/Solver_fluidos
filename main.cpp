@@ -45,11 +45,19 @@ int main() {
 
     const std::vector<double> vol = malla.obtener_volumenes();
 
-    for (int j=0; j<ny; ++j) {
-        for (int i=0; i<nx; ++i) {
-            printf("vol[%d] = %f\n",i+nx*j,vol[i+nx*j]);
-        }
-    }
+    const Malla::Mallador::Interpolacion inter = Malla::Mallador::obtener_factores_de_interpolacion(malla);
+
+    // for (int j = 1; j < ny - 1; ++j) {
+    //     for (int i = 1; i < nx - 1; ++i) {
+    //         printf("vol[%d] = %f\n", i + nx * j, vol[i + nx * j]);
+    //     }
+    // }
+
+    // for (int j = 0; j < ny; ++j) {
+    //     for (int i = 0; i < nx; ++i) {
+    //         printf("ge[%d] = %f\n", i + nx * j, inter.ge[i + nx * j]);
+    //     }
+    // }
 
     // Coordenadas persistentes
     const std::vector<double> x = malla.obtener_coord_pers_x();
@@ -68,20 +76,36 @@ int main() {
 
     //--------------------------Definicion de campos----------------------------
 
-    // Campos de temperaturas
-    std::vector<double> T(nx*ny,0.0);
-    std::vector<double> Told(nx*ny,0.0);
+    // Campo de temperatura
+    std::vector<double> T(nx*ny,0.0), Told(nx*ny,0.0);
 
-    // Otra inicializacion de prueba
-    for (int j = 1; j < ny-1; ++j) {
-      for (int i = 1; i < nx-1; ++i) {
-          T[i+nx*j]=24.0;
-      }
-    }
+    // Campo de velocidad en forma escalar
+    std::vector<double> u_star(nx*ny,0.0), v_star(nx*ny,0.0),
+    u_old(nx*ny,0.0), v_old(nx*ny,0.0);
+
+    // Campo de presion
+    std::vector<double> Pstar(nx*ny,0.0), P_old(nx*ny,0.0);
 
     //------------------------Fin definicion de campos--------------------------
 
-    //-----------------Asignacion de condiciones de frontera--------------------
+    //-------------------------Creacion de los campos---------------------------
+
+    Ecuaciones_gobernantes::Momentum ecuacion_momentum_u(malla);
+
+    Campo::Escalar Vel_u
+    (
+        Parches_norte,
+        Parches_sur,
+        Parches_este,
+        Parches_oeste,
+        u_star,
+        u_old,
+        g_dirichlet_u,
+        g_zero_neumann_u,
+        malla,
+        ecuacion_momentum_u,
+        solver_elegido_u
+    );
 
     // Instancia de la ecuacion de energia que sirve para ensamblar la ecuacion
     Ecuaciones_gobernantes::Energia ecuacion_energia(malla);
@@ -102,7 +126,6 @@ int main() {
         solver_elegido_Temp
     );
 
-
     Temp.construir_condiciones_de_frontera();
 
     std::vector<Condicion_frontera::Dirichlet> lista_parches_dirichlet_T
@@ -115,7 +138,7 @@ int main() {
 
     //--------------Fin de asignacion de condiciones de frontera----------------
 
-    // Aplicacion de las condiciones de frontera al campo
+    // Aplicacion de las condiciones de frontera de Dirichlet al campo
 
     for (int i=0; i<lista_parches_dirichlet_T.size(); ++i ) {
         lista_parches_dirichlet_T[i].aplicar();

@@ -315,6 +315,30 @@ namespace Malla {
     return vol;
   }
 
+  Mallador::Interpolacion Mallador::obtener_factores_de_interpolacion(Mallador& malla) {
+
+    Interpolacion inter;
+
+    const int nx = static_cast<int>(malla.obtener_coordenadas_tmp_x().size());
+    const int ny = static_cast<int>(malla.obtener_coordenadas_tmp_y().size());
+
+    const std::vector<double> vol = malla.obtener_volumenes();
+
+    // Importante calcular a partir del cero para evitar cosas raras
+    for (int j = 0; j < ny; ++j) {
+      for (int i = 0; i < nx; ++i) {
+        inter.ge.push_back(vol[i+nx*j]/(vol[i+nx*j]+vol[i+1+nx*j]));
+        // printf("%d: %f / (%f + %f) \n",i+nx*j,vol[i+nx*j],vol[i+nx*j],vol[i+1+nx*j]);
+        inter.gw.push_back(vol[i+nx*j]/(vol[i+nx*j]+vol[i-1+nx*j]));
+        inter.gn.push_back(vol[i+nx*j]/(vol[i+nx*j]+vol[i+nx*(j+1)]));
+        inter.gs.push_back(vol[i+nx*j]/(vol[i+nx*j]+vol[i+nx*(j-1)]));
+      }
+    }
+
+    return inter;
+
+  }
+
 
   void Mallador::asignar_coord_pers_x(const std::vector<double>& x_) {
     x=x_;

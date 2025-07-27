@@ -63,12 +63,10 @@ namespace Campo {
         std::vector<std::shared_ptr<Condicion_frontera::Base>> parches_dinamicos;
 
         // Pointer hacia el solver lineal
-        // FIXME: pointer nulo, no se inicializa
         std::unique_ptr<Solver_lineal::Base> campo;
 
         // Instancia a "Energia::A_energia" para almacenar los coeficientes agrupados
         Ecuaciones_gobernantes::A_coef A;
-
 
     };
 

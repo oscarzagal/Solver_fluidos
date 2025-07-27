@@ -31,3 +31,31 @@ inline std::array<CF_Zero_Neumann, limite_num_parches> g_zero_neumann_T = { {
     {"sur_derecha","sur"}
     }
 };
+
+// Condiciones tipo dirichlet para la velocidad en u
+inline std::array<CF_Dirichlet, limite_num_parches> g_dirichlet_u = {
+    {
+
+    }
+};
+
+// Condiciones tipo dirichlet para la velocidad en u
+inline std::array<CF_Dirichlet, limite_num_parches> g_dirichlet_v = {
+    {
+
+    }
+};
+
+// Condiciones tipo zero_neumann para la velocidad en u
+inline std::array<CF_Zero_Neumann, limite_num_parches> g_zero_neumann_u = {
+    {
+
+    }
+};
+
+// Condiciones tipo zero_neumann para la velocidad en v
+inline std::array<CF_Zero_Neumann, limite_num_parches> g_zero_neumann_v = {
+    {
+
+    }
+};
