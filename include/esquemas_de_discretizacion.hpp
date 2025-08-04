@@ -12,12 +12,28 @@ namespace Esquemas_discretizacion {
 
     struct grad_explicito {
 
-        // Gradiente de presion explicito multiplicado por el volumen
-        std::vector<double> Pstar_x_vol, Pstar_y_vol;
+        // Gradiente explicito multiplicado por el volumen
+        std::vector<double> grad_x_vol, grad_y_vol;
 
     };
 
-    void laplaciano
+    struct fluxes_convectivos {
+        // Coeficientes convectivos en las caras para el coeficiente agrupado F
+        std::vector<double> fluxFConv_e,fluxFConv_w,fluxFConv_n,fluxFConv_s;
+
+        // Coeficientes convectivos en las caras para el coeficiente agrupado C
+        std::vector<double> fluxCConv_e,fluxCConv_w,fluxCConv_n,fluxCConv_s;
+    };
+
+    struct fluxes_difusivos {
+        // Coeficientes difusivos en las caras para el coeficiente agrupado F
+        std::vector<double> fluxFDif_e,fluxFDif_w,fluxFDif_n,fluxFDif_s;
+
+        // Coeficientes difusivos en las caras para el coeficiente agrupado C
+        std::vector<double> fluxCDif_e,fluxCDif_w,fluxCDif_n,fluxCDif_s;
+    };
+
+    void laplaciano_lineal
     (
         const int &nx,
         const int &ny,
@@ -32,8 +48,16 @@ namespace Esquemas_discretizacion {
         int ny,
         const Malla::Mallador::Interpolacion &inter,
         grad_explicito &grad_explicito,
-        const std::vector<double> &Pstar,
+        const std::vector<double> &P,
         const Malla::Mallador &malla
+    );
+
+    void divergencia_upwind
+    (
+        int nx,
+        int ny,
+        fluxes_convectivos &fluxes,
+        const Ecuaciones_gobernantes::Momentum::mstar &mstar
     );
 
 } // Fin namespace Esquemas_discretizacion

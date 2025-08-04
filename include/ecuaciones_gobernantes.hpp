@@ -57,6 +57,11 @@ namespace Ecuaciones_gobernantes {
 
         A_coef A;
 
+        // Flujo de masa en las caras
+        struct mstar {
+            std::vector<double> me_star={}, mw_star={}, mn_star={}, ms_star={};
+        };
+
     private:
 
         void asignar_matriz(const A_coef& A_paso);

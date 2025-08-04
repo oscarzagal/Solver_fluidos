@@ -164,7 +164,7 @@ namespace Malla {
     // Asignacion de parches frontera
     void preparar_parches_fronteras();
 
-
+    // TODO: hacer un setter y un getter para "nx" y "ny"
 
     struct Parche {
 

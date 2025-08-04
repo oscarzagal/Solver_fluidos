@@ -152,7 +152,7 @@ int main() {
         Temp.resolver();
 
         // Actualizacion de condiciones de frontera dinamicas
-        for (int i = 0; i < lista_parches_dinamicos_T.size(); ++i) {
+        for (int i = 0; i < static_cast<int>(lista_parches_dinamicos_T.size()); ++i) {
             lista_parches_dinamicos_T[i]->aplicar();
         }
 
