@@ -10,6 +10,9 @@
 // Conductividad termica
 inline constexpr double k = 20.0;
 
+// Viscosidad cinemática
+inline constexpr double nu = 1.0e-3;
+
 // Control
 inline constexpr int num_iteraciones_max = 6000;
 
@@ -20,6 +23,10 @@ inline constexpr double tolerancia = 1e-10;
 inline std::string solver_elegido_Temp = "SOR";
 inline std::string solver_elegido_u = "SOR";
 inline std::string solver_elegido_v = "SOR";
+inline std::string solver_elegido_P = "SOR";
 
-// Factor de relajacion
-inline constexpr double lambdaT = 1.5;
+// Factores de relajacion
+inline constexpr double lambda_T = 0.5;
+inline constexpr double lambda_u = 0.5;
+inline constexpr double lambda_v = 0.5;
+inline constexpr double lambda_P = 0.5;

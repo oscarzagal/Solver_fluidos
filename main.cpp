@@ -38,10 +38,10 @@ int main() {
     malla.preparar_coordenadas_persistentes();
 
     // Numero de nodos en x
-    const int nx = static_cast<int>(malla.obtener_coordenadas_tmp_x().size());
+    const int nx = malla.obtener_el_numero_de_nodos(Malla::Nodos::nx);
 
     // Numero de nodos en y
-    const int ny = static_cast<int>(malla.obtener_coordenadas_tmp_y().size());
+    const int ny = malla.obtener_el_numero_de_nodos(Malla::Nodos::ny);
 
     const std::vector<double> vol = malla.obtener_volumenes();
 
@@ -90,7 +90,31 @@ int main() {
 
     //-------------------------Creacion de los campos---------------------------
 
-    Ecuaciones_gobernantes::Momentum ecuacion_momentum_u(malla);
+
+    /*-----------------------------------------------------------------------------
+                                Campo de presion
+    -----------------------------------------------------------------------------*/
+
+    Ecuaciones_gobernantes::Presion presion(malla);
+
+    Campo::Escalar Presion
+    (
+        Parches_norte,
+        Parches_sur,
+        Parches_este,
+        Parches_oeste,
+        Pstar,
+        P_old,
+        g_dirichlet_P,
+        g_zero_neumann_P,
+        malla,
+        presion,
+        solver_elegido_P
+    );
+
+    // Instancia de la ecuacion de momentum que sirve para ensamblar la ecuacion
+    // TODO: pasar a las velocidades tambien???
+    Ecuaciones_gobernantes::Momentum ecuacion_momentum_u(nu,malla,Presion.phi_new);
 
     Campo::Escalar Vel_u
     (
@@ -106,6 +130,8 @@ int main() {
         ecuacion_momentum_u,
         solver_elegido_u
     );
+
+    Vel_u.construir_ecuacion();
 
     // Instancia de la ecuacion de energia que sirve para ensamblar la ecuacion
     Ecuaciones_gobernantes::Energia ecuacion_energia(malla);
@@ -140,7 +166,7 @@ int main() {
 
     // Aplicacion de las condiciones de frontera de Dirichlet al campo
 
-    for (int i=0; i<lista_parches_dirichlet_T.size(); ++i ) {
+    for (int i=0; i<static_cast<int>(lista_parches_dirichlet_T.size()); ++i ) {
         lista_parches_dirichlet_T[i].aplicar();
     }
 

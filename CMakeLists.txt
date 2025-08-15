@@ -11,5 +11,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -g")
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
 set(CMAKE_BUILD_TYPE Debug)
 add_executable(main main.cpp ${SRC_FILES}
-        include/utilidades.hpp)
+        include/utilidades.hpp
+        include/variables_discretizacion.hpp)
 target_include_directories(main PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

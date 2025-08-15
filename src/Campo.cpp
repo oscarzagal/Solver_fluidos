@@ -4,12 +4,16 @@
 
 #include "Campo.hpp"
 
-#include <iostream>
-
 #include "condiciones_de_frontera.hpp"
+#include "ecuaciones_gobernantes.hpp"
 #include "malla_por_bloques.hpp"
 
 namespace Campo {
+
+
+/*-----------------------------------------------------------------------------
+                            Campo Escalar
+-----------------------------------------------------------------------------*/
 
     // Constructor
     Escalar::Escalar
@@ -108,6 +112,44 @@ namespace Campo {
         campo->resolver();
 
     }
+
+
+/*-----------------------------------------------------------------------------
+                            Campo Vectorial
+-----------------------------------------------------------------------------*/
+
+// Constructor
+Vectorial::Vectorial
+(
+    const Malla::Mallador& malla_,
+    const std::array<CF_Dirichlet,limite_num_parches> & g_dirichlet_u_,
+    const std::array<CF_Zero_Neumann,limite_num_parches> & g_zero_neumann_u_,
+    const std::array<CF_Dirichlet,limite_num_parches> & g_dirichlet_v_,
+    const std::array<CF_Zero_Neumann,limite_num_parches> & g_zero_neumann_v_,
+    const Ecuaciones_gobernantes::Momentum& ecuacion_momentum_,
+    const std::string& solver_elegido_
+) :
+    malla(malla_),
+    g_dirichlet_u(g_dirichlet_u_),
+    g_zero_neumann_u(g_zero_neumann_u_),
+    g_dirichlet_v(g_dirichlet_v_),
+    g_zero_neumann_v(g_zero_neumann_v_),
+    ecuacion_momentum(ecuacion_momentum_),
+    solver_elegido(solver_elegido_)
+{}
+
+void Vectorial::construir_condiciones_de_frontera() {
+
+    typedef std::vector<Malla::Mallador::Parche> almacenar;
+
+    almacenar Parches_norte=malla.obtener_parches(Malla::Frontera::Norte);
+    almacenar Parches_sur=malla.obtener_parches(Malla::Frontera::Sur);
+    almacenar Parches_este=malla.obtener_parches(Malla::Frontera::Este);
+    almacenar Parches_oeste=malla.obtener_parches(Malla::Frontera::Oeste);
+
+
+}
+
 
 
 } // Fin namespace Campos

@@ -31,21 +31,22 @@ namespace Condicion_frontera {
         // Constructor
         Dirichlet
         (
-            std::vector<double> &,
             std::vector<int> &,
-            double
+            double,
+            std::vector<double> &
         );
 
         void aplicar();
+
+        std::vector<int>& nodos_del_parche;
+
+        const double valor;
 
     private:
 
         // Campo
         std::vector<double>& phi;
 
-        std::vector<int>& nodos_del_parche;
-
-        const double valor;
     };
 
     class Zero_Neumann : public Base {

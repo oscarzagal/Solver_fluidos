@@ -59,3 +59,13 @@ inline std::array<CF_Zero_Neumann, limite_num_parches> g_zero_neumann_v = {
 
     }
 };
+
+
+inline std::array<CF_Dirichlet,limite_num_parches> g_dirichlet_P = {{
+
+}};
+
+inline std::array<CF_Zero_Neumann,limite_num_parches> g_zero_neumann_P = {{
+
+}};
+

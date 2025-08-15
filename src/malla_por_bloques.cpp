@@ -235,6 +235,8 @@ namespace Malla {
     /* retorna un iterador (un pointer) que almacena su posicion */
     /* https://en.cppreference.com/w/cpp/container/vector/begin */
 
+    asignar_numero_de_nodos(static_cast<int>(x_tmp.size()),Nodos::nx);
+
     return x_tmp;
 
   }
@@ -295,6 +297,8 @@ namespace Malla {
       );
     }
 
+    asignar_numero_de_nodos(static_cast<int>(y_tmp.size()),Nodos::ny);
+
     return y_tmp;
 
   }
@@ -337,6 +341,27 @@ namespace Malla {
 
     return inter;
 
+  }
+
+  void Mallador::asignar_numero_de_nodos(int nn, Nodos nodos) {
+    switch (nodos) {
+      case Nodos::nx:
+        nx = nn;
+        break;
+      case Nodos::ny:
+        ny = nn;
+        break;
+    }
+  }
+
+  int Mallador::obtener_el_numero_de_nodos(Nodos nodos) {
+    switch (nodos) {
+      case Nodos::nx:
+        return nx;
+      case Nodos::ny:
+        return ny;
+    }
+    return {};
   }
 
 

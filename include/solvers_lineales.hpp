@@ -50,9 +50,9 @@ namespace Solver_lineal {
 
             for (int j=1; j<ny-1; ++j) {
               for (int i=1; i<nx-1; ++i) {
-                phi[i+nx*j]=lambdaT*((phi[i+1+nx*j]*A.ae[i+nx*j]+phi[i-1+nx*j]*A.aw[i+nx*j]
+                phi[i+nx*j]=lambda_T*((phi[i+1+nx*j]*A.ae[i+nx*j]+phi[i-1+nx*j]*A.aw[i+nx*j]
                   +phi[i+nx*(j+1)]*A.an[i+nx*j]+phi[i+nx*(j-1)]*A.as[i+nx*j]+A.b[i+nx*j])
-                  /A.ap[i+nx*j])+(1.0-lambdaT)*phi_old[i+nx*j];
+                  /A.ap[i+nx*j])+(1.0-lambda_T)*phi_old[i+nx*j];
               }
             }
 

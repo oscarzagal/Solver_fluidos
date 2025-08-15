@@ -16,7 +16,8 @@ namespace Campo {
 
 class Escalar {
 public:
-    // Constructor
+
+    // Constructor para cuando se tengan dos tipos de CF
     Escalar
     (
         const std::vector<Malla::Mallador::Parche> &,
@@ -32,6 +33,7 @@ public:
         const std::string&
     );
 
+
     void construir_condiciones_de_frontera();
 
     void construir_ecuacion();
@@ -41,6 +43,9 @@ public:
     std::vector<Condicion_frontera::Dirichlet> obtener_parches_dirichlet();
 
     std::vector<std::shared_ptr<Condicion_frontera::Base>> obtener_parches_dinamicos();
+
+    std::vector<double>& phi_new; // Campo nuevo
+    std::vector<double>& phi_old; // Campo viejo
 
 private:
 
@@ -54,8 +59,6 @@ private:
     Malla::Mallador& malla;
     Ecuaciones_gobernantes::Base& ecuacion; // Referencia hacia el tipo de ecuacion
     const std::string& solver_elegido;
-    std::vector<double>& phi_new; // Campo nuevo
-    std::vector<double>& phi_old; // Campo viejo
 
 
     // Variables adicionales
@@ -66,8 +69,45 @@ private:
     // Pointer hacia el solver lineal
     std::unique_ptr<Solver_lineal::Base> campo;
 
-    // Instancia a "Energia::A*" para almacenar los coeficientes agrupados
+    // Instancia para almacenar los coeficientes agrupados
     Ecuaciones_gobernantes::A_coef A;
+
+};
+
+class Vectorial {
+public:
+
+    Vectorial
+    (
+        const Malla::Mallador &,
+        const std::array<CF_Dirichlet, limite_num_parches> &,
+        const std::array<CF_Zero_Neumann, limite_num_parches> &,
+        const std::array<CF_Dirichlet, limite_num_parches> &,
+        const std::array<CF_Zero_Neumann, limite_num_parches> &,
+        const Ecuaciones_gobernantes::Momentum &, // No hay necesidad de polimorfismo
+        const std::string&
+    );
+
+    void construir_condiciones_de_frontera();
+
+    // TODO: implementar, es una oportunidad para mejorar la clase lo hecho en
+    // la clase Escalar
+    // 1.- Ver la manera de solo pasar la malla por referencia constante y obtener
+    // los parches dentro de la clase
+    // 2.- Pasar todos los campos o implementarlos dentro de la clase
+    // 3.- Pasar todas las condiciones de frontera de igual manera que en Escalar
+    // 4.- Pasar el solver elegido igual que en Escalar
+
+private:
+
+    // Variables del constructor
+    const Malla::Mallador& malla;
+    const std::array<CF_Dirichlet, limite_num_parches> & g_dirichlet_u;
+    const std::array<CF_Zero_Neumann, limite_num_parches> & g_zero_neumann_u;
+    const std::array<CF_Dirichlet, limite_num_parches> & g_dirichlet_v;
+    const std::array<CF_Zero_Neumann, limite_num_parches> & g_zero_neumann_v;
+    const Ecuaciones_gobernantes::Momentum& ecuacion_momentum;
+    const std::string& solver_elegido;
 
 };
 

@@ -72,6 +72,11 @@ namespace Malla {
     Oeste
   };
 
+  enum class Nodos {
+    nx,
+    ny
+  };
+
   class Mallador {
 
 
@@ -164,7 +169,7 @@ namespace Malla {
     // Asignacion de parches frontera
     void preparar_parches_fronteras();
 
-    // TODO: hacer un setter y un getter para "nx" y "ny"
+    [[nodiscard]] int obtener_el_numero_de_nodos(Nodos nodos);
 
     struct Parche {
 
@@ -190,6 +195,9 @@ namespace Malla {
     std::vector<double> deltax;
     std::vector<double> deltay;
 
+    // Numero de nodos en "x" y "y"
+    int nx, ny;
+
 
   private:
 
@@ -201,6 +209,8 @@ namespace Malla {
 
     // Asignar los parches fronteras
     void asignar_parches(const std::vector<Parche>& parche, Frontera frontera);
+
+    void asignar_numero_de_nodos(int nn, Nodos nodos);
 
     // Nodos por cada parche en la direccion x
     std::vector<int> nodos_en_x;

@@ -15,13 +15,13 @@ namespace Condicion_frontera {
     // Lista de inicializacion
     Dirichlet::Dirichlet
     (
-        std::vector<double>& phi_,
         std::vector<int>& nodos_del_parche_,
-        const double valor_
+        const double valor_,
+        std::vector<double>& phi_
     ) :
-    phi(phi_),
     nodos_del_parche(nodos_del_parche_),
-    valor(valor_)
+    valor(valor_),
+    phi(phi_)
     {}
 
     void Dirichlet::aplicar() {
@@ -107,15 +107,15 @@ namespace Condicion_frontera {
         const std::array<CF_Zero_Neumann, limite_num_parches>& g_zero_neumann
     )
     {
-        for (int i = 0; i < parches.size(); ++i) {
+        for (int i = 0; i < static_cast<int>(parches.size()); ++i) {
             std::pair<std::string,int> tipo = que_tipo_es(parches[i].obtener_nombre);
             if (tipo.first == "dirichlet") {
 
                 Dirichlet parametros
                 (
-                    phi,
                     parches[i].obtener_nodos_del_parche,
-                    g_dirichlet[tipo.second].valor
+                    g_dirichlet[tipo.second].valor,
+                    phi
                 );
 
                 lista_dirichlet.push_back(parametros);
