@@ -354,7 +354,7 @@ namespace Malla {
     }
   }
 
-  int Mallador::obtener_el_numero_de_nodos(Nodos nodos) {
+  int Mallador::obtener_el_numero_de_nodos(const Nodos nodos) const {
     switch (nodos) {
       case Nodos::nx:
         return nx;

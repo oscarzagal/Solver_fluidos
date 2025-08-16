@@ -82,7 +82,7 @@ void Momentum::asignar_matriz(const A_coef& A_paso) {
     A = A_paso;
 }
 
-A_coef Momentum::obtener_coeficientes() {
+const A_coef Momentum::obtener_coeficientes() const {
     return A;
 }
 

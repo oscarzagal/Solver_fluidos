@@ -113,7 +113,6 @@ int main() {
     );
 
     // Instancia de la ecuacion de momentum que sirve para ensamblar la ecuacion
-    // TODO: pasar a las velocidades tambien???
     Ecuaciones_gobernantes::Momentum ecuacion_momentum_u(nu,malla,Presion.phi_new);
 
     Campo::Escalar Vel_u

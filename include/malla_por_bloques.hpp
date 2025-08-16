@@ -169,7 +169,7 @@ namespace Malla {
     // Asignacion de parches frontera
     void preparar_parches_fronteras();
 
-    [[nodiscard]] int obtener_el_numero_de_nodos(Nodos nodos);
+    [[nodiscard]] int obtener_el_numero_de_nodos(const Nodos nodos) const;
 
     struct Parche {
 
