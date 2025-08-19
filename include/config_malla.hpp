@@ -16,10 +16,10 @@ typedef std::vector<std::string> asignacion_de;
 typedef std::vector<Malla::Mallador::Parche> almacenar;
 
 /* Nodos por cada parche en la direccion x */
-inline cantidad_de nodos_en_x = {5,5};
+inline cantidad_de nodos_en_x = {5};
 
 /* Nodos por cada parche en la direccion y */
-inline cantidad_de nodos_en_y = {5,5};
+inline cantidad_de nodos_en_y = {5};
 
 /* TODO: buscar la manera de tirar una excepcion ante la configuracion
  erronea en las coordenadas, por ejemplo:
@@ -36,34 +36,28 @@ inline cantidad_de nodos_en_y = {5,5};
 
 /* Par de coordenas en x (first: coordenada inicial, second: coordenada final) */
 inline par_de coordenadas_en_x = {
-    {0.0, 1.0},
-    {1.0, 2.0}
+    {0.0, 1.0}
 };
 
 /* Par de coordenas en y (first: coordenada inicial, second: coordenada final) */
 inline par_de coordenadas_en_y = {
-    {0.0, 1.0},
-    {1.0, 2.0}
+    {0.0, 1.0}
 };
 
 /* Nombres de los parches horizontales */
 inline asignacion_de nombres_frontera_norte = {
-    {"norte_izquierda"},
-    {"norte_derecha"}
+    {"norte"}
 };
 
 inline asignacion_de nombres_frontera_sur = {
-    {"sur_izquierda"},
-    {"sur_derecha"}
+    {"sur"}
 };
 
 /* Nombres de los parches verticales */
 inline asignacion_de nombres_frontera_este = {
-    {"este_abajo"},
-    {"este_arriba"}
+    {"este"}
 };
 
 inline asignacion_de nombres_frontera_oeste = {
-    {"oeste_abajo"},
-    {"oeste_arriba"}
+    {"oeste"}
 };

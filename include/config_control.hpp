@@ -10,6 +10,9 @@
 // Conductividad termica
 inline constexpr double k = 20.0;
 
+// Densidad
+inline constexpr double rho = 1.0;
+
 // Viscosidad cinemática
 inline constexpr double nu = 1.0e-3;
 

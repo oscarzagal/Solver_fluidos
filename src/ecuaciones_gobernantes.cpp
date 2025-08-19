@@ -47,20 +47,18 @@ A_coef Energia::obtener_coeficientes() {
 
 Momentum::Momentum(const double nu_, Malla::Mallador & malla_, std::vector<double> & Pstar_) :
 
-    nu(nu_),
     // Obtencion de los nodos una unica vez en el tiempo de vida del objeto
     nx(malla_.obtener_el_numero_de_nodos(Malla::Nodos::nx)),
     ny(malla_.obtener_el_numero_de_nodos(Malla::Nodos::ny)),
-    malla(malla_),
-    Pstar(Pstar_)
-{
-    inter = Malla::Mallador::obtener_factores_de_interpolacion(malla_);
     // Inicializacion del flujo de masa
-    mstar.mstar_x.resize(nx*ny,0.0);
-    mstar.mstar_y.resize(nx*ny,0.0);
-}
+    mstar{std::vector<double>(nx*ny,0.0), std::vector<double>(nx*ny,0.0)},
+    nu(nu_),
+    malla(malla_),
+    inter(Malla::Mallador::obtener_factores_de_interpolacion(malla_)),
+    Pstar(Pstar_)
+{}
 
-void Momentum::ensamblar() {
+void Momentum::unir_ecuacion() {
 
     // Modifica el estado de "gradP_explicito"
     Esquemas_discretizacion::gradiente_explicito(nx,ny,inter,gradP_explicito,Pstar,malla);
@@ -71,21 +69,30 @@ void Momentum::ensamblar() {
     // Modifica el estado de "flux_dif"
     Esquemas_discretizacion::laplaciano_lineal(nx,ny,nu,flux_dif,malla);
 
-    // Modifica el estado de "A"
-    Esquemas_discretizacion::construccion_matriz_A(nx,ny,flux_dif,flux_conv,A);
+    // TODO: implementar la funcion de abajo
+    // Modifica el estado de "A_u" y "A_v"
+    Esquemas_discretizacion::construccion_matriz_A_momentum(nx,ny,flux_dif,flux_conv,A_u,A_v,gradP_explicito);
 
-    // TODO: obtener los coeficientes agrupados a traves de una funcion de union
+    // TODO: hacer una funcion para el calculo del flujo de masa
 
 }
 
-void Momentum::asignar_matriz(const A_coef& A_paso) {
-    A = A_paso;
+// TODO: hacer enums para estas madres
+A_coef Momentum::obtener_coeficientes_para_u() const {
+    return A_u;
 }
 
-const A_coef Momentum::obtener_coeficientes() const {
-    return A;
+A_coef Momentum::obtener_coeficientes_para_v() const {
+    return A_v;
 }
 
+void Momentum::asignar_matriz_para_u(const A_coef& A_paso) {
+    A_u = A_paso;
+}
+
+void Momentum::asignar_matriz_para_v(const A_coef& A_paso) {
+    A_v = A_paso;
+}
 
 
 } // Fin namespace Ecuaciones_gobernantes

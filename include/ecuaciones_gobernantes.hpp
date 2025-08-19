@@ -47,16 +47,18 @@ private:
 
 };
 
-class Momentum : public Base {
+class Momentum : public Base{
 public:
     // Constructor
-    explicit Momentum(const double, Malla::Mallador &, std::vector<double> &);
+    Momentum(double, Malla::Mallador &, std::vector<double> &);
 
-    void ensamblar() override;
+    // Metodo que hace lo mismo que el metodo polimorfico "ensamblar"
+    void unir_ecuacion();
 
-    A_coef obtener_coeficientes() override;
+    [[nodiscard]] A_coef obtener_coeficientes_para_u() const;
+    [[nodiscard]] A_coef obtener_coeficientes_para_v() const;
 
-    A_coef A;
+    A_coef A_u, A_v;
 
     // Flujo de masa en las caras
     struct Mstar {
@@ -67,6 +69,9 @@ public:
         std::vector<double> mstar_x={}, mstar_y={};
     };
 
+    // Nodos en la direccion "x" y "y"
+    const int nx, ny;
+
     // Instancia de mstar
     Mstar mstar;
 
@@ -75,10 +80,9 @@ public:
 
 private:
 
-    void asignar_matriz(const A_coef& A_paso);
+    void asignar_matriz_para_u(const A_coef& A_paso);
+    void asignar_matriz_para_v(const A_coef& A_paso);
 
-    // Nodos en la direccion "x" y "y"
-    const int nx, ny;
 
     Malla::Mallador& malla;
 

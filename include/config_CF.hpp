@@ -15,34 +15,44 @@ struct CF_Zero_Neumann {
 };
 
 // Parametros para la condicion de frontera tipo Dirichlet para T
-inline std::array<CF_Dirichlet, limite_num_parches> g_dirichlet_T = {{
-    {"norte_derecha", 0.0},
-    {"este_arriba", 0.0},
-    {"sur_izquierda", 100.0},
-    {"oeste_abajo", 100.0}
-    }
-};
+// NOTE: por el momento no se usa, pero se deja como referencia
+// inline std::array<CF_Dirichlet, limite_num_parches> g_dirichlet_T = {{
+//     {"norte_derecha", 0.0},
+//     {"este_arriba", 0.0},
+//     {"sur_izquierda", 100.0},
+//     {"oeste_abajo", 100.0}
+//     }
+// };
 
 // Parametros para la condicion de frontera tipo zero_neumann para T
-inline std::array<CF_Zero_Neumann, limite_num_parches> g_zero_neumann_T = { {
-    {"oeste_arriba", "oeste"},
-    {"norte_izquierda", "norte"},
-    {"este_abajo", "este"},
-    {"sur_derecha","sur"}
-    }
-};
+// NOTE: por el momento no se usa, pero se deja como referencia
+// inline std::array<CF_Zero_Neumann, limite_num_parches> g_zero_neumann_T = { {
+//     {"oeste_arriba", "oeste"},
+//     {"norte_izquierda", "norte"},
+//     {"este_abajo", "este"},
+//     {"sur_derecha","sur"}
+//     }
+// };
+
+// NOTE: condiciones de frontera para el caso lid driven cavity
 
 // Condiciones tipo dirichlet para la velocidad en u
 inline std::array<CF_Dirichlet, limite_num_parches> g_dirichlet_u = {
     {
-
+    {"norte", 1.0},
+    {"sur", 0.0},
+    {"este", 0.0},
+    {"oeste", 0.0}
     }
 };
 
 // Condiciones tipo dirichlet para la velocidad en u
 inline std::array<CF_Dirichlet, limite_num_parches> g_dirichlet_v = {
     {
-
+    {"norte", 0.0},
+    {"sur", 0.0},
+    {"este", 0.0},
+    {"oeste", 0.0}
     }
 };
 
@@ -66,6 +76,8 @@ inline std::array<CF_Dirichlet,limite_num_parches> g_dirichlet_P = {{
 }};
 
 inline std::array<CF_Zero_Neumann,limite_num_parches> g_zero_neumann_P = {{
-
+    {"norte", "norte"},
+    {"sur", "sur"},
+    {"este", "este"},
+    {"oeste", "oeste"}
 }};
-

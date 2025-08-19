@@ -57,6 +57,7 @@ namespace Campo {
         // Numero de nodos en x
         const int nx = static_cast<int>(malla.obtener_el_numero_de_nodos(Malla::Nodos::nx));
 
+        // Se modifica el estado de "parches_dirichlet" y "parches_dinamicos"
         Condicion_frontera::construir_condiciones_de_frontera
         (
             Parches_norte,
@@ -175,8 +176,9 @@ Vectorial::Vectorial
 
 void Vectorial::construir_condiciones_de_frontera() {
 
-
     // Condiciones de frontera para la velocidad "u"
+    // Se modifica el estado de "parches_dirichlet_u", "parches_dinamicos_u" y
+    // u_new
     Condicion_frontera::construir_condiciones_de_frontera
     (
         Parches_norte,
@@ -187,11 +189,50 @@ void Vectorial::construir_condiciones_de_frontera() {
         nx,
         parches_dirichlet_u,
         parches_dinamicos_u,
-        g_dirichlet_u,
-        g_zero_neumann_u
+        g_dirichlet_u,   // Array con las condiciones de frontera
+        g_zero_neumann_u // Array con las condiciones de frontera
     );
 
+    // Condiciones de frontera para la velocidad "v"
+    // Se modifica el estado de "parches_dirichlet_v", "parches_dinamicos_v" y
+    // v_new
+    Condicion_frontera::construir_condiciones_de_frontera
+    (
+        Parches_norte,
+        Parches_sur,
+        Parches_este,
+        Parches_oeste,
+        v_new,
+        nx,
+        parches_dirichlet_v,
+        parches_dinamicos_v,
+        g_dirichlet_v,   // Array con las condiciones de frontera
+        g_zero_neumann_v // Array con las condiciones de frontera
+    );
 
+}
+
+void Vectorial::construir_ecuacion() {
+
+    // Ensamblar la ecuacion gobernante
+    ecuacion_momentum.unir_ecuacion();
+
+    // Obtencion de los coeficientes agrupados
+    A = ecuacion_momentum.obtener_coeficientes();
+
+    // Asignacion de los coeficientes agrupados
+    Solver_lineal::asignar
+    (
+        nx,
+        ny,
+        u_new,
+        u_old,
+        v_new,
+        v_old,
+        A,
+        solver_elegido,
+        campo
+    );
 }
 
 

@@ -92,6 +92,8 @@ public:
 
     void construir_condiciones_de_frontera();
 
+    void construir_ecuacion();
+
 private:
 
     // Variables del constructor
@@ -113,6 +115,8 @@ private:
     almacenar Parches_este;
     almacenar Parches_oeste;
 
+    // Instancias para almacenar los coeficientes agrupados
+    Ecuaciones_gobernantes::A_coef A_u, A_v;
 
 public:
 
@@ -122,15 +126,14 @@ public:
     Campo::Escalar u; // Campo de velocidad en "x"
     Campo::Escalar v; // Campo de velocidad en "y"
 
+    // Variables que almacenan las condiciones de frontera dependiendo el tipo
+    std::vector<Condicion_frontera::Dirichlet> parches_dirichlet_u;
+    std::vector<std::shared_ptr<Condicion_frontera::Base>> parches_dinamicos_u;
+
+    std::vector<Condicion_frontera::Dirichlet> parches_dirichlet_v;
+    std::vector<std::shared_ptr<Condicion_frontera::Base>> parches_dinamicos_v;
 
 
-    // TODO: implementar, es una oportunidad para mejorar la clase lo hecho en
-    // la clase Escalar
-    // 1.- Ver la manera de solo pasar la malla por referencia constante y obtener
-    // los parches dentro de la clase
-    // 2.- Pasar todos los campos o implementarlos dentro de la clase
-    // 3.- Pasar todas las condiciones de frontera de igual manera que en Escalar
-    // 4.- Pasar el solver elegido igual que en Escalar
 
 
 };

@@ -48,13 +48,26 @@ namespace Esquemas_discretizacion {
         const Malla::Mallador &malla
     );
 
-    void construccion_matriz_A
+    void construccion_matriz_A_momentum
     (
         int nx,
         int ny,
         const fluxes_difusivos &fluxes_dif,
         const fluxes_convectivos &fluxes_conv,
-        Ecuaciones_gobernantes::A_coef &A
+        Ecuaciones_gobernantes::A_coef &A_u,
+        Ecuaciones_gobernantes::A_coef &A_v,
+        Grad_explicito &grad_explicito
+    );
+
+    void construccion_coeficiente_b_momemtum
+    (
+        int nx,
+        int ny,
+        Ecuaciones_gobernantes::A_coef &A_u,
+        Ecuaciones_gobernantes::A_coef &A_v,
+        const Malla::Mallador &malla,
+        const Grad_explicito &grad_explicito,
+        const double rho
     );
 
 
