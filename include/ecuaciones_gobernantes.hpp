@@ -47,7 +47,7 @@ private:
 
 };
 
-class Momentum : public Base{
+class Momentum {
 public:
     // Constructor
     Momentum(double, Malla::Mallador &, std::vector<double> &);
@@ -83,6 +83,7 @@ private:
     void asignar_matriz_para_u(const A_coef& A_paso);
     void asignar_matriz_para_v(const A_coef& A_paso);
 
+    void calcular_flujo_de_masa();
 
     Malla::Mallador& malla;
 

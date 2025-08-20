@@ -36,6 +36,22 @@ public:
         const std::string&
     );
 
+    // Constructor para admitir una referencia a "Ecuaciones_gobernantes::Momentum &"
+    Escalar
+    (
+        const std::vector<Malla::Mallador::Parche> &,
+        const std::vector<Malla::Mallador::Parche> &,
+        const std::vector<Malla::Mallador::Parche> &,
+        const std::vector<Malla::Mallador::Parche> &,
+        std::vector<double> &,
+        std::vector<double> &,
+        const std::array<CF_Dirichlet, limite_num_parches> &,
+        const std::array<CF_Zero_Neumann, limite_num_parches> &,
+        const Malla::Mallador &,
+        Ecuaciones_gobernantes::Momentum &,
+        const std::string&
+    );
+
 
     void construir_condiciones_de_frontera();
 
@@ -49,6 +65,9 @@ public:
 
     std::vector<double>& phi_new; // Campo nuevo
     std::vector<double>& phi_old; // Campo viejo
+
+    // Pointer hacia el solver lineal
+    std::unique_ptr<Solver_lineal::Base> campo;
 
 private:
 
@@ -68,8 +87,6 @@ private:
     std::vector<Condicion_frontera::Dirichlet> parches_dirichlet;
     std::vector<std::shared_ptr<Condicion_frontera::Base>> parches_dinamicos;
 
-    // Pointer hacia el solver lineal
-    std::unique_ptr<Solver_lineal::Base> campo;
 
     // Instancia para almacenar los coeficientes agrupados
     Ecuaciones_gobernantes::A_coef A;
@@ -94,6 +111,9 @@ public:
 
     void construir_ecuacion();
 
+    // Se aplica el solver lineal a los campos
+    void resolver();
+
 private:
 
     // Variables del constructor
@@ -117,6 +137,7 @@ private:
 
     // Instancias para almacenar los coeficientes agrupados
     Ecuaciones_gobernantes::A_coef A_u, A_v;
+
 
 public:
 

@@ -73,7 +73,7 @@ void Momentum::unir_ecuacion() {
     // Modifica el estado de "A_u" y "A_v"
     Esquemas_discretizacion::construccion_matriz_A_momentum(nx,ny,flux_dif,flux_conv,A_u,A_v,gradP_explicito);
 
-    // TODO: hacer una funcion para el calculo del flujo de masa
+    // TODO: (dificil) hacer una funcion para el calculo del flujo de masa
 
 }
 

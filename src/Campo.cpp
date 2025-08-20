@@ -31,12 +31,12 @@ namespace Campo {
      Ecuaciones_gobernantes::Base& ecuacion_,
      const std::string& solver_elegido_
     ) :
+    phi_new(phi_new_),
+    phi_old(phi_old_),
     Parches_norte(Parches_norte_),
     Parches_sur(Parches_sur_),
     Parches_este(Parches_este_),
     Parches_oeste(Parches_oeste_),
-    phi_new(phi_new_),
-    phi_old(phi_old_),
     g_dirichlet(g_dirichlet_),
     g_zero_neumann(g_zero_neumann_),
     malla(malla_),
@@ -144,6 +144,7 @@ Vectorial::Vectorial
     v_new(nx*ny,0.0),
     u_old(nx*ny,0.0),
     v_old(nx*ny,0.0),
+    // NOTE: constructor sobrecargado
     u
     (
         Parches_norte,
@@ -174,11 +175,13 @@ Vectorial::Vectorial
     )
 {}
 
+// TODO: hacer unos getters para devolver a "parches_dirichlet_*" y "parches_dinamicos_*",
+// preferiblemente mediante enums
+
 void Vectorial::construir_condiciones_de_frontera() {
 
     // Condiciones de frontera para la velocidad "u"
-    // Se modifica el estado de "parches_dirichlet_u", "parches_dinamicos_u" y
-    // u_new
+    // Se modifica el estado de "parches_dirichlet_u", "parches_dinamicos_u"
     Condicion_frontera::construir_condiciones_de_frontera
     (
         Parches_norte,
@@ -194,8 +197,7 @@ void Vectorial::construir_condiciones_de_frontera() {
     );
 
     // Condiciones de frontera para la velocidad "v"
-    // Se modifica el estado de "parches_dirichlet_v", "parches_dinamicos_v" y
-    // v_new
+    // Se modifica el estado de "parches_dirichlet_v", "parches_dinamicos_v"
     Condicion_frontera::construir_condiciones_de_frontera
     (
         Parches_norte,
@@ -218,23 +220,39 @@ void Vectorial::construir_ecuacion() {
     ecuacion_momentum.unir_ecuacion();
 
     // Obtencion de los coeficientes agrupados
-    A = ecuacion_momentum.obtener_coeficientes();
+    A_u = ecuacion_momentum.obtener_coeficientes_para_u();
+    A_v = ecuacion_momentum.obtener_coeficientes_para_v();
 
-    // Asignacion de los coeficientes agrupados
+
+    // Asignacion de los coeficientes agrupados A_u, se altera el estado de "u.campo"
     Solver_lineal::asignar
     (
         nx,
         ny,
         u_new,
         u_old,
+        A_u,
+        solver_elegido,
+        u.campo
+    );
+
+    // Asignacion de los coeficientes agrupados A_v, se altera el estado de "v.campo"
+    Solver_lineal::asignar
+    (
+        nx,
+        ny,
         v_new,
         v_old,
-        A,
+        A_v,
         solver_elegido,
-        campo
+        v.campo
     );
+
 }
 
-
+void Vectorial::resolver() {
+    u.campo->resolver();
+    v.campo->resolver();
+}
 
 } // Fin namespace Campos
