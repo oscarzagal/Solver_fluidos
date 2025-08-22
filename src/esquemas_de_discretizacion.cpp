@@ -14,7 +14,7 @@ void laplaciano_lineal
     const int ny,
     const double gamma,
     fluxes_difusivos &fluxes,
-    Malla::Mallador &malla
+    const Malla::Mallador &malla
 ) {
     // Obtencion de las deltas
     // Las deltas dependen del tamaño de la malla y de los nodos
@@ -22,8 +22,8 @@ void laplaciano_lineal
     std::vector<double> deltay = malla.deltay;
 
     // Obtencion de las cordenadas
-    std::vector<double> x = malla.obtener_coordenadas_tmp_x();
-    std::vector<double> y = malla.obtener_coordenadas_tmp_y();
+    std::vector<double> x = malla.retornar_coordanas_tmp(Malla::Nodos::nx);
+    std::vector<double> y = malla.retornar_coordanas_tmp(Malla::Nodos::ny);
 
     // Asignar tamaño
     fluxes.fluxFDif_e.resize(nx*ny,0.0);
@@ -44,7 +44,6 @@ void laplaciano_lineal
     auto &fluxCDif_w = fluxes.fluxCDif_w;
     auto &fluxCDif_n = fluxes.fluxCDif_n;
     auto &fluxCDif_s = fluxes.fluxCDif_s;
-
 
     for (int j = 1; j < ny - 1; j++) {
         for (int i = 1; i < nx - 1; i++) {

@@ -112,8 +112,6 @@ int main() {
         solver_elegido_P
     );
 
-    // Instancia de la ecuacion de momentum que sirve para ensamblar la ecuacion
-    Ecuaciones_gobernantes::Momentum ecuacion_momentum_u(nu,malla,Presion.phi_new);
 
     Campo::Escalar Vel_u
     (

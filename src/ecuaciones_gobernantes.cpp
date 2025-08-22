@@ -45,8 +45,14 @@ A_coef Energia::obtener_coeficientes() {
                             Ecuacion de Momentum
 -----------------------------------------------------------------------------*/
 
-Momentum::Momentum(const double nu_, Malla::Mallador & malla_, std::vector<double> & Pstar_) :
-
+Momentum::Momentum
+(
+    const double nu_,
+    const Malla::Mallador & malla_,
+    const std::vector<double> & Pstar_,
+    std::vector<double> & u_new_,
+    std::vector<double> & v_new_
+) :
     // Obtencion de los nodos una unica vez en el tiempo de vida del objeto
     nx(malla_.obtener_el_numero_de_nodos(Malla::Nodos::nx)),
     ny(malla_.obtener_el_numero_de_nodos(Malla::Nodos::ny)),
@@ -55,7 +61,9 @@ Momentum::Momentum(const double nu_, Malla::Mallador & malla_, std::vector<doubl
     nu(nu_),
     malla(malla_),
     inter(Malla::Mallador::obtener_factores_de_interpolacion(malla_)),
-    Pstar(Pstar_)
+    Pstar(Pstar_),
+    u_new(u_new_),
+    v_new(v_new_)
 {}
 
 void Momentum::unir_ecuacion() {

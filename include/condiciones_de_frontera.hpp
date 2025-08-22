@@ -14,6 +14,7 @@
 
 namespace Condicion_frontera {
 
+    // TODO: Cambiar a poliformismo en tiempo de compilacion
     class Base {
     public:
 

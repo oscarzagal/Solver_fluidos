@@ -17,7 +17,7 @@ namespace Esquemas_discretizacion {
         int ny,
         double gamma,
         fluxes_difusivos &fluxes,
-        Malla::Mallador &malla
+        const Malla::Mallador &malla
     );
 
     void gradiente_explicito

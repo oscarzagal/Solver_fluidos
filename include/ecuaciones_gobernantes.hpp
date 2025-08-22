@@ -50,7 +50,14 @@ private:
 class Momentum {
 public:
     // Constructor
-    Momentum(double, Malla::Mallador &, std::vector<double> &);
+    Momentum
+    (
+        double,
+        const Malla::Mallador &,
+        const std::vector<double> &,
+        std::vector<double> &, // Velocidad u
+        std::vector<double> &  // Velocidad v
+    );
 
     // Metodo que hace lo mismo que el metodo polimorfico "ensamblar"
     void unir_ecuacion();
@@ -85,7 +92,7 @@ private:
 
     void calcular_flujo_de_masa();
 
-    Malla::Mallador& malla;
+    const Malla::Mallador& malla;
 
     Malla::Mallador::Interpolacion inter;
     Grad_explicito gradP_explicito;
@@ -93,7 +100,11 @@ private:
     fluxes_difusivos flux_dif;
 
     // Campo de presion necesario para el armado de la ecuacion de momentum
-    std::vector<double>& Pstar;
+    const std::vector<double>& Pstar;
+
+    // Velocidades usadas en el termino fuente "b"
+    std::vector<double>& u_new; // Velocidad u
+    std::vector<double>& v_new; // Velocidad v
 
 };
 

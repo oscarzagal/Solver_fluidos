@@ -175,6 +175,29 @@ namespace Malla {
     }
   }
 
+  void Mallador::asignar_coordenas_temporales(const std::vector<double> &coordenadas, Nodos nodos) {
+    switch (nodos) {
+      case Nodos::nx:
+        x_tmp = coordenadas;
+        break;
+      case Nodos::ny:
+        y_tmp = coordenadas;
+        break;
+    }
+  }
+
+  std::vector<double> Mallador::retornar_coordanas_tmp(Nodos nodos) const {
+    switch (nodos) {
+      case Nodos::nx:
+        return x_tmp;
+      case Nodos::ny:
+        return y_tmp;
+    }
+    return {};
+
+  }
+
+
   std::vector<double> Mallador::obtener_coordenadas_tmp_x() {
 
     // Limpieza del vector antes de cada llamada
@@ -236,6 +259,8 @@ namespace Malla {
     /* https://en.cppreference.com/w/cpp/container/vector/begin */
 
     asignar_numero_de_nodos(static_cast<int>(x_tmp.size()),Nodos::nx);
+
+    asignar_coordenas_temporales(x_tmp,Nodos::nx);
 
     return x_tmp;
 
@@ -299,16 +324,18 @@ namespace Malla {
 
     asignar_numero_de_nodos(static_cast<int>(y_tmp.size()),Nodos::ny);
 
+    asignar_coordenas_temporales(y_tmp,Nodos::ny);
+
     return y_tmp;
 
   }
 
-  std::vector<double> Mallador::obtener_volumenes() {
+  std::vector<double> Mallador::obtener_volumenes() const {
 
     std::vector<double> vol;
 
-    const int nx = static_cast<int>(this->obtener_coordenadas_tmp_x().size());
-    const int ny = static_cast<int>(this->obtener_coordenadas_tmp_y().size());
+    const int nx = static_cast<int>(obtener_el_numero_de_nodos(Nodos::nx));
+    const int ny = static_cast<int>(obtener_el_numero_de_nodos(Nodos::ny));
 
     for (int j = 0; j < ny; ++j) {
       for (int i = 0; i < nx; ++i) {
@@ -319,12 +346,12 @@ namespace Malla {
     return vol;
   }
 
-  Mallador::Interpolacion Mallador::obtener_factores_de_interpolacion(Mallador& malla) {
+  Mallador::Interpolacion Mallador::obtener_factores_de_interpolacion(const Mallador& malla) {
 
     Interpolacion inter;
 
-    const int nx = static_cast<int>(malla.obtener_coordenadas_tmp_x().size());
-    const int ny = static_cast<int>(malla.obtener_coordenadas_tmp_y().size());
+    const int nx = static_cast<int>(malla.obtener_el_numero_de_nodos(Nodos::nx));
+    const int ny = static_cast<int>(malla.obtener_el_numero_de_nodos(Nodos::ny));
 
     const std::vector<double> vol = malla.obtener_volumenes();
 

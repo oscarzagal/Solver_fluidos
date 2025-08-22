@@ -7,6 +7,8 @@
 #include "condiciones_de_frontera.hpp"
 #include "ecuaciones_gobernantes.hpp"
 #include "malla_por_bloques.hpp"
+#include "config_control.hpp"
+#include <vector>
 
 
 namespace Campo {
@@ -28,7 +30,7 @@ namespace Campo {
      const std::array<CF_Dirichlet,limite_num_parches> & g_dirichlet_,
      const std::array<CF_Zero_Neumann,limite_num_parches> & g_zero_neumann_,
      const Malla::Mallador& malla_,
-     Ecuaciones_gobernantes::Base& ecuacion_,
+     std::optional<std::reference_wrapper<Ecuaciones_gobernantes::Base>> ecuacion_,
      const std::string& solver_elegido_
     ) :
     phi_new(phi_new_),
@@ -40,7 +42,33 @@ namespace Campo {
     g_dirichlet(g_dirichlet_),
     g_zero_neumann(g_zero_neumann_),
     malla(malla_),
-    ecuacion(ecuacion_),
+    ecuacion_b(ecuacion_),
+    solver_elegido(solver_elegido_)
+    {}
+
+    // Constructor que no admite una referencia a "Ecuaciones_gobernantes::Base &"
+    Escalar::Escalar
+    (
+     const std::vector<Malla::Mallador::Parche> & Parches_norte_,
+     const std::vector<Malla::Mallador::Parche> & Parches_sur_,
+     const std::vector<Malla::Mallador::Parche> & Parches_este_,
+     const std::vector<Malla::Mallador::Parche> & Parches_oeste_,
+     std::vector<double>& phi_new_,
+     std::vector<double>& phi_old_,
+     const std::array<CF_Dirichlet,limite_num_parches> & g_dirichlet_,
+     const std::array<CF_Zero_Neumann,limite_num_parches> & g_zero_neumann_,
+     const Malla::Mallador& malla_,
+     const std::string& solver_elegido_
+    ) :
+    phi_new(phi_new_),
+    phi_old(phi_old_),
+    Parches_norte(Parches_norte_),
+    Parches_sur(Parches_sur_),
+    Parches_este(Parches_este_),
+    Parches_oeste(Parches_oeste_),
+    g_dirichlet(g_dirichlet_),
+    g_zero_neumann(g_zero_neumann_),
+    malla(malla_),
     solver_elegido(solver_elegido_)
     {}
 
@@ -78,10 +106,10 @@ namespace Campo {
     void Escalar::construir_ecuacion() {
 
         // Ensamblar la ecuacion gobernante
-        ecuacion.ensamblar();
+        ecuacion_b.ensamblar();
 
         // Obtencion de los coeficientes agrupados
-        A = ecuacion.obtener_coeficientes();
+        A = ecuacion_b.obtener_coeficientes();
 
         // Numero de nodos en "x" y "y"
         const int nx = static_cast<int>(malla.obtener_el_numero_de_nodos(Malla::Nodos::nx));
@@ -106,6 +134,7 @@ namespace Campo {
             solver_elegido,
             campo
         );
+
     }
 
     void Escalar::resolver() const {
@@ -120,19 +149,19 @@ namespace Campo {
 Vectorial::Vectorial
 (
     const Malla::Mallador& malla_,
+    const std::vector<double>& Pstar_,
     const std::array<CF_Dirichlet,limite_num_parches> & g_dirichlet_u_,
     const std::array<CF_Zero_Neumann,limite_num_parches> & g_zero_neumann_u_,
     const std::array<CF_Dirichlet,limite_num_parches> & g_dirichlet_v_,
     const std::array<CF_Zero_Neumann,limite_num_parches> & g_zero_neumann_v_,
-    Ecuaciones_gobernantes::Momentum& ecuacion_momentum_,
     const std::string& solver_elegido_
 ) :
     malla(malla_),
+    Pstar(Pstar_),
     g_dirichlet_u(g_dirichlet_u_),
     g_zero_neumann_u(g_zero_neumann_u_),
     g_dirichlet_v(g_dirichlet_v_),
     g_zero_neumann_v(g_zero_neumann_v_),
-    ecuacion_momentum(ecuacion_momentum_),
     solver_elegido(solver_elegido_),
     nx(malla_.obtener_el_numero_de_nodos(Malla::Nodos::nx)),
     ny(malla_.obtener_el_numero_de_nodos(Malla::Nodos::ny)),
@@ -144,6 +173,14 @@ Vectorial::Vectorial
     v_new(nx*ny,0.0),
     u_old(nx*ny,0.0),
     v_old(nx*ny,0.0),
+    ecuacion_momentum
+    (
+        nu,
+        malla_,
+        Pstar_,
+        u_new,
+        v_new
+    ),
     // NOTE: constructor sobrecargado
     u
     (
@@ -156,7 +193,6 @@ Vectorial::Vectorial
         g_dirichlet_u_,
         g_zero_neumann_u_,
         malla_,
-        ecuacion_momentum_,
         solver_elegido_
     ),
     v
@@ -170,7 +206,6 @@ Vectorial::Vectorial
         g_dirichlet_v_,
         g_zero_neumann_v_,
         malla_,
-        ecuacion_momentum_,
         solver_elegido_
     )
 {}
@@ -190,8 +225,8 @@ void Vectorial::construir_condiciones_de_frontera() {
         Parches_oeste,
         u_new,
         nx,
-        parches_dirichlet_u,
-        parches_dinamicos_u,
+        u.parches_dirichlet,
+        u.parches_dinamicos,
         g_dirichlet_u,   // Array con las condiciones de frontera
         g_zero_neumann_u // Array con las condiciones de frontera
     );
@@ -206,8 +241,8 @@ void Vectorial::construir_condiciones_de_frontera() {
         Parches_oeste,
         v_new,
         nx,
-        parches_dirichlet_v,
-        parches_dinamicos_v,
+        v.parches_dirichlet,
+        v.parches_dinamicos,
         g_dirichlet_v,   // Array con las condiciones de frontera
         g_zero_neumann_v // Array con las condiciones de frontera
     );

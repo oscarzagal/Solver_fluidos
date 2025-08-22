@@ -153,7 +153,10 @@ namespace Malla {
     // Coordenadas temporales para y
     [[nodiscard]] std::vector<double> obtener_coordenadas_tmp_y();
 
-    [[nodiscard]] std::vector<double> obtener_volumenes();
+    // Esta se implementa para evitar problemas con eso de los valores constantes
+    [[nodiscard]] std::vector<double> retornar_coordanas_tmp(Nodos nodos) const;
+
+    [[nodiscard]] std::vector<double> obtener_volumenes() const;
 
 
     // Asignacion de coordenadas persistentes
@@ -189,7 +192,7 @@ namespace Malla {
 
     [[nodiscard]] std::vector<Parche> obtener_parches(Frontera frontera) const;
 
-    [[nodiscard]] static Interpolacion obtener_factores_de_interpolacion(Mallador& malla);
+    [[nodiscard]] static Interpolacion obtener_factores_de_interpolacion(const Mallador& malla);
 
     // Vector de deltas para su posterior uso en los esquemas de discretizacion
     std::vector<double> deltax;
@@ -198,8 +201,13 @@ namespace Malla {
     // Numero de nodos en "x" y "y"
     int nx, ny;
 
+    // Para retornar las coordenadas temporales
+    std::vector<double> x_tmp, y_tmp;
+
 
   private:
+
+    void asignar_coordenas_temporales(const std::vector<double>& coordenadas, Nodos nodos);
 
     // Asignar coordenada persistente en x
     void asignar_coord_pers_x(const std::vector<double>& x_);

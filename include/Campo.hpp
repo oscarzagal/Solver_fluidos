@@ -12,6 +12,7 @@
 #include "solvers_lineales.hpp"
 #include "ecuaciones_gobernantes.hpp"
 #include <memory>
+#include <optional>
 
 typedef std::vector<Malla::Mallador::Parche> almacenar;
 
@@ -32,11 +33,11 @@ public:
         const std::array<CF_Dirichlet, limite_num_parches> &,
         const std::array<CF_Zero_Neumann, limite_num_parches> &,
         const Malla::Mallador &,
-        Ecuaciones_gobernantes::Base &,
+        std::optional<std::reference_wrapper<Ecuaciones_gobernantes::Base>>,
         const std::string&
     );
 
-    // Constructor para admitir una referencia a "Ecuaciones_gobernantes::Momentum &"
+    // Constructor que no admite una referencia a "Ecuaciones_gobernantes::Base &"
     Escalar
     (
         const std::vector<Malla::Mallador::Parche> &,
@@ -48,7 +49,6 @@ public:
         const std::array<CF_Dirichlet, limite_num_parches> &,
         const std::array<CF_Zero_Neumann, limite_num_parches> &,
         const Malla::Mallador &,
-        Ecuaciones_gobernantes::Momentum &,
         const std::string&
     );
 
@@ -79,14 +79,17 @@ private:
     const std::array<CF_Dirichlet, limite_num_parches> & g_dirichlet;
     const std::array<CF_Zero_Neumann, limite_num_parches> & g_zero_neumann;
     const Malla::Mallador& malla;
-    Ecuaciones_gobernantes::Base& ecuacion; // Referencia hacia el tipo de ecuacion
+    std::optional<std::reference_wrapper<Ecuaciones_gobernantes::Base>> ecuacion_b; // Referencia de clase base
     const std::string& solver_elegido;
+
+public:
 
     // Variables adicionales
     // Variables que almacenan las condiciones de frontera dependiendo el tipo
     std::vector<Condicion_frontera::Dirichlet> parches_dirichlet;
     std::vector<std::shared_ptr<Condicion_frontera::Base>> parches_dinamicos;
 
+private:
 
     // Instancia para almacenar los coeficientes agrupados
     Ecuaciones_gobernantes::A_coef A;
@@ -99,11 +102,11 @@ public:
     Vectorial
     (
         const Malla::Mallador &,
+        const std::vector<double>& Pstar,
         const std::array<CF_Dirichlet, limite_num_parches> &,
         const std::array<CF_Zero_Neumann, limite_num_parches> &,
         const std::array<CF_Dirichlet, limite_num_parches> &,
         const std::array<CF_Zero_Neumann, limite_num_parches> &,
-        Ecuaciones_gobernantes::Momentum &, // No hay necesidad de polimorfismo
         const std::string&
     );
 
@@ -118,11 +121,11 @@ private:
 
     // Variables del constructor
     const Malla::Mallador& malla;
+    const std::vector<double>& Pstar; // Campo de presion necesario para el armado de la ecuacion de momentum
     const std::array<CF_Dirichlet, limite_num_parches> & g_dirichlet_u;
     const std::array<CF_Zero_Neumann, limite_num_parches> & g_zero_neumann_u;
     const std::array<CF_Dirichlet, limite_num_parches> & g_dirichlet_v;
     const std::array<CF_Zero_Neumann, limite_num_parches> & g_zero_neumann_v;
-    Ecuaciones_gobernantes::Momentum& ecuacion_momentum;
     const std::string& solver_elegido;
 
     // Numero de nodos en "x" y "y"
@@ -144,18 +147,11 @@ public:
     std::vector<double> u_new, v_new; // Campos nuevos
     std::vector<double> u_old, v_old; // Campos viejos
 
+    // Instancia de la ecuacion de momentum
+    Ecuaciones_gobernantes::Momentum ecuacion_momentum;
+
     Campo::Escalar u; // Campo de velocidad en "x"
     Campo::Escalar v; // Campo de velocidad en "y"
-
-    // Variables que almacenan las condiciones de frontera dependiendo el tipo
-    std::vector<Condicion_frontera::Dirichlet> parches_dirichlet_u;
-    std::vector<std::shared_ptr<Condicion_frontera::Base>> parches_dinamicos_u;
-
-    std::vector<Condicion_frontera::Dirichlet> parches_dirichlet_v;
-    std::vector<std::shared_ptr<Condicion_frontera::Base>> parches_dinamicos_v;
-
-
-
 
 };
 

@@ -5,9 +5,6 @@
 #include <stdexcept>
 
 #include "condiciones_de_frontera.hpp"
-
-#include <iostream>
-
 #include "config_CF.hpp"
 
 namespace Condicion_frontera {
