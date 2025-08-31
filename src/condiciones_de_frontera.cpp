@@ -105,7 +105,11 @@ namespace Condicion_frontera {
     )
     {
         for (int i = 0; i < static_cast<int>(parches.size()); ++i) {
-            std::pair<std::string,int> tipo = que_tipo_es(parches[i].obtener_nombre);
+            std::pair<std::string,int> tipo = que_tipo_es
+            (parches[i].obtener_nombre,
+             g_dirichlet,
+             g_zero_neumann);
+
             if (tipo.first == "dirichlet") {
 
                 Dirichlet parametros
@@ -132,16 +136,22 @@ namespace Condicion_frontera {
         }
     }
 
-    std::pair<std::string,int> que_tipo_es(const std::string& nombre) {
+    std::pair<std::string,int> que_tipo_es
+    (
+        const std::string& nombre,
+        const std::array<CF_Dirichlet, limite_num_parches>& g_dirichlet,
+        const std::array<CF_Zero_Neumann, limite_num_parches>& g_zero_neumann
+    )
+    {
 
-        for (int i=0; i<g_dirichlet_T.size(); ++i) {
-            if (g_dirichlet_T[i].nombre == nombre) {
+        for (int i=0; i<static_cast<int>(g_dirichlet.size()); ++i) {
+            if (g_dirichlet[i].nombre == nombre) {
                 return {"dirichlet",i};
             }
         }
 
-        for (int i=0; i<g_zero_neumann_T.size(); ++i) {
-            if (g_zero_neumann_T[i].nombre == nombre) {
+        for (int i=0; i<static_cast<int>(g_zero_neumann.size()); ++i) {
+            if (g_zero_neumann[i].nombre == nombre) {
                 return {"zero_neumann",i};
             }
         }
@@ -157,13 +167,16 @@ namespace Condicion_frontera {
         std::vector<Malla::Mallador::Parche>& Parches_este,
         std::vector<Malla::Mallador::Parche>& Parches_oeste,
         std::vector<double>& phi,
-        const int& nx,
+        const int nx,
         std::vector<Dirichlet>& lista_parches_dirichlet,
         std::vector<std::shared_ptr<Base>>& lista_parches_dinamicos,
         const std::array<CF_Dirichlet, limite_num_parches>& g_dirichlet,
         const std::array<CF_Zero_Neumann, limite_num_parches>& g_zero_neumann
     )
     {
+
+        // NOTE: yo creo que con un "for" queda
+
         // Frontera norte
         asignar_condiciones_de_frontera
         (

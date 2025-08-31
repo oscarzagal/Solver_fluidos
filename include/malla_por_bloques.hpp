@@ -52,7 +52,7 @@
   para las fronteras horizontales y de abajo a arriba para las fronteras
   verticales
 
-  TODO: escribir ejemplos
+  NOTE: escribir ejemplos
 
  */
 

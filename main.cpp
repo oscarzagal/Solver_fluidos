@@ -2,19 +2,17 @@
 // Created by oscar on 1/06/25.
 //
 
-#include <iostream>
-#include <string>
 
 #include "malla_por_bloques.hpp"
 #include "config_malla.hpp"
 #include "condiciones_de_frontera.hpp"
+#include "condiciones_de_frontera_MDot.hpp"
+#include "Campo.hpp"
 #include "config_control.hpp"
 #include "solvers_lineales.hpp"
 #include "calculo_del_error.hpp"
 #include "escritura.hpp"
 #include "config_CF.hpp"
-#include "Campo.hpp"
-#include "ecuaciones_gobernantes.hpp"
 
 
 int main() {
@@ -67,136 +65,133 @@ int main() {
     malla.preparar_parches_fronteras();
 
     // Obtener parches para su uso futuro
-    almacenar Parches_norte=malla.obtener_parches(Malla::Frontera::Norte);
-    almacenar Parches_sur=malla.obtener_parches(Malla::Frontera::Sur);
-    almacenar Parches_este=malla.obtener_parches(Malla::Frontera::Este);
-    almacenar Parches_oeste=malla.obtener_parches(Malla::Frontera::Oeste);
+    almacenar Parches_norte = malla.obtener_parches(Malla::Frontera::Norte);
+    almacenar Parches_sur   = malla.obtener_parches(Malla::Frontera::Sur);
+    almacenar Parches_este  = malla.obtener_parches(Malla::Frontera::Este);
+    almacenar Parches_oeste = malla.obtener_parches(Malla::Frontera::Oeste);
 
     //------------------------Fin creacion de la malla--------------------------
 
-    //--------------------------Definicion de campos----------------------------
+    /*-----------------------------------------------------------------------------
+                            Parches para el flujo de masa
+    -----------------------------------------------------------------------------*/
 
-    // Campo de temperatura
-    std::vector<double> T(nx*ny,0.0), Told(nx*ny,0.0);
+    // TODO: hacer toda esta madre una funcion
 
-    // Campo de velocidad en forma escalar
-    std::vector<double> u_star(nx*ny,0.0), v_star(nx*ny,0.0),
-    u_old(nx*ny,0.0), v_old(nx*ny,0.0);
+    std::vector<Parches_Flujo_de_Masa> parches_norte_FM;
+    std::vector<Parches_Flujo_de_Masa> parches_sur_FM;
+    std::vector<Parches_Flujo_de_Masa> parches_este_FM;
+    std::vector<Parches_Flujo_de_Masa> parches_oeste_FM;
 
-    // Campo de presion
-    std::vector<double> Pstar(nx*ny,0.0), P_old(nx*ny,0.0);
+    parches_norte_FM.resize(Parches_norte.size());
+    parches_sur_FM.resize(Parches_sur.size());
+    parches_este_FM.resize(Parches_este.size());
+    parches_oeste_FM.resize(Parches_oeste.size());
 
-    //------------------------Fin definicion de campos--------------------------
+    for (int i = 0; i < static_cast<int>(parches_norte_FM.size()); ++i) {
+        parches_norte_FM[i].obtener_nodos_del_parche = Parches_norte[i].obtener_nodos_del_parche;
+        parches_norte_FM[i].obtener_nombre = Parches_norte[i].obtener_nombre;
+    }
 
-    //-------------------------Creacion de los campos---------------------------
+    for (int i = 0; i < static_cast<int>(parches_sur_FM.size()); ++i) {
+        parches_sur_FM[i].obtener_nodos_del_parche = Parches_sur[i].obtener_nodos_del_parche;
+        parches_sur_FM[i].obtener_nombre = Parches_sur[i].obtener_nombre;
+    }
+
+    for (int i = 0; i < static_cast<int>(parches_este_FM.size()); ++i) {
+        parches_este_FM[i].obtener_nodos_del_parche = Parches_este[i].obtener_nodos_del_parche;
+        parches_este_FM[i].obtener_nombre = Parches_este[i].obtener_nombre;
+    }
+
+    for (int i = 0; i < static_cast<int>(parches_oeste_FM.size()); ++i) {
+        parches_oeste_FM[i].obtener_nodos_del_parche = Parches_oeste[i].obtener_nodos_del_parche;
+        parches_oeste_FM[i].obtener_nombre = Parches_oeste[i].obtener_nombre;
+    }
 
 
     /*-----------------------------------------------------------------------------
-                                Campo de presion
+                            Parches para el flujo de masa
     -----------------------------------------------------------------------------*/
 
-    Ecuaciones_gobernantes::Presion presion(malla);
 
-    Campo::Escalar Presion
+    /*-----------------------------------------------------------------------------
+                            Inicializacion de campos
+    -----------------------------------------------------------------------------*/
+
+    Campo::Momentum vecU(nx, ny);
+    Campo::Presion presion(nx, ny);
+    Campo::velFace velface(nx, ny);
+    Campo::MDotStar mdotstar(nx, ny);
+
+    /*-----------------------------------------------------------------------------
+                           Fin inicializacion de campos
+    -----------------------------------------------------------------------------*/
+
+
+
+    /*-----------------------------------------------------------------------------
+                      Asignacion de condiciones de frontera
+    -----------------------------------------------------------------------------*/
+
+    // Construccion de las condiciones de frontera para la velocidad "u" y "v"
+    // NOTE: se podria usar una funcion contenedor
+    construir_condiciones_de_frontera
     (
         Parches_norte,
         Parches_sur,
         Parches_este,
         Parches_oeste,
-        Pstar,
-        P_old,
-        g_dirichlet_P,
-        g_zero_neumann_P,
-        malla,
-        presion,
-        solver_elegido_P
-    );
-
-
-    Campo::Escalar Vel_u
-    (
-        Parches_norte,
-        Parches_sur,
-        Parches_este,
-        Parches_oeste,
-        u_star,
-        u_old,
+        vecU.u_star,
+        nx,
+        vecU.lista_parches_dirichlet_u,
+        vecU.lista_parches_dinamicos_u,
         g_dirichlet_u,
-        g_zero_neumann_u,
-        malla,
-        ecuacion_momentum_u,
-        solver_elegido_u
+        g_zero_neumann_u
     );
 
-    Vel_u.construir_ecuacion();
-
-    // Instancia de la ecuacion de energia que sirve para ensamblar la ecuacion
-    Ecuaciones_gobernantes::Energia ecuacion_energia(malla);
-
-    // Creacion del campo escalar T
-    Campo::Escalar Temp
+    construir_condiciones_de_frontera
     (
         Parches_norte,
         Parches_sur,
         Parches_este,
         Parches_oeste,
-        T,
-        Told,
-        g_dirichlet_T,
-        g_zero_neumann_T,
-        malla,
-        ecuacion_energia,
-        solver_elegido_Temp
+        vecU.v_star,
+        nx,
+        vecU.lista_parches_dirichlet_v,
+        vecU.lista_parches_dinamicos_v,
+        g_dirichlet_v,
+        g_zero_neumann_v
     );
 
-    Temp.construir_condiciones_de_frontera();
 
-    std::vector<Condicion_frontera::Dirichlet> lista_parches_dirichlet_T
-    = Temp.obtener_parches_dirichlet();
+    // Construccion de las condiciones de frontera para la presion "P"
+    construir_condiciones_de_frontera
+    (
+        Parches_norte,
+        Parches_sur,
+        Parches_este,
+        Parches_oeste,
+        presion.P_star,
+        nx,
+        presion.lista_parches_dirichlet,
+        presion.lista_parches_dinamicos,
+        g_dirichlet_P,
+        g_zero_neumann_P
+    );
 
-    std::vector<std::shared_ptr<Condicion_frontera::Base>> lista_parches_dinamicos_T
-    = Temp.obtener_parches_dinamicos();
 
-    Temp.construir_ecuacion();
+    // TODO: Hacer la siguiente funcion: (Meter las listas tambien en la funcion de abajo)
+    // construir_CF_flujo_de_masa(malla,vecU.u_star,vecU.v_star,mdotstar);
 
-    //--------------Fin de asignacion de condiciones de frontera----------------
+    // Calculo debe realizarse con una instancia propia de MDotStar para despues:
+    // velU.mdotstar = mdotstar;
+    // energia.mdotstar = mdotstar;
 
-    // Aplicacion de las condiciones de frontera de Dirichlet al campo
 
-    for (int i=0; i<static_cast<int>(lista_parches_dirichlet_T.size()); ++i ) {
-        lista_parches_dirichlet_T[i].aplicar();
-    }
+    /*-----------------------------------------------------------------------------
+                      Fin asignacion condiciones de frontera
+    -----------------------------------------------------------------------------*/
 
-    int numit=0;
-    double error_mayor=1.0;
-
-    while (error_mayor>tolerancia) {
-
-        Temp.resolver();
-
-        // Actualizacion de condiciones de frontera dinamicas
-        for (int i = 0; i < static_cast<int>(lista_parches_dinamicos_T.size()); ++i) {
-            lista_parches_dinamicos_T[i]->aplicar();
-        }
-
-        error_mayor=calcular_error_mayor(nx,ny,T,Told);
-
-        ++numit;
-
-        printf("Iteracion = %d, Error maximo = %e\n",numit,error_mayor);
-
-        Told=T;
-
-        if (numit==num_iteraciones_max) break;
-
-    }
-
-    std::cout << "\n\n";
-
-    std::cout << "Numero de elementos en x: " << nx << "\n";
-    std::cout << "Numero de elementos en y: " << ny << "\n";
-
-    escribir("T.dat","T",x,y,nx,ny,T);
 
     return 0;
 }

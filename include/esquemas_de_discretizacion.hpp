@@ -35,7 +35,7 @@ namespace Esquemas_discretizacion {
         int nx,
         int ny,
         fluxes_convectivos &fluxes,
-        Ecuaciones_gobernantes::Momentum::Mstar &mstar
+        Ecuaciones_gobernantes::MDotStar &mstar
     );
 
     void divergencia_explicita
