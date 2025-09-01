@@ -75,7 +75,6 @@ public:
                  Struct para almacenar parches Flujo de masa
 -----------------------------------------------------------------------------*/
 
-// TODO: implementar las funciones miembro
 struct Parches_Flujo_de_Masa {
 
     // Vector que va a almacenar una copia de los nodos obtenidos de la clase
@@ -83,14 +82,19 @@ struct Parches_Flujo_de_Masa {
     std::vector<int> obtener_nodos_del_parche;
     std::string obtener_nombre;
     double vecUnitNormal; // Vector normal unitario
+    int nx, ny; // Nodos en "x" e "y"
 
     /* Funciones miembro */
 
     // Modifica el estado de "obtener_nodos_del_parche"
-    std::vector<int> cortar_nodos_esquina();
+    void cortar_nodos_esquina();
 
-    // Modifica el estado de "vecUnitNormal"
-    double calcular_vector_normal_unitario();
+    // Modifica el estado de "vecUnitNormal". Retorna un vector normal unitario
+    // acorde a un sistema de coordenadas cartesiano para la malla.
+    void calcular_vector_normal_unitario();
+
+    // Constructor
+    Parches_Flujo_de_Masa(int, int);
 
 };
 
@@ -103,6 +107,7 @@ struct Parches_Flujo_de_Masa {
                         Funciones de construccion de CF
 -----------------------------------------------------------------------------*/
 
+// TODO: cambiar malla por los parches especiales para flujo de masa
 void construir_CF_flujo_de_masa
 (
     const Malla::Mallador                   & malla,

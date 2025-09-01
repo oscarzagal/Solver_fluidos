@@ -102,7 +102,7 @@ void divergencia_upwind
     const int nx,
     const int ny,
     fluxes_convectivos &fluxes,
-    Ecuaciones_gobernantes::Momentum::Mstar &mstar
+    Campo::MDotStar &mstar
 )
 {
 
@@ -125,8 +125,8 @@ void divergencia_upwind
     auto &fluxCConv_w = fluxes.fluxCConv_w;
     auto &fluxCConv_n = fluxes.fluxCConv_n;
     auto &fluxCConv_s = fluxes.fluxCConv_s;
-    const auto &mstar_x = mstar.mstar_x;
-    const auto &mstar_y = mstar.mstar_y;
+    const auto &mstar_x = mstar.mDotStar_x;
+    const auto &mstar_y = mstar.mDotStar_y;
 
     for (int j=1; j<ny-1; ++j) {
         for (int i=1; i<nx-1; ++i) {

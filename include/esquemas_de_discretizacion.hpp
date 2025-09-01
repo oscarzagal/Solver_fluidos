@@ -8,6 +8,7 @@
 #include "malla_por_bloques.hpp"
 #include "ecuaciones_gobernantes.hpp"
 #include "variables_discretizacion.hpp"
+#include "Campo.hpp"
 
 namespace Esquemas_discretizacion {
 
@@ -35,7 +36,7 @@ namespace Esquemas_discretizacion {
         int nx,
         int ny,
         fluxes_convectivos &fluxes,
-        Ecuaciones_gobernantes::MDotStar &mstar
+        Campo::MDotStar &mdotstar
     );
 
     void divergencia_explicita
@@ -67,7 +68,7 @@ namespace Esquemas_discretizacion {
         Ecuaciones_gobernantes::A_coef &A_v,
         const Malla::Mallador &malla,
         const Grad_explicito &grad_explicito,
-        const double rho
+        double rho
     );
 
 

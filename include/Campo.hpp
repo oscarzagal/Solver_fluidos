@@ -17,7 +17,7 @@ struct velFace {
     std::vector<double> uFace_x, vFace_y;
 
     // Constructor
-    velFace(const int, const int);
+    velFace(int, int);
 };
 
 struct MDotStar {
@@ -30,7 +30,7 @@ struct MDotStar {
     std::vector<CF_MDot<Zero_Neumann_MDot>> lista_Zero_Neumann;
 
     // Constructor
-    MDotStar(const int, const int);
+    MDotStar(int, int);
 };
 
 struct A_coef {
@@ -53,7 +53,7 @@ struct Momentum {
     std::vector<std::shared_ptr<Condicion_frontera::Base>> lista_parches_dinamicos_v;
 
     // Constructor
-    Momentum(const int, const int);
+    Momentum(int, int);
 
 };
 
@@ -67,7 +67,7 @@ struct Presion {
     std::vector<std::shared_ptr<Condicion_frontera::Base>> lista_parches_dinamicos;
 
     // Constructor
-    Presion(const int, const int);
+    Presion(int, int);
 };
 
 } // Fin namespace Campo_Escalar

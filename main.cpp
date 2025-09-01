@@ -13,6 +13,8 @@
 #include "calculo_del_error.hpp"
 #include "escritura.hpp"
 #include "config_CF.hpp"
+#include <algorithm>
+#include <iostream>
 
 
 int main() {
@@ -83,29 +85,44 @@ int main() {
     std::vector<Parches_Flujo_de_Masa> parches_este_FM;
     std::vector<Parches_Flujo_de_Masa> parches_oeste_FM;
 
-    parches_norte_FM.resize(Parches_norte.size());
-    parches_sur_FM.resize(Parches_sur.size());
-    parches_este_FM.resize(Parches_este.size());
-    parches_oeste_FM.resize(Parches_oeste.size());
+                            // Espacio, lo que lleva cada espacio (objeto)
+    parches_norte_FM.resize(Parches_norte.size(), Parches_Flujo_de_Masa(nx, ny));
+    parches_sur_FM.resize(Parches_sur.size(), Parches_Flujo_de_Masa(nx, ny));
+    parches_este_FM.resize(Parches_este.size(), Parches_Flujo_de_Masa(nx, ny));
+    parches_oeste_FM.resize(Parches_oeste.size(), Parches_Flujo_de_Masa(nx, ny));
 
     for (int i = 0; i < static_cast<int>(parches_norte_FM.size()); ++i) {
         parches_norte_FM[i].obtener_nodos_del_parche = Parches_norte[i].obtener_nodos_del_parche;
         parches_norte_FM[i].obtener_nombre = Parches_norte[i].obtener_nombre;
+        parches_norte_FM[i].cortar_nodos_esquina();
+        parches_norte_FM[i].calcular_vector_normal_unitario();
     }
 
     for (int i = 0; i < static_cast<int>(parches_sur_FM.size()); ++i) {
         parches_sur_FM[i].obtener_nodos_del_parche = Parches_sur[i].obtener_nodos_del_parche;
         parches_sur_FM[i].obtener_nombre = Parches_sur[i].obtener_nombre;
+        parches_sur_FM[i].cortar_nodos_esquina();
+        parches_sur_FM[i].calcular_vector_normal_unitario();
     }
 
     for (int i = 0; i < static_cast<int>(parches_este_FM.size()); ++i) {
         parches_este_FM[i].obtener_nodos_del_parche = Parches_este[i].obtener_nodos_del_parche;
         parches_este_FM[i].obtener_nombre = Parches_este[i].obtener_nombre;
+        parches_este_FM[i].cortar_nodos_esquina();
+        parches_este_FM[i].calcular_vector_normal_unitario();
     }
 
     for (int i = 0; i < static_cast<int>(parches_oeste_FM.size()); ++i) {
         parches_oeste_FM[i].obtener_nodos_del_parche = Parches_oeste[i].obtener_nodos_del_parche;
         parches_oeste_FM[i].obtener_nombre = Parches_oeste[i].obtener_nombre;
+        parches_oeste_FM[i].cortar_nodos_esquina();
+        parches_oeste_FM[i].calcular_vector_normal_unitario();
+    }
+
+    std::cout << "Nodos del parche norte (copia) luego de cortar: \n";
+    std::cout << "Vector unitario: " << parches_norte_FM[0].vecUnitNormal << "\n";
+    for (const int nodo : parches_norte_FM[0].obtener_nodos_del_parche) {
+        std::cout << nodo << " ";
     }
 
 
