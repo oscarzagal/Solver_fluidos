@@ -59,5 +59,69 @@ void Parches_Flujo_de_Masa::calcular_vector_normal_unitario() {
         vecUnitNormal = -1.0;
     }
 
+}
+
+void construir_CF_flujo_de_masa
+(
+    const std::vector<Parches_Flujo_de_Masa> & parches_norte_FM,
+    const std::vector<Parches_Flujo_de_Masa> & parches_sur_FM,
+    const std::vector<Parches_Flujo_de_Masa> & parches_este_FM,
+    const std::vector<Parches_Flujo_de_Masa> & parches_oeste_FM,
+    const std::vector<double>                & u_star,
+    const std::vector<double>                & v_star,
+    std::vector<double>                      & mDotStar_x,
+    std::vector<double>                      & mDotStar_y,
+    std::vector<CF_MDot<Dirichlet_MDot>>     & lista_Dirichlet_x,
+    std::vector<CF_MDot<Zero_Neumann_MDot>>  & lista_Zero_Neumann_x,
+    std::vector<CF_MDot<Dirichlet_MDot>>     & lista_Dirichlet_y,
+    std::vector<CF_MDot<Zero_Neumann_MDot>>  & lista_Zero_Neumann_y
+)
+{
+    // Vector 2D que almacena las frontera para evitar repetir codigo
+    std::vector<std::vector<Parches_Flujo_de_Masa>> listas;
+
+    listas.emplace_back(parches_norte_FM);
+    listas.emplace_back(parches_sur_FM);
+    listas.emplace_back(parches_este_FM);
+    listas.emplace_back(parches_oeste_FM);
+
+    for (int i = 0; i < static_cast<int>(listas.size()); ++i) {
+
+        // Direccion "x"
+        asignar_condiciones_de_frontera_MDot
+        (
+            listas[i],
+            u_star,
+            mDotStar_x,
+            lista_Dirichlet_x,
+            lista_Zero_Neumann_x
+        );
+
+        // Direccion "y"
+        asignar_condiciones_de_frontera_MDot
+        (
+            listas[i],
+            v_star,
+            mDotStar_y,
+            lista_Dirichlet_y,
+            lista_Zero_Neumann_y
+        );
+
+    }
+
+}
+
+
+void asignar_condiciones_de_frontera_MDot
+(
+    const std::vector<Parches_Flujo_de_Masa> & parches,
+    const std::vector<double>                & vel_star,
+    std::vector<double>                      & mDotStar,
+    std::vector<CF_MDot<Dirichlet_MDot>>     & lista_Dirichlet,
+    std::vector<CF_MDot<Zero_Neumann_MDot>>  & lista_Zero_Neumann
+)
+{
+
+
 
 }

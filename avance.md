@@ -18,13 +18,25 @@ TODO (para la siguiente sesión):
 1. [x] Implementar funciones miembro del `struct` `condiciones_de_frontera_MDot.hpp::Parches_Flujo_de_Masa`.
 2. [x] Hacer que el código corra y arroje resultados.
 
+
 # 31 agosto 2025
 
-1. Se implantaron las funciones miembro en
+1. Se implementaron las funciones miembro en
 `condiciones_de_frontera_MDot.hpp::Parches_Flujo_de_Masa` de forma exitosa.
 
 2. El código ya compila y corre sin problemas (por ahora).
 
 TODO (para la siguiente sesión):
 
-1. [ ] Implementar la función `condiciones_de_frontera_MDot.hpp::construir_CF_flujo_de_masa`
+1. [x] Implementar la función `condiciones_de_frontera_MDot.hpp::construir_CF_flujo_de_masa`
+
+
+# 1 septiembre 2025
+
+1. Se implementó la función `asignar_condiciones_de_frontera_MDot.hpp::construir_CF_flujo_de_masa`
+
+2. Se comenzó a realizar la función `condiciones_de_frontera_MDot.hpp::asignar_condiciones_de_frontera_MDot`
+
+TODO (para la siguiente sesión):
+
+1. [ ] Implementar la función `condiciones_de_frontera_MDot.hpp::asignar_condiciones_de_frontera_MDot`

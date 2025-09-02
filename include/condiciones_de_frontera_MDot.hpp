@@ -5,7 +5,6 @@
 #ifndef CONDICIONES_DE_FRONTERA_MDOT_HPP
 #define CONDICIONES_DE_FRONTERA_MDOT_HPP
 
-#include "malla_por_bloques.hpp"
 #include <vector>
 #include <string>
 
@@ -64,6 +63,7 @@ public:
 template<>
 class CF_MDot<Zero_Neumann_MDot> {
 public:
+    // TODO: Implementar.
 };
 
 /*-----------------------------------------------------------------------------
@@ -107,16 +107,31 @@ struct Parches_Flujo_de_Masa {
                         Funciones de construccion de CF
 -----------------------------------------------------------------------------*/
 
-// TODO: cambiar malla por los parches especiales para flujo de masa
+// TODO: Implementar esta fucnion
 void construir_CF_flujo_de_masa
 (
-    const Malla::Mallador                   & malla,
-    const std::vector<double>               & u_star,
-    const std::vector<double>               & v_star,
-    std::vector<double>                     & mDotStar_x,
-    std::vector<double>                     & mDotStar_y,
-    std::vector<CF_MDot<Dirichlet_MDot>>    & lista_Dirichlet,
-    std::vector<CF_MDot<Zero_Neumann_MDot>> & lista_Zero_Neumann
+    const std::vector<Parches_Flujo_de_Masa> & parches_norte_FM,
+    const std::vector<Parches_Flujo_de_Masa> & parches_sur_FM,
+    const std::vector<Parches_Flujo_de_Masa> & parches_este_FM,
+    const std::vector<Parches_Flujo_de_Masa> & parches_oeste_FM,
+    const std::vector<double>                & u_star,
+    const std::vector<double>                & v_star,
+    std::vector<double>                      & mDotStar_x,
+    std::vector<double>                      & mDotStar_y,
+    std::vector<CF_MDot<Dirichlet_MDot>>     & lista_Dirichlet_x,
+    std::vector<CF_MDot<Zero_Neumann_MDot>>  & lista_Zero_Neumann_x,
+    std::vector<CF_MDot<Dirichlet_MDot>>     & lista_Dirichlet_y,
+    std::vector<CF_MDot<Zero_Neumann_MDot>>  & lista_Zero_Neumann_y
+);
+
+// Funcion de asignacion que va colocada dentro de "construir_CF_flujo_de_masa"
+void asignar_condiciones_de_frontera_MDot
+(
+    const std::vector<Parches_Flujo_de_Masa> & parches,
+    const std::vector<double>                & vel_star,
+    std::vector<double>                      & mDotStar,
+    std::vector<CF_MDot<Dirichlet_MDot>>     & lista_Dirichlet,
+    std::vector<CF_MDot<Zero_Neumann_MDot>>  & lista_Zero_Neumann
 );
 
 // TODO: Implementar la funcion "asignar_condiciones_de_frontera_MDot" similar a la de "asignar_condiciones_de_frontera" en "condiciones_de_frontera.*"

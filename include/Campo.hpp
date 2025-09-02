@@ -26,8 +26,11 @@ struct MDotStar {
     std::vector<double> mDotStar_y, mDotStar_y_old;
 
     // Listas de condiciones de frontera
-    std::vector<CF_MDot<Dirichlet_MDot>>    lista_Dirichlet;
-    std::vector<CF_MDot<Zero_Neumann_MDot>> lista_Zero_Neumann;
+    std::vector<CF_MDot<Dirichlet_MDot>>    lista_Dirichlet_x;
+    std::vector<CF_MDot<Zero_Neumann_MDot>> lista_Zero_Neumann_x;
+
+    std::vector<CF_MDot<Dirichlet_MDot>>    lista_Dirichlet_y;
+    std::vector<CF_MDot<Zero_Neumann_MDot>> lista_Zero_Neumann_y;
 
     // Constructor
     MDotStar(int, int);

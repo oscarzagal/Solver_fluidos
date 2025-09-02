@@ -112,6 +112,8 @@ namespace Condicion_frontera {
 
             if (tipo.first == "dirichlet") {
 
+                // NOTE: seria conveniente usar "emplace_back" para no crear
+                // objetos temporales.
                 Dirichlet parametros
                 (
                     parches[i].obtener_nodos_del_parche,
