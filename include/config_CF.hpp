@@ -11,7 +11,7 @@ struct CF_Dirichlet {
 
 struct CF_Zero_Neumann {
     const std::string nombre;
-    const std::string localizacion_fisica;
+    const std::string localizacion_fisica; // norte, sur, este, oeste
 };
 
 // Parametros para la condicion de frontera tipo Dirichlet para T
@@ -34,39 +34,49 @@ struct CF_Zero_Neumann {
 //     }
 // };
 
+// WARNING: LOS TIPOS DE PARCHE PARA "u" Y "v" DEBEN DE SER LOS MISMOS, los
+// valores pueden cambiar.
+// TODO: tirar una excepcion cuando lo de arriba no se cumpla
 // NOTE: condiciones de frontera para el caso lid driven cavity
 
 // Condiciones tipo dirichlet para la velocidad en u
 inline std::array<CF_Dirichlet, limite_num_parches> g_dirichlet_u = {
     {
-    {"norte", 1.0},
-    {"sur", 0.0},
-    {"este", 0.0},
-    {"oeste", 0.0}
+    {"norte2", 1.0},
+    {"sur2", 0.0},
+    {"este2", 0.0},
+    {"oeste2", 0.0}
     }
 };
 
 // Condiciones tipo dirichlet para la velocidad en u
-inline std::array<CF_Dirichlet, limite_num_parches> g_dirichlet_v = {
-    {
-    {"norte", 0.0},
-    {"sur", 0.0},
-    {"este", 0.0},
-    {"oeste", 0.0}
-    }
-};
+inline std::array<CF_Dirichlet, limite_num_parches> g_dirichlet_v = g_dirichlet_u;
+// inline std::array<CF_Dirichlet, limite_num_parches> g_dirichlet_v = {
+//     {
+//     {"norte2", 0.0},
+//     {"sur2", 0.0},
+//     {"este2", 0.0},
+//     {"oeste2", 0.0}
+//     }
+// };
 
 // Condiciones tipo zero_neumann para la velocidad en u
 inline std::array<CF_Zero_Neumann, limite_num_parches> g_zero_neumann_u = {
     {
-
+        {"norte1", "norte"},
+        {"sur1", "sur"},
+        {"este1", "este"},
+        {"oeste1", "oeste"}
     }
 };
 
 // Condiciones tipo zero_neumann para la velocidad en v
 inline std::array<CF_Zero_Neumann, limite_num_parches> g_zero_neumann_v = {
     {
-
+        {"norte1", "norte"},
+        {"sur1", "sur"},
+        {"este1", "este"},
+        {"oeste1", "oeste"}
     }
 };
 
@@ -76,8 +86,12 @@ inline std::array<CF_Dirichlet,limite_num_parches> g_dirichlet_P = {{
 }};
 
 inline std::array<CF_Zero_Neumann,limite_num_parches> g_zero_neumann_P = {{
-    {"norte", "norte"},
-    {"sur", "sur"},
-    {"este", "este"},
-    {"oeste", "oeste"}
+    {"norte1", "norte"},
+    {"sur1", "sur"},
+    {"este1", "este"},
+    {"oeste1", "oeste"},
+    {"norte2", "norte"},
+    {"sur2", "sur"},
+    {"este2", "este"},
+    {"oeste2", "oeste"}
 }};

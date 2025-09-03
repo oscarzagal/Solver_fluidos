@@ -37,6 +37,16 @@ TODO (para la siguiente sesión):
 
 2. Se comenzó a realizar la función `condiciones_de_frontera_MDot.hpp::asignar_condiciones_de_frontera_MDot`
 
+
+# 2 septiembre 2025
+
+1. Se implementó la función miembro
+`condiciones_de_frontera_MDot.hpp::Parches_Flujo_de_Masa::añadir_tipo_de_CF`
+para poder almacenar el tipo de condición de frontera en cada objeto de tipo
+`Parches_Flujo_de_Masa`. Esto se hizo para hacer más sencilla a la función que
+se implementará después:
+`condiciones_de_frontera_MDot.hpp::asignar_condiciones_de_frontera_MDot`
+
 TODO (para la siguiente sesión):
 
 1. [ ] Implementar la función `condiciones_de_frontera_MDot.hpp::asignar_condiciones_de_frontera_MDot`

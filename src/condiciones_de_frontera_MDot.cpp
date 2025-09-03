@@ -2,8 +2,9 @@
 // Created by oscar on 31/08/25.
 //
 
-#include "condiciones_de_frontera_MDot.hpp"
 #include <stdexcept>
+
+#include "condiciones_de_frontera_MDot.hpp"
 
 // Constructor
 Parches_Flujo_de_Masa::Parches_Flujo_de_Masa(const int nx_, const int ny_)
@@ -61,6 +62,31 @@ void Parches_Flujo_de_Masa::calcular_vector_normal_unitario() {
 
 }
 
+std::string Parches_Flujo_de_Masa::añadir_tipo_de_CF
+(
+    std::array<CF_Dirichlet, limite_num_parches> g_dirichlet,
+    std::array<CF_Zero_Neumann, limite_num_parches> g_zero_neumann
+)
+{
+    for (int i = 0; i < static_cast<int>(g_dirichlet.size()); ++i) {
+
+        if (obtener_nombre == g_dirichlet[i].nombre) {
+            return "dirichlet";
+        }
+    }
+
+    for (int i = 0; i < static_cast<int>(g_zero_neumann.size()); ++i) {
+
+        if (obtener_nombre == g_zero_neumann[i].nombre) {
+            return "zero_neumann";
+        }
+    }
+
+    return {};
+
+
+}
+
 void construir_CF_flujo_de_masa
 (
     const std::vector<Parches_Flujo_de_Masa> & parches_norte_FM,
@@ -112,6 +138,7 @@ void construir_CF_flujo_de_masa
 }
 
 
+// TODO: implementar funcion
 void asignar_condiciones_de_frontera_MDot
 (
     const std::vector<Parches_Flujo_de_Masa> & parches,

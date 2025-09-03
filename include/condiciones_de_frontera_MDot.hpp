@@ -5,8 +5,11 @@
 #ifndef CONDICIONES_DE_FRONTERA_MDOT_HPP
 #define CONDICIONES_DE_FRONTERA_MDOT_HPP
 
+#include <array>
 #include <vector>
 #include <string>
+
+#include "config_CF.hpp"
 
 /*-----------------------------------------------------------------------------
                             Especializaciones
@@ -75,12 +78,15 @@ public:
                  Struct para almacenar parches Flujo de masa
 -----------------------------------------------------------------------------*/
 
+// TODO: Agregaer una funcion miembro para obtener el tipo de parche (Dirichlet_MDot o
+// Zero_Neumann_MDot)
 struct Parches_Flujo_de_Masa {
 
     // Vector que va a almacenar una copia de los nodos obtenidos de la clase
     // Malla::Mallador de los archivos "malla_por_bloques.*"
     std::vector<int> obtener_nodos_del_parche;
     std::string obtener_nombre;
+    std::string tipo_de_CF;
     double vecUnitNormal; // Vector normal unitario
     int nx, ny; // Nodos en "x" e "y"
 
@@ -92,6 +98,15 @@ struct Parches_Flujo_de_Masa {
     // Modifica el estado de "vecUnitNormal". Retorna un vector normal unitario
     // acorde a un sistema de coordenadas cartesiano para la malla.
     void calcular_vector_normal_unitario();
+
+    // Modifica el estado de "tipo_de_CF". Como los tipos de CF deben de ser
+    // iguales para ambas velocidades se escoge, por convencion, los configurados
+    // para "u" en "include/config_CF.hpp"
+    std::string añadir_tipo_de_CF
+    (
+        std::array<CF_Dirichlet, limite_num_parches> g_dirichlet,
+        std::array<CF_Zero_Neumann, limite_num_parches> g_zero_neumann
+    );
 
     // Constructor
     Parches_Flujo_de_Masa(int, int);

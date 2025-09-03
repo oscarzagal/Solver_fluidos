@@ -15,6 +15,7 @@
 #include "config_CF.hpp"
 #include <algorithm>
 #include <iostream>
+#include <vector>
 
 
 int main() {
@@ -96,6 +97,7 @@ int main() {
         parches_norte_FM[i].obtener_nombre = Parches_norte[i].obtener_nombre;
         parches_norte_FM[i].cortar_nodos_esquina();
         parches_norte_FM[i].calcular_vector_normal_unitario();
+        parches_norte_FM[i].tipo_de_CF = parches_norte_FM[i].añadir_tipo_de_CF(g_dirichlet_u, g_zero_neumann_u);
     }
 
     for (int i = 0; i < static_cast<int>(parches_sur_FM.size()); ++i) {
@@ -103,6 +105,7 @@ int main() {
         parches_sur_FM[i].obtener_nombre = Parches_sur[i].obtener_nombre;
         parches_sur_FM[i].cortar_nodos_esquina();
         parches_sur_FM[i].calcular_vector_normal_unitario();
+        parches_sur_FM[i].tipo_de_CF = parches_sur_FM[i].añadir_tipo_de_CF(g_dirichlet_u, g_zero_neumann_u);
     }
 
     for (int i = 0; i < static_cast<int>(parches_este_FM.size()); ++i) {
@@ -110,6 +113,7 @@ int main() {
         parches_este_FM[i].obtener_nombre = Parches_este[i].obtener_nombre;
         parches_este_FM[i].cortar_nodos_esquina();
         parches_este_FM[i].calcular_vector_normal_unitario();
+        parches_este_FM[i].tipo_de_CF = parches_este_FM[i].añadir_tipo_de_CF(g_dirichlet_u, g_zero_neumann_u);
     }
 
     for (int i = 0; i < static_cast<int>(parches_oeste_FM.size()); ++i) {
@@ -117,11 +121,17 @@ int main() {
         parches_oeste_FM[i].obtener_nombre = Parches_oeste[i].obtener_nombre;
         parches_oeste_FM[i].cortar_nodos_esquina();
         parches_oeste_FM[i].calcular_vector_normal_unitario();
+        parches_oeste_FM[i].tipo_de_CF = parches_oeste_FM[i].añadir_tipo_de_CF(g_dirichlet_u, g_zero_neumann_u);
     }
 
-    std::cout << "Nodos del parche norte (copia) luego de cortar: \n";
-    std::cout << "Vector unitario: " << parches_norte_FM[0].vecUnitNormal << "\n";
-    for (const int nodo : parches_norte_FM[0].obtener_nodos_del_parche) {
+    constexpr int numero_parche = 1;
+
+    #define FRONTERA_PARCHE parches_oeste_FM
+
+    std::cout << "Vector unitario: " << FRONTERA_PARCHE[numero_parche].vecUnitNormal << "\n";
+    std::cout << "Tipo de CF: " << FRONTERA_PARCHE[numero_parche].tipo_de_CF << "\n";
+    std::cout << "Nodos del parche " << FRONTERA_PARCHE[numero_parche].obtener_nombre << " (copia) luego de cortar: \n";
+    for (const int nodo : FRONTERA_PARCHE[numero_parche].obtener_nodos_del_parche) {
         std::cout << nodo << " ";
     }
 
