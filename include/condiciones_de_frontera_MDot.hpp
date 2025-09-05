@@ -15,18 +15,20 @@
                             Especializaciones
 -----------------------------------------------------------------------------*/
 
+// Declaracion adelantada
+struct Parches_Flujo_de_Masa;
+
 // Template specialization para las condiciones de frontera de flujo de masa
 struct Dirichlet_MDot {
-    const std::vector<int>& nodos_del_parche;
-    const double valor;
-    std::vector<double>& mdotstar;
+    const std::vector<Parches_Flujo_de_Masa>& parche;
+    const std::vector<double>& vel; // Velocidad en el centro de masa
+    std::vector<double>& mdotstar; // Objeto a modificar
 };
 
 struct Zero_Neumann_MDot {
-    std::vector<double>& mdotstar;
-    const std::vector<int>& nodos_del_parche;
-    const std::string& frontera_fisica;
-    const int nx;
+    const std::vector<Parches_Flujo_de_Masa>& parche;
+    const std::vector<double>& vel; // Velocidad en el centro de masa
+    std::vector<double>& mdotstar; // Objeto a modificar
 };
 
 // Clase generica (no se usa)
@@ -44,12 +46,11 @@ public:
 
     CF_MDot<Dirichlet_MDot>
     (
-        // TODO: se van a requerir los campos de velocidad, entonces es necesario quitar a "valor_"
-        const std::vector<int>& nodos_,
-        const double valor_,
+        const std::vector<Parches_Flujo_de_Masa>& parche_,
+        const std::vector<double>& vel_,
         std::vector<double>& mdotstar_
     ) :
-        dirichlet{nodos_, valor_, mdotstar_}
+        dirichlet{parche_, vel_, mdotstar_}
     {}
 
     void aplicar() {
@@ -69,6 +70,8 @@ public:
     // TODO: Implementar.
 };
 
+
+
 /*-----------------------------------------------------------------------------
                             Fin Especializaciones
 -----------------------------------------------------------------------------*/
@@ -78,8 +81,8 @@ public:
                  Struct para almacenar parches Flujo de masa
 -----------------------------------------------------------------------------*/
 
-// TODO: Agregaer una funcion miembro para obtener el tipo de parche (Dirichlet_MDot o
-// Zero_Neumann_MDot)
+// TODO: obtener aqui tambien las deltas del objeto "malla" (ver primeras lineas
+// del main)
 struct Parches_Flujo_de_Masa {
 
     // Vector que va a almacenar una copia de los nodos obtenidos de la clase
@@ -87,6 +90,7 @@ struct Parches_Flujo_de_Masa {
     std::vector<int> obtener_nodos_del_parche;
     std::string obtener_nombre;
     std::string tipo_de_CF;
+    std::string frontera_fisica;
     double vecUnitNormal; // Vector normal unitario
     int nx, ny; // Nodos en "x" e "y"
 

@@ -43,21 +43,25 @@ void Parches_Flujo_de_Masa::calcular_vector_normal_unitario() {
     // Frontera este (\hat{i})
     if (index_i == nx - 1) {
         vecUnitNormal = 1.0;
+        frontera_fisica = "este";
     }
 
     // Frontera oeste (-\hat{i})
     if (index_i == 0) {
         vecUnitNormal = -1.0;
+        frontera_fisica = "oeste";
     }
 
     // Frontera norte (\hat{j})
     if (index_j == ny - 1) {
         vecUnitNormal = 1.0;
+        frontera_fisica = "norte";
     }
 
     // Frontera sur (-\hat{j})
     if (index_j == 0) {
         vecUnitNormal = -1.0;
+        frontera_fisica = "sur";
     }
 
 }
@@ -148,6 +152,20 @@ void asignar_condiciones_de_frontera_MDot
     std::vector<CF_MDot<Zero_Neumann_MDot>>  & lista_Zero_Neumann
 )
 {
+
+    for (int i = 0; i < static_cast<int>(parches.size()); ++i) {
+
+        if (parches[i].tipo_de_CF == "dirichlet") {
+            lista_Dirichlet.emplace_back();
+        }
+
+
+        if (parches[i].tipo_de_CF == "zero_neumann") {
+            lista_Zero_Neumann.emplace_back();
+        }
+
+
+    }
 
 
 

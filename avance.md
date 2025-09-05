@@ -47,6 +47,15 @@ para poder almacenar el tipo de condición de frontera en cada objeto de tipo
 se implementará después:
 `condiciones_de_frontera_MDot.hpp::asignar_condiciones_de_frontera_MDot`
 
+
+# 3 septiembre 2025
+
+1. Se comenzó a implementar la función
+`condiciones_de_frontera_MDot.hpp::asignar_condiciones_de_frontera_MDot`,
+dándome cuenta que era necesario redefinir el constructor de la clase
+`condiciones_de_frontera_MDot.hpp::CF_MDot<Dirichlet_MDot>`.
+
 TODO (para la siguiente sesión):
 
-1. [ ] Implementar la función `condiciones_de_frontera_MDot.hpp::asignar_condiciones_de_frontera_MDot`
+1. [ ] Terminar de implementar la función `condiciones_de_frontera_MDot.hpp::asignar_condiciones_de_frontera_MDot`
+2. [ ] Implementar la función miembro `aplicar` de la clase `condiciones_de_frontera_MDot.hpp::asignar_condiciones_de_frontera_MDot` basándome en la función miembro del mismo nombre de la clase `condiciones_de_frontera.hpp::Zero_Neumann`
