@@ -88,8 +88,25 @@ std::string Parches_Flujo_de_Masa::añadir_tipo_de_CF
 
     return {};
 
+}
+
+void Parches_Flujo_de_Masa::calcular_desfase() {
+
+    if (frontera_fisica == "norte") {
+        desfase=0;
+    } else if (frontera_fisica == "sur") {
+        desfase=nx;
+    } else if (frontera_fisica == "este") {
+        desfase=0;
+    } else if (frontera_fisica == "oeste") {
+        desfase=1;
+    } else {
+        throw std::runtime_error("La frontera "
+                                 + frontera_fisica + " no es un frontera");
+    }
 
 }
+
 
 void construir_CF_flujo_de_masa
 (
@@ -108,29 +125,34 @@ void construir_CF_flujo_de_masa
 )
 {
     // Vector 2D que almacena las frontera para evitar repetir codigo
-    std::vector<std::vector<Parches_Flujo_de_Masa>> listas;
+    std::vector<std::vector<Parches_Flujo_de_Masa>> listas_verticales;
+    std::vector<std::vector<Parches_Flujo_de_Masa>> listas_horizontales;
 
-    listas.emplace_back(parches_norte_FM);
-    listas.emplace_back(parches_sur_FM);
-    listas.emplace_back(parches_este_FM);
-    listas.emplace_back(parches_oeste_FM);
+    listas_verticales.emplace_back(parches_este_FM);
+    listas_verticales.emplace_back(parches_oeste_FM);
+    listas_horizontales.emplace_back(parches_norte_FM);
+    listas_horizontales.emplace_back(parches_sur_FM);
 
-    for (int i = 0; i < static_cast<int>(listas.size()); ++i) {
+    for (int i = 0; i < static_cast<int>(listas_verticales.size()); ++i) {
 
         // Direccion "x"
         asignar_condiciones_de_frontera_MDot
         (
-            listas[i],
+            listas_verticales[i],
             u_star,
             mDotStar_x,
             lista_Dirichlet_x,
             lista_Zero_Neumann_x
         );
 
+    }
+
+    for (int i = 0; i < static_cast<int>(listas_horizontales.size()); ++i) {
+
         // Direccion "y"
         asignar_condiciones_de_frontera_MDot
         (
-            listas[i],
+            listas_horizontales[i],
             v_star,
             mDotStar_y,
             lista_Dirichlet_y,
@@ -156,14 +178,14 @@ void asignar_condiciones_de_frontera_MDot
     for (int i = 0; i < static_cast<int>(parches.size()); ++i) {
 
         if (parches[i].tipo_de_CF == "dirichlet") {
-            lista_Dirichlet.emplace_back();
+            lista_Dirichlet.emplace_back(parches, vel_star, mDotStar);
         }
 
 
+        // TODO: terminar
         if (parches[i].tipo_de_CF == "zero_neumann") {
             lista_Zero_Neumann.emplace_back();
         }
-
 
     }
 

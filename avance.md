@@ -57,5 +57,16 @@ dándome cuenta que era necesario redefinir el constructor de la clase
 
 TODO (para la siguiente sesión):
 
+1. [x] Pre calcular el `desfase` en el struct `condiciones_de_frontera_MDot.hpp::Parches_Flujo_de_Masa`
+2. [x] Dividir `listas` en `listas_verticales` y `listas_horizontales` en `condiciones_de_frontera_MDot.hpp::construir_CF_flujo_de_masa`
+
+
+# 5 septiembre 2025
+
+1. Se implementó la función miembro `condiciones_de_frontera_MDot.hpp::Parches_Flujo_de_Masa::calcular_desfase`
+2. Se implementó una lista para los parches verticales y otra para los horizontales en `condiciones_de_frontera_MDot.hpp::construir_CF_flujo_de_masa`, con el objetivo de evitar pasar velocidades que no sean normales a las caras
+
+TODO (para la siguiente sesión):
+
 1. [ ] Terminar de implementar la función `condiciones_de_frontera_MDot.hpp::asignar_condiciones_de_frontera_MDot`
 2. [ ] Implementar la función miembro `aplicar` de la clase `condiciones_de_frontera_MDot.hpp::asignar_condiciones_de_frontera_MDot` basándome en la función miembro del mismo nombre de la clase `condiciones_de_frontera.hpp::Zero_Neumann`

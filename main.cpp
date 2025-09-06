@@ -97,6 +97,7 @@ int main() {
         parches_norte_FM[i].obtener_nombre = Parches_norte[i].obtener_nombre;
         parches_norte_FM[i].cortar_nodos_esquina();
         parches_norte_FM[i].calcular_vector_normal_unitario();
+        parches_norte_FM[i].calcular_desfase();
         parches_norte_FM[i].tipo_de_CF = parches_norte_FM[i].añadir_tipo_de_CF(g_dirichlet_u, g_zero_neumann_u);
     }
 
@@ -105,6 +106,7 @@ int main() {
         parches_sur_FM[i].obtener_nombre = Parches_sur[i].obtener_nombre;
         parches_sur_FM[i].cortar_nodos_esquina();
         parches_sur_FM[i].calcular_vector_normal_unitario();
+        parches_sur_FM[i].calcular_desfase();
         parches_sur_FM[i].tipo_de_CF = parches_sur_FM[i].añadir_tipo_de_CF(g_dirichlet_u, g_zero_neumann_u);
     }
 
@@ -113,6 +115,7 @@ int main() {
         parches_este_FM[i].obtener_nombre = Parches_este[i].obtener_nombre;
         parches_este_FM[i].cortar_nodos_esquina();
         parches_este_FM[i].calcular_vector_normal_unitario();
+        parches_este_FM[i].calcular_desfase();
         parches_este_FM[i].tipo_de_CF = parches_este_FM[i].añadir_tipo_de_CF(g_dirichlet_u, g_zero_neumann_u);
     }
 
@@ -121,14 +124,17 @@ int main() {
         parches_oeste_FM[i].obtener_nombre = Parches_oeste[i].obtener_nombre;
         parches_oeste_FM[i].cortar_nodos_esquina();
         parches_oeste_FM[i].calcular_vector_normal_unitario();
+        parches_oeste_FM[i].calcular_desfase();
         parches_oeste_FM[i].tipo_de_CF = parches_oeste_FM[i].añadir_tipo_de_CF(g_dirichlet_u, g_zero_neumann_u);
     }
 
-    constexpr int numero_parche = 1;
+    constexpr int numero_parche = 0;
 
-    #define FRONTERA_PARCHE parches_oeste_FM
+    #define FRONTERA_PARCHE parches_norte_FM
 
+    std::cout << "Frontera fisica: " << FRONTERA_PARCHE[numero_parche].frontera_fisica << "\n";
     std::cout << "Vector unitario: " << FRONTERA_PARCHE[numero_parche].vecUnitNormal << "\n";
+    std::cout << "Desfase del parche: " << FRONTERA_PARCHE[numero_parche].desfase << "\n";
     std::cout << "Tipo de CF: " << FRONTERA_PARCHE[numero_parche].tipo_de_CF << "\n";
     std::cout << "Nodos del parche " << FRONTERA_PARCHE[numero_parche].obtener_nombre << " (copia) luego de cortar: \n";
     for (const int nodo : FRONTERA_PARCHE[numero_parche].obtener_nodos_del_parche) {

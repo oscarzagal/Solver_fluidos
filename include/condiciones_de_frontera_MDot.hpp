@@ -92,6 +92,7 @@ struct Parches_Flujo_de_Masa {
     std::string tipo_de_CF;
     std::string frontera_fisica;
     double vecUnitNormal; // Vector normal unitario
+    int desfase;
     int nx, ny; // Nodos en "x" e "y"
 
     /* Funciones miembro */
@@ -99,8 +100,9 @@ struct Parches_Flujo_de_Masa {
     // Modifica el estado de "obtener_nodos_del_parche"
     void cortar_nodos_esquina();
 
-    // Modifica el estado de "vecUnitNormal". Retorna un vector normal unitario
-    // acorde a un sistema de coordenadas cartesiano para la malla.
+    // Modifica el estado de "vecUnitNormal" y "frontera_fisica". Retorna un
+    // vector normal unitario acorde a un sistema de coordenadas cartesiano
+    // para la malla.
     void calcular_vector_normal_unitario();
 
     // Modifica el estado de "tipo_de_CF". Como los tipos de CF deben de ser
@@ -111,6 +113,10 @@ struct Parches_Flujo_de_Masa {
         std::array<CF_Dirichlet, limite_num_parches> g_dirichlet,
         std::array<CF_Zero_Neumann, limite_num_parches> g_zero_neumann
     );
+
+    // Pre calcula el desfase para asignar las CF de flujo de masa en base a los
+    // valores de las velocidades de los centros de masa. Modifica a "desfase"
+    void calcular_desfase();
 
     // Constructor
     Parches_Flujo_de_Masa(int, int);
