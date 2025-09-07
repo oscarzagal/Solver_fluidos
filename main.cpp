@@ -48,10 +48,8 @@ int main() {
 
     const Malla::Mallador::Interpolacion inter = Malla::Mallador::obtener_factores_de_interpolacion(malla);
 
-    // for (int j = 1; j < ny - 1; ++j) {
-    //     for (int i = 1; i < nx - 1; ++i) {
-    //         printf("vol[%d] = %f\n", i + nx * j, vol[i + nx * j]);
-    //     }
+    // for (int i = 0; i < ny; ++i) {
+    //     printf("deltay[%d] = %f\n", i, malla.deltay[i]);
     // }
 
     // for (int j = 0; j < ny; ++j) {
@@ -97,6 +95,7 @@ int main() {
         parches_norte_FM[i].obtener_nombre = Parches_norte[i].obtener_nombre;
         parches_norte_FM[i].cortar_nodos_esquina();
         parches_norte_FM[i].calcular_vector_normal_unitario();
+        parches_norte_FM[i].asignar_deltas(malla);
         parches_norte_FM[i].calcular_desfase();
         parches_norte_FM[i].tipo_de_CF = parches_norte_FM[i].añadir_tipo_de_CF(g_dirichlet_u, g_zero_neumann_u);
     }
@@ -106,6 +105,7 @@ int main() {
         parches_sur_FM[i].obtener_nombre = Parches_sur[i].obtener_nombre;
         parches_sur_FM[i].cortar_nodos_esquina();
         parches_sur_FM[i].calcular_vector_normal_unitario();
+        parches_sur_FM[i].asignar_deltas(malla);
         parches_sur_FM[i].calcular_desfase();
         parches_sur_FM[i].tipo_de_CF = parches_sur_FM[i].añadir_tipo_de_CF(g_dirichlet_u, g_zero_neumann_u);
     }
@@ -115,6 +115,7 @@ int main() {
         parches_este_FM[i].obtener_nombre = Parches_este[i].obtener_nombre;
         parches_este_FM[i].cortar_nodos_esquina();
         parches_este_FM[i].calcular_vector_normal_unitario();
+        parches_este_FM[i].asignar_deltas(malla);
         parches_este_FM[i].calcular_desfase();
         parches_este_FM[i].tipo_de_CF = parches_este_FM[i].añadir_tipo_de_CF(g_dirichlet_u, g_zero_neumann_u);
     }
@@ -124,22 +125,37 @@ int main() {
         parches_oeste_FM[i].obtener_nombre = Parches_oeste[i].obtener_nombre;
         parches_oeste_FM[i].cortar_nodos_esquina();
         parches_oeste_FM[i].calcular_vector_normal_unitario();
+        parches_oeste_FM[i].asignar_deltas(malla);
         parches_oeste_FM[i].calcular_desfase();
         parches_oeste_FM[i].tipo_de_CF = parches_oeste_FM[i].añadir_tipo_de_CF(g_dirichlet_u, g_zero_neumann_u);
     }
 
-    constexpr int numero_parche = 0;
+    constexpr bool debug = true;
 
-    #define FRONTERA_PARCHE parches_norte_FM
+    if (debug) {
+        constexpr int numero_parche = 0;
 
-    std::cout << "Frontera fisica: " << FRONTERA_PARCHE[numero_parche].frontera_fisica << "\n";
-    std::cout << "Vector unitario: " << FRONTERA_PARCHE[numero_parche].vecUnitNormal << "\n";
-    std::cout << "Desfase del parche: " << FRONTERA_PARCHE[numero_parche].desfase << "\n";
-    std::cout << "Tipo de CF: " << FRONTERA_PARCHE[numero_parche].tipo_de_CF << "\n";
-    std::cout << "Nodos del parche " << FRONTERA_PARCHE[numero_parche].obtener_nombre << " (copia) luego de cortar: \n";
-    for (const int nodo : FRONTERA_PARCHE[numero_parche].obtener_nodos_del_parche) {
-        std::cout << nodo << " ";
-    }
+#define FRONTERA_PARCHE parches_sur_FM
+
+        std::cout << "Frontera fisica: " << FRONTERA_PARCHE[numero_parche].frontera_fisica << "\n";
+        std::cout << "Vector unitario: " << FRONTERA_PARCHE[numero_parche].vecUnitNormal << "\n";
+        std::cout << "Desfase del parche: " << FRONTERA_PARCHE[numero_parche].desfase << "\n";
+        std::cout << "Tipo de CF: " << FRONTERA_PARCHE[numero_parche].tipo_de_CF << "\n";
+        std::cout << "Nodos del parche " << FRONTERA_PARCHE[numero_parche].obtener_nombre << " (copia) luego de cortar: \n";
+        for (const int nodo : FRONTERA_PARCHE[numero_parche].obtener_nodos_del_parche) {
+            std::cout << nodo << " ";
+        }
+
+        std::cout << "\n\n";
+
+        std::cout << "Delta asignada: " << FRONTERA_PARCHE[numero_parche].que_delta_fue_asignada << "\n";
+        std::cout << "Deltas: \n";
+        for (int i = 0; i < (int)FRONTERA_PARCHE[numero_parche].delta.size(); ++i) {
+            std::cout << FRONTERA_PARCHE[numero_parche].delta[i] << " ";
+        }
+
+    } // Fin debug
+
 
 
     /*-----------------------------------------------------------------------------
@@ -151,10 +167,10 @@ int main() {
                             Inicializacion de campos
     -----------------------------------------------------------------------------*/
 
-    Campo::Momentum vecU(nx, ny);
-    Campo::Presion presion(nx, ny);
-    Campo::velFace velface(nx, ny);
-    Campo::MDotStar mdotstar(nx, ny);
+    Campo::Momentum vecU(nx, ny, 100.0, 27.0);
+    Campo::Presion  presion(nx, ny, 0.0);
+    Campo::velFace  velface(nx, ny, 0.0);
+    Campo::MDotStar mdotstar(nx, ny, 0.0);
 
     /*-----------------------------------------------------------------------------
                            Fin inicializacion de campos
@@ -212,6 +228,42 @@ int main() {
         g_zero_neumann_P
     );
 
+    // Construccion de las condiciones de frontera para el flujo de masa.
+    construir_CF_flujo_de_masa
+    (
+        parches_norte_FM,
+        parches_sur_FM,
+        parches_este_FM,
+        parches_oeste_FM,
+        vecU.u_star,
+        vecU.v_star,
+        mdotstar.mDotStar_x,
+        mdotstar.mDotStar_y,
+        mdotstar.lista_Dirichlet_x,
+        mdotstar.lista_Zero_Neumann_x,
+        mdotstar.lista_Dirichlet_y,
+        mdotstar.lista_Zero_Neumann_y
+    );
+
+    constexpr bool debug2 = false;
+
+    if (debug2)
+    {
+        std::cout << "\n\n";
+        std::cout << "Tamaño de lista_Dirichlet_x: " << mdotstar.lista_Dirichlet_x.size() << "\n";
+        std::cout << "Tamaño de lista_Zero_Neumann_x: " << mdotstar.lista_Zero_Neumann_x.size() << "\n";
+
+        std::cout << "Tamaño de lista_Dirichlet_y: " << mdotstar.lista_Dirichlet_y.size() << "\n";
+        std::cout << "Tamaño de lista_Zero_Neumann_y: " << mdotstar.lista_Zero_Neumann_y.size() << "\n";
+
+        mdotstar.lista_Dirichlet_x[0].aplicar();
+        mdotstar.lista_Zero_Neumann_x[0].aplicar();
+
+        mdotstar.lista_Dirichlet_y[0].aplicar();
+        mdotstar.lista_Zero_Neumann_y[0].aplicar();
+    }
+
+
 
     // TODO: Hacer la siguiente funcion: (Meter las listas tambien en la funcion de abajo)
     // construir_CF_flujo_de_masa(malla,vecU.u_star,vecU.v_star,mdotstar);
@@ -219,6 +271,8 @@ int main() {
     // Calculo debe realizarse con una instancia propia de MDotStar para despues:
     // velU.mdotstar = mdotstar;
     // energia.mdotstar = mdotstar;
+    // NOTE: no hace falta tener una instancia propia ya que en los coeficientes agrupados
+    // ("A_coef" struct) esta el flujo de masa implicito
 
 
     /*-----------------------------------------------------------------------------

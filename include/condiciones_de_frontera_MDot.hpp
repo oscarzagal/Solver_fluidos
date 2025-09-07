@@ -6,10 +6,12 @@
 #define CONDICIONES_DE_FRONTERA_MDOT_HPP
 
 #include <array>
+#include <iostream>
 #include <vector>
 #include <string>
 
 #include "config_CF.hpp"
+#include "malla_por_bloques.hpp"
 
 /*-----------------------------------------------------------------------------
                             Especializaciones
@@ -58,6 +60,7 @@ public:
         // for (const auto& nodo : dirichlet.nodos_del_parche) {
         //     dirichlet.mdotstar[nodo] = dirichlet.valor;
         // }
+        std::cout << "Hola desde Dirichlet_MDot \n";
     }
 
     Dirichlet_MDot dirichlet;
@@ -67,7 +70,20 @@ public:
 template<>
 class CF_MDot<Zero_Neumann_MDot> {
 public:
-    // TODO: Implementar.
+    CF_MDot<Zero_Neumann_MDot>
+    (
+        const std::vector<Parches_Flujo_de_Masa>& parche_,
+        const std::vector<double>& vel_,
+        std::vector<double>& mdotstar_
+    ) :
+        zero_neumann{parche_, vel_, mdotstar_}
+    {}
+
+    void aplicar() {
+        std::cout << "Hola desde Zero_Neumann_MDot \n";
+    }
+
+    Zero_Neumann_MDot zero_neumann;
 };
 
 
@@ -88,6 +104,8 @@ struct Parches_Flujo_de_Masa {
     // Vector que va a almacenar una copia de los nodos obtenidos de la clase
     // Malla::Mallador de los archivos "malla_por_bloques.*"
     std::vector<int> obtener_nodos_del_parche;
+    std::vector<double> delta; // Ya sea en "x" o "y"
+    std::string que_delta_fue_asignada;
     std::string obtener_nombre;
     std::string tipo_de_CF;
     std::string frontera_fisica;
@@ -118,6 +136,9 @@ struct Parches_Flujo_de_Masa {
     // valores de las velocidades de los centros de masa. Modifica a "desfase"
     void calcular_desfase();
 
+    // Modifica el estado de "delta"
+    void asignar_deltas(const Malla::Mallador& malla);
+
     // Constructor
     Parches_Flujo_de_Masa(int, int);
 
@@ -132,7 +153,8 @@ struct Parches_Flujo_de_Masa {
                         Funciones de construccion de CF
 -----------------------------------------------------------------------------*/
 
-// TODO: Implementar esta fucnion
+// Modifica el estado de "lista_Dirichlet_x," "lista_Zero_Neumann_x",
+// "lista_Dirichlet_y" y "lista_Zero_Neumann_y"
 void construir_CF_flujo_de_masa
 (
     const std::vector<Parches_Flujo_de_Masa> & parches_norte_FM,
@@ -149,7 +171,8 @@ void construir_CF_flujo_de_masa
     std::vector<CF_MDot<Zero_Neumann_MDot>>  & lista_Zero_Neumann_y
 );
 
-// Funcion de asignacion que va colocada dentro de "construir_CF_flujo_de_masa"
+// Funcion de asignacion que va colocada dentro de "construir_CF_flujo_de_masa".
+// Modifica el estado de "lista_Dirichlet" y "lista_Zero_Neumann".
 void asignar_condiciones_de_frontera_MDot
 (
     const std::vector<Parches_Flujo_de_Masa> & parches,

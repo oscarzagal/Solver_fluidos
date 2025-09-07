@@ -3,8 +3,10 @@
 //
 
 #include <stdexcept>
+#include <vector>
 
 #include "condiciones_de_frontera_MDot.hpp"
+#include "malla_por_bloques.hpp"
 
 // Constructor
 Parches_Flujo_de_Masa::Parches_Flujo_de_Masa(const int nx_, const int ny_)
@@ -107,6 +109,46 @@ void Parches_Flujo_de_Masa::calcular_desfase() {
 
 }
 
+void Parches_Flujo_de_Masa::asignar_deltas(const Malla::Mallador& malla) {
+
+    if (frontera_fisica == "este" || frontera_fisica == "oeste") {
+
+        std::vector<double> delta_malla_y(nx * ny);
+
+        for (int j = 0; j < ny; ++j) {
+            for (int i = 0; i < nx; ++i) {
+                delta_malla_y[i + nx * j] = malla.deltay[j];
+            }
+        }
+
+        for (const int nodo : obtener_nodos_del_parche) {
+            delta.push_back(delta_malla_y[nodo]);
+        }
+
+        que_delta_fue_asignada = "deltay";
+    }
+
+
+    if (frontera_fisica == "norte" || frontera_fisica == "sur") {
+
+        std::vector<double> delta_malla_x(nx * ny);
+
+        for (int j = 0 ; j < ny ; ++j) {
+            for (int i = 0 ; i < nx ; ++i) {
+                delta_malla_x[i + nx * j] = malla.deltax[i];
+            }
+        }
+
+        for (const int nodo : obtener_nodos_del_parche) {
+            delta.push_back(delta_malla_x[nodo]);
+        }
+
+        que_delta_fue_asignada = "deltax";
+    }
+
+
+}
+
 
 void construir_CF_flujo_de_masa
 (
@@ -164,7 +206,6 @@ void construir_CF_flujo_de_masa
 }
 
 
-// TODO: implementar funcion
 void asignar_condiciones_de_frontera_MDot
 (
     const std::vector<Parches_Flujo_de_Masa> & parches,
@@ -182,13 +223,10 @@ void asignar_condiciones_de_frontera_MDot
         }
 
 
-        // TODO: terminar
         if (parches[i].tipo_de_CF == "zero_neumann") {
-            lista_Zero_Neumann.emplace_back();
+            lista_Zero_Neumann.emplace_back(parches, vel_star, mDotStar);
         }
 
     }
-
-
 
 }

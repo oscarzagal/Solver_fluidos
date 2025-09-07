@@ -17,7 +17,7 @@ struct velFace {
     std::vector<double> uFace_x, vFace_y;
 
     // Constructor
-    velFace(int, int);
+    velFace(int, int, double);
 };
 
 struct MDotStar {
@@ -33,7 +33,7 @@ struct MDotStar {
     std::vector<CF_MDot<Zero_Neumann_MDot>> lista_Zero_Neumann_y;
 
     // Constructor
-    MDotStar(int, int);
+    MDotStar(int, int, double);
 };
 
 struct A_coef {
@@ -44,11 +44,11 @@ struct A_coef {
 struct Momentum {
     std::vector<double> u_star, u_old; // Velocidad en x
     std::vector<double> v_star, v_old; // Velocidad en y
-    MDotStar mdotstar;
     A_coef A_u, A_v;
 
     // Listas de condiciones de frontera (PROVISIONAL: cambiaran los tipos luego de
-    // modificar la interfaz de condiciones de frontera)
+    // modificar la interfaz de condiciones de frontera a traves de TEMPLATE
+    // SPECIALIZATION)
     std::vector<Condicion_frontera::Dirichlet>             lista_parches_dirichlet_u;
     std::vector<std::shared_ptr<Condicion_frontera::Base>> lista_parches_dinamicos_u;
 
@@ -56,7 +56,7 @@ struct Momentum {
     std::vector<std::shared_ptr<Condicion_frontera::Base>> lista_parches_dinamicos_v;
 
     // Constructor
-    Momentum(int, int);
+    Momentum(int, int, double, double);
 
 };
 
@@ -70,7 +70,7 @@ struct Presion {
     std::vector<std::shared_ptr<Condicion_frontera::Base>> lista_parches_dinamicos;
 
     // Constructor
-    Presion(int, int);
+    Presion(int, int, double);
 };
 
 } // Fin namespace Campo_Escalar

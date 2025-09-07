@@ -68,5 +68,17 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. [ ] Terminar de implementar la función `condiciones_de_frontera_MDot.hpp::asignar_condiciones_de_frontera_MDot`
-2. [ ] Implementar la función miembro `aplicar` de la clase `condiciones_de_frontera_MDot.hpp::asignar_condiciones_de_frontera_MDot` basándome en la función miembro del mismo nombre de la clase `condiciones_de_frontera.hpp::Zero_Neumann`
+1. [x] Terminar de implementar la función `condiciones_de_frontera_MDot.hpp::asignar_condiciones_de_frontera_MDot`
+2. [x] Obtener las deltas en el struct `condiciones_de_frontera_MDot.hpp::Parches_Flujo_de_Masa::calcular_desfase`
+
+
+# 7 septiembre 2025
+
+1. Se eliminó al flujo de masa del struct `Campo.hpp::Momentum` porque no era necesario tenerlo, ya que el flujo de masa está implícito en los coeficientes agrupados `A_coef`.
+2. Se implementó la función miembro `condiciones_de_frontera_MDot.hpp::asignar_condiciones_de_frontera_MDot`.
+3. Se obtuvieron las deltas en el struct `condiciones_de_frontera_MDot.hpp::Parches_Flujo_de_Masa::calcular_desfase` con éxito.
+
+TODO (para la siguiente sesión):
+
+1. [ ] Implementar la función miembro `aplicar` de las clases `condiciones_de_frontera_MDot.hpp::CF_MDot<Dirichlet_MDot>` y `condiciones_de_frontera_MDot.hpp::CF_MDot<Zero_Neumann_MDot>`.
+2. [ ] Investigar una herramienta para pruebas unitarias.
