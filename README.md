@@ -11,6 +11,16 @@ muy complicado y difícil de mantener, por lo que decidí reescribirlo usando
 plantillas (polimorfismo en tiempo de compilación) y usando el paradigma
 orientada a datos.
 
+## lunes 8 agosto 2025
+
+**NOTE**: Para cuando toque el desarrollo de la ecuación de corrección de presión:
+- En Dirichlet se hace todo el calculo normal pero P_{b}^{'} (presión en la
+frontera) es cero, haciendo que a_{N} sea cero del lado derecho pero no en su
+contribución al coeficiente central a_{C}.
+- En Zero Neumann se sabe cuál es el flujo de masa desde el principio, por lo
+que no hay contribución al coeficiente central por parte de a_{N} porque este
+nunca se forma.
+
 ## Template specialization
 
 ```cpp

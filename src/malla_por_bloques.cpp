@@ -141,12 +141,12 @@ namespace Malla {
       if (i==0 || i==nodos.size()-1) {
         nodos_cortados+=1;
       }
-      if (i>0 && i<nodos.size()-1) {
+      if (i>0 && i<(int)nodos.size()-1) {
         nodos_cortados+=2;
       }
 
       lim_sup_nodos[i]=lim_sup_nodos[i]-nodos_cortados;
-      if (i<nodos.size()-1) {
+      if (i<(int)nodos.size()-1) {
         lim_inf_nodos[i+1]=lim_sup_nodos[i];
       }
     }

@@ -78,7 +78,15 @@ TODO (para la siguiente sesión):
 2. Se implementó la función miembro `condiciones_de_frontera_MDot.hpp::asignar_condiciones_de_frontera_MDot`.
 3. Se obtuvieron las deltas en el struct `condiciones_de_frontera_MDot.hpp::Parches_Flujo_de_Masa::calcular_desfase` con éxito.
 
+
+# 8 septiembre 2025
+
+1. Se corrigió el código de la función `condiciones_de_frontera_MDot.cpp::Parches_Flujo_de_Masa::cortar_nodos_esquina` haciendo un bucle en reversa para evitar saltos de elementos ocasionado por el anterior enfoque. Si tienes dudas de lo que hablo ponte a hacerlo a mano, flojo.
+2. Se especificó en `main.cpp` que es necesario robustecer el código relacionado con el struct `Parches_Flujo_de_Masa`, ya que las funciones miembro deben de ponerse en un determinado orden para que se obtenga lo deseado, lo cual hace que el código sea muy frágil.
+3. Se eliminaron las variables locales `listas_verticales` y `listas_horizontales` en `condiciones_de_frontera_MDot.cpp::construir_CF_flujo_de_masa` porque ocurrían errores de segmentación de memoria, pues, al salir dejar de usar la función estas se destruían, causando un comportamiento indefinido.
+4. Se implementó con éxito la función miembro `aplicar` de `condiciones_de_frontera_MDot.hpp::CF_MDot<Dirichlet_MDot>`.
+
 TODO (para la siguiente sesión):
 
-1. [ ] Implementar la función miembro `aplicar` de las clases `condiciones_de_frontera_MDot.hpp::CF_MDot<Dirichlet_MDot>` y `condiciones_de_frontera_MDot.hpp::CF_MDot<Zero_Neumann_MDot>`.
+1. [ ] Implementar la función miembro `aplicar` de la clase `condiciones_de_frontera_MDot.hpp::CF_MDot<Zero_Neumann_MDot>`.
 2. [ ] Investigar una herramienta para pruebas unitarias.

@@ -14,9 +14,14 @@
 #include "escritura.hpp"
 #include "config_CF.hpp"
 #include <algorithm>
+#include <cstdio>
 #include <iostream>
 #include <vector>
 
+
+constexpr bool debug = false; // Parches flujo de masa
+constexpr bool debug2 = true; // Listas para las especializaciones
+constexpr bool debug3 = debug2; // Flujo de masa
 
 int main() {
 
@@ -90,6 +95,9 @@ int main() {
     parches_este_FM.resize(Parches_este.size(), Parches_Flujo_de_Masa(nx, ny));
     parches_oeste_FM.resize(Parches_oeste.size(), Parches_Flujo_de_Masa(nx, ny));
 
+    // NOTE: se debe de cuidar mucho el orden, lo cual hace que el codigo sea muy
+    // fragil. Es necesario corregir este defecto en el futuro, por ahora funciona
+    // y no es la prioridad.
     for (int i = 0; i < static_cast<int>(parches_norte_FM.size()); ++i) {
         parches_norte_FM[i].obtener_nodos_del_parche = Parches_norte[i].obtener_nodos_del_parche;
         parches_norte_FM[i].obtener_nombre = Parches_norte[i].obtener_nombre;
@@ -130,12 +138,11 @@ int main() {
         parches_oeste_FM[i].tipo_de_CF = parches_oeste_FM[i].añadir_tipo_de_CF(g_dirichlet_u, g_zero_neumann_u);
     }
 
-    constexpr bool debug = true;
 
     if (debug) {
-        constexpr int numero_parche = 0;
+        constexpr int numero_parche = 1;
 
-#define FRONTERA_PARCHE parches_sur_FM
+#define FRONTERA_PARCHE parches_este_FM
 
         std::cout << "Frontera fisica: " << FRONTERA_PARCHE[numero_parche].frontera_fisica << "\n";
         std::cout << "Vector unitario: " << FRONTERA_PARCHE[numero_parche].vecUnitNormal << "\n";
@@ -167,7 +174,7 @@ int main() {
                             Inicializacion de campos
     -----------------------------------------------------------------------------*/
 
-    Campo::Momentum vecU(nx, ny, 100.0, 27.0);
+    Campo::Momentum vecU(nx, ny, 99.0, 1.0);
     Campo::Presion  presion(nx, ny, 0.0);
     Campo::velFace  velface(nx, ny, 0.0);
     Campo::MDotStar mdotstar(nx, ny, 0.0);
@@ -245,7 +252,6 @@ int main() {
         mdotstar.lista_Zero_Neumann_y
     );
 
-    constexpr bool debug2 = false;
 
     if (debug2)
     {
@@ -256,23 +262,35 @@ int main() {
         std::cout << "Tamaño de lista_Dirichlet_y: " << mdotstar.lista_Dirichlet_y.size() << "\n";
         std::cout << "Tamaño de lista_Zero_Neumann_y: " << mdotstar.lista_Zero_Neumann_y.size() << "\n";
 
+
         mdotstar.lista_Dirichlet_x[0].aplicar();
-        mdotstar.lista_Zero_Neumann_x[0].aplicar();
+        mdotstar.lista_Dirichlet_x[1].aplicar();
+        // mdotstar.lista_Zero_Neumann_x[0].aplicar();
+        // mdotstar.lista_Zero_Neumann_x[1].aplicar();
 
         mdotstar.lista_Dirichlet_y[0].aplicar();
-        mdotstar.lista_Zero_Neumann_y[0].aplicar();
+        mdotstar.lista_Dirichlet_y[1].aplicar();
+        // mdotstar.lista_Zero_Neumann_y[0].aplicar();
+        // mdotstar.lista_Zero_Neumann_y[1].aplicar();
     }
 
+    if (debug3) {
+
+        for (int j = 0 ; j < ny ; ++j) {
+            for (int i = 0 ; i < nx ; ++i) {
+                printf("mDotStar_x[%d] = %f \n", i + nx * j, mdotstar.mDotStar_x[i + nx * j]);
+                // printf("mDotStar_y[%d] = %f \n", i + nx * j, mdotstar.mDotStar_y[i + nx * j]);
+            }
+        }
 
 
-    // TODO: Hacer la siguiente funcion: (Meter las listas tambien en la funcion de abajo)
-    // construir_CF_flujo_de_masa(malla,vecU.u_star,vecU.v_star,mdotstar);
+    }
 
     // Calculo debe realizarse con una instancia propia de MDotStar para despues:
     // velU.mdotstar = mdotstar;
     // energia.mdotstar = mdotstar;
     // NOTE: no hace falta tener una instancia propia ya que en los coeficientes agrupados
-    // ("A_coef" struct) esta el flujo de masa implicito
+    // ("A_coef" struct) esta el flujo de masa implicito.
 
 
     /*-----------------------------------------------------------------------------

@@ -7,6 +7,7 @@
 
 #include "condiciones_de_frontera_MDot.hpp"
 #include "malla_por_bloques.hpp"
+#include "logs.hpp"
 
 // Constructor
 Parches_Flujo_de_Masa::Parches_Flujo_de_Masa(const int nx_, const int ny_)
@@ -18,7 +19,7 @@ void Parches_Flujo_de_Masa::cortar_nodos_esquina() {
         throw std::runtime_error("El parche " + obtener_nombre + "esta vacío");
     }
 
-    for (int i = 0; i < static_cast<int>(obtener_nodos_del_parche.size()); ++i) {
+    for (int i = (int)obtener_nodos_del_parche.size() - 1 ; i >= 0 ; --i) {
 
         // Se obtienen los indices locales "i" y "j"
         int index_i = obtener_nodos_del_parche[i] % nx;
@@ -166,42 +167,44 @@ void construir_CF_flujo_de_masa
     std::vector<CF_MDot<Zero_Neumann_MDot>>  & lista_Zero_Neumann_y
 )
 {
-    // Vector 2D que almacena las frontera para evitar repetir codigo
-    std::vector<std::vector<Parches_Flujo_de_Masa>> listas_verticales;
-    std::vector<std::vector<Parches_Flujo_de_Masa>> listas_horizontales;
-
-    listas_verticales.emplace_back(parches_este_FM);
-    listas_verticales.emplace_back(parches_oeste_FM);
-    listas_horizontales.emplace_back(parches_norte_FM);
-    listas_horizontales.emplace_back(parches_sur_FM);
-
-    for (int i = 0; i < static_cast<int>(listas_verticales.size()); ++i) {
-
         // Direccion "x"
         asignar_condiciones_de_frontera_MDot
         (
-            listas_verticales[i],
+            parches_este_FM,
             u_star,
             mDotStar_x,
             lista_Dirichlet_x,
             lista_Zero_Neumann_x
         );
 
-    }
+        asignar_condiciones_de_frontera_MDot
+        (
+            parches_oeste_FM,
+            u_star,
+            mDotStar_x,
+            lista_Dirichlet_x,
+            lista_Zero_Neumann_x
+        );
 
-    for (int i = 0; i < static_cast<int>(listas_horizontales.size()); ++i) {
 
         // Direccion "y"
         asignar_condiciones_de_frontera_MDot
         (
-            listas_horizontales[i],
+            parches_norte_FM,
             v_star,
             mDotStar_y,
             lista_Dirichlet_y,
             lista_Zero_Neumann_y
         );
 
-    }
+        asignar_condiciones_de_frontera_MDot
+        (
+            parches_sur_FM,
+            v_star,
+            mDotStar_y,
+            lista_Dirichlet_y,
+            lista_Zero_Neumann_y
+        );
 
 }
 
@@ -216,15 +219,15 @@ void asignar_condiciones_de_frontera_MDot
 )
 {
 
-    for (int i = 0; i < static_cast<int>(parches.size()); ++i) {
+    for (int i = 0 ; i < static_cast<int>(parches.size()) ; ++i) {
 
         if (parches[i].tipo_de_CF == "dirichlet") {
-            lista_Dirichlet.emplace_back(parches, vel_star, mDotStar);
+            lista_Dirichlet.emplace_back(parches[i], vel_star, mDotStar);
         }
 
 
         if (parches[i].tipo_de_CF == "zero_neumann") {
-            lista_Zero_Neumann.emplace_back(parches, vel_star, mDotStar);
+            lista_Zero_Neumann.emplace_back(parches[i], vel_star, mDotStar);
         }
 
     }

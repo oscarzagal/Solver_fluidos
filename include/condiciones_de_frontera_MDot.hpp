@@ -11,94 +11,14 @@
 #include <string>
 
 #include "config_CF.hpp"
+#include "logs.hpp"
 #include "malla_por_bloques.hpp"
-
-/*-----------------------------------------------------------------------------
-                            Especializaciones
------------------------------------------------------------------------------*/
-
-// Declaracion adelantada
-struct Parches_Flujo_de_Masa;
-
-// Template specialization para las condiciones de frontera de flujo de masa
-struct Dirichlet_MDot {
-    const std::vector<Parches_Flujo_de_Masa>& parche;
-    const std::vector<double>& vel; // Velocidad en el centro de masa
-    std::vector<double>& mdotstar; // Objeto a modificar
-};
-
-struct Zero_Neumann_MDot {
-    const std::vector<Parches_Flujo_de_Masa>& parche;
-    const std::vector<double>& vel; // Velocidad en el centro de masa
-    std::vector<double>& mdotstar; // Objeto a modificar
-};
-
-// Clase generica (no se usa)
-template<typename T>
-class CF_MDot {
-public:
-    void aplicar() {}
-};
-
-// Especializacion para Dirichlet_MDot
-// TODO: Implementar la aplicacion de la condicion de frontera
-template<>
-class CF_MDot<Dirichlet_MDot> {
-public:
-
-    CF_MDot<Dirichlet_MDot>
-    (
-        const std::vector<Parches_Flujo_de_Masa>& parche_,
-        const std::vector<double>& vel_,
-        std::vector<double>& mdotstar_
-    ) :
-        dirichlet{parche_, vel_, mdotstar_}
-    {}
-
-    void aplicar() {
-        // NOTE: se tiene para consulta
-        // for (const auto& nodo : dirichlet.nodos_del_parche) {
-        //     dirichlet.mdotstar[nodo] = dirichlet.valor;
-        // }
-        std::cout << "Hola desde Dirichlet_MDot \n";
-    }
-
-    Dirichlet_MDot dirichlet;
-
-};
-
-template<>
-class CF_MDot<Zero_Neumann_MDot> {
-public:
-    CF_MDot<Zero_Neumann_MDot>
-    (
-        const std::vector<Parches_Flujo_de_Masa>& parche_,
-        const std::vector<double>& vel_,
-        std::vector<double>& mdotstar_
-    ) :
-        zero_neumann{parche_, vel_, mdotstar_}
-    {}
-
-    void aplicar() {
-        std::cout << "Hola desde Zero_Neumann_MDot \n";
-    }
-
-    Zero_Neumann_MDot zero_neumann;
-};
-
-
-
-/*-----------------------------------------------------------------------------
-                            Fin Especializaciones
------------------------------------------------------------------------------*/
 
 
 /*-----------------------------------------------------------------------------
                  Struct para almacenar parches Flujo de masa
 -----------------------------------------------------------------------------*/
 
-// TODO: obtener aqui tambien las deltas del objeto "malla" (ver primeras lineas
-// del main)
 struct Parches_Flujo_de_Masa {
 
     // Vector que va a almacenar una copia de los nodos obtenidos de la clase
@@ -147,6 +67,95 @@ struct Parches_Flujo_de_Masa {
 /*-----------------------------------------------------------------------------
                  Fin Struct para almacenar parches Flujo de masa
 -----------------------------------------------------------------------------*/
+
+
+/*-----------------------------------------------------------------------------
+                            Especializaciones
+-----------------------------------------------------------------------------*/
+
+// Template specialization para las condiciones de frontera de flujo de masa
+struct Dirichlet_MDot {
+    const Parches_Flujo_de_Masa& parche;
+    const std::vector<double>& vel; // Velocidad en el centro de masa
+    std::vector<double>& mdotstar; // Objeto a modificar
+};
+
+struct Zero_Neumann_MDot {
+    const Parches_Flujo_de_Masa& parche;
+    const std::vector<double>& vel; // Velocidad en el centro de masa
+    std::vector<double>& mdotstar; // Objeto a modificar
+};
+
+// Clase generica (no se usa)
+template<typename T>
+class CF_MDot {
+public:
+    void aplicar() {}
+};
+
+// Especializacion para Dirichlet_MDot
+// TODO: Implementar la aplicacion de la condicion de frontera en ambas
+// especializaciones.
+template<>
+class CF_MDot<Dirichlet_MDot> {
+public:
+
+    CF_MDot<Dirichlet_MDot>
+    (
+        const Parches_Flujo_de_Masa& parche_,
+        const std::vector<double>& vel_,
+        std::vector<double>& mdotstar_
+    ) :
+        dirichlet{parche_, vel_, mdotstar_} {}
+
+    void aplicar() {
+
+            const auto& nodos_parche = dirichlet.parche.obtener_nodos_del_parche;
+            const auto& desfase = dirichlet.parche.desfase;
+
+            int index = 0;
+            for (const int nodo : nodos_parche) {
+
+                std::cout << "Nodo: " << nodo << "\n";
+
+                dirichlet.mdotstar[nodo+desfase] = dirichlet.vel[nodo] * dirichlet.parche.delta[index];
+
+                ++index;
+
+            }
+
+    }
+
+    Dirichlet_MDot dirichlet;
+
+};
+
+template<>
+class CF_MDot<Zero_Neumann_MDot> {
+public:
+    CF_MDot<Zero_Neumann_MDot>
+    (
+        const Parches_Flujo_de_Masa& parche_,
+        const std::vector<double>& vel_,
+        std::vector<double>& mdotstar_
+    ) :
+        zero_neumann{parche_, vel_, mdotstar_}
+    {}
+
+    void aplicar() {
+        std::cout << "Hola desde Zero_Neumann_MDot \n";
+    }
+
+    Zero_Neumann_MDot zero_neumann;
+};
+
+
+
+/*-----------------------------------------------------------------------------
+                            Fin Especializaciones
+-----------------------------------------------------------------------------*/
+
+
 
 
 /*-----------------------------------------------------------------------------
