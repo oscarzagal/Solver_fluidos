@@ -88,5 +88,16 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. [ ] Implementar la función miembro `aplicar` de la clase `condiciones_de_frontera_MDot.hpp::CF_MDot<Zero_Neumann_MDot>`.
-2. [ ] Investigar una herramienta para pruebas unitarias.
+1. [x] Implementar la función miembro `aplicar` de la clase `condiciones_de_frontera_MDot.hpp::CF_MDot<Zero_Neumann_MDot>`.
+2. [x] No olvidar la multiplicación por el vector normal en `condiciones_de_frontera_MDot.hpp::CF_MDot<Dirichlet_MDot>`.
+3. [ ] Investigar una herramienta para pruebas unitarias.
+
+
+# 9 septiembre 2025
+
+1. Se implementó la función miembro `aplicar` de la clase `condiciones_de_frontera_MDot.hpp::CF_MDot<Zero_Neumann_MDot>`, añadiendo el vector normal. Se comprobó que el cálculo está bien.
+
+TODO (para la siguiente sesión):
+
+1. [ ] Investigar una herramienta para pruebas unitarias.
+2. [ ] Comenzar a implementar el cálculo del flujo de masa a través de la interpolación de Rhie-Chow.

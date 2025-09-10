@@ -174,7 +174,7 @@ int main() {
                             Inicializacion de campos
     -----------------------------------------------------------------------------*/
 
-    Campo::Momentum vecU(nx, ny, 99.0, 1.0);
+    Campo::Momentum vecU(nx, ny, - 99.0, 1.0);
     Campo::Presion  presion(nx, ny, 0.0);
     Campo::velFace  velface(nx, ny, 0.0);
     Campo::MDotStar mdotstar(nx, ny, 0.0);
@@ -265,13 +265,13 @@ int main() {
 
         mdotstar.lista_Dirichlet_x[0].aplicar();
         mdotstar.lista_Dirichlet_x[1].aplicar();
-        // mdotstar.lista_Zero_Neumann_x[0].aplicar();
-        // mdotstar.lista_Zero_Neumann_x[1].aplicar();
+        mdotstar.lista_Zero_Neumann_x[0].aplicar();
+        mdotstar.lista_Zero_Neumann_x[1].aplicar();
 
         mdotstar.lista_Dirichlet_y[0].aplicar();
         mdotstar.lista_Dirichlet_y[1].aplicar();
-        // mdotstar.lista_Zero_Neumann_y[0].aplicar();
-        // mdotstar.lista_Zero_Neumann_y[1].aplicar();
+        mdotstar.lista_Zero_Neumann_y[0].aplicar();
+        mdotstar.lista_Zero_Neumann_y[1].aplicar();
     }
 
     if (debug3) {
@@ -285,12 +285,6 @@ int main() {
 
 
     }
-
-    // Calculo debe realizarse con una instancia propia de MDotStar para despues:
-    // velU.mdotstar = mdotstar;
-    // energia.mdotstar = mdotstar;
-    // NOTE: no hace falta tener una instancia propia ya que en los coeficientes agrupados
-    // ("A_coef" struct) esta el flujo de masa implicito.
 
 
     /*-----------------------------------------------------------------------------

@@ -6,12 +6,10 @@
 #define CONDICIONES_DE_FRONTERA_MDOT_HPP
 
 #include <array>
-#include <iostream>
 #include <vector>
 #include <string>
 
 #include "config_CF.hpp"
-#include "logs.hpp"
 #include "malla_por_bloques.hpp"
 
 
@@ -110,19 +108,22 @@ public:
 
     void aplicar() {
 
-            const auto& nodos_parche = dirichlet.parche.obtener_nodos_del_parche;
-            const auto& desfase = dirichlet.parche.desfase;
+        const auto& nodos_parche = dirichlet.parche.obtener_nodos_del_parche;
+        const auto& desfase      = dirichlet.parche.desfase;
 
-            int index = 0;
-            for (const int nodo : nodos_parche) {
+        int index = 0;
+        for (const int nodo : nodos_parche) {
 
-                std::cout << "Nodo: " << nodo << "\n";
+            auto& mdotstar          = dirichlet.mdotstar[nodo+desfase];
+            const auto& vel         = dirichlet.vel[nodo];
+            const auto& delta       = dirichlet.parche.delta[index];
+            const auto& vecNormUnit = dirichlet.parche.vecUnitNormal;
 
-                dirichlet.mdotstar[nodo+desfase] = dirichlet.vel[nodo] * dirichlet.parche.delta[index];
+            mdotstar = vel * delta * vecNormUnit;
 
-                ++index;
+            ++index;
 
-            }
+        }
 
     }
 
@@ -143,7 +144,23 @@ public:
     {}
 
     void aplicar() {
-        std::cout << "Hola desde Zero_Neumann_MDot \n";
+
+        const auto& nodos_parche = zero_neumann.parche.obtener_nodos_del_parche;
+        const auto& desfase      = zero_neumann.parche.desfase;
+
+        int index = 0;
+        for (const int nodo : nodos_parche) {
+
+            auto& mdotstar          = zero_neumann.mdotstar[nodo+desfase];
+            const auto& vel         = zero_neumann.vel[nodo];
+            const auto& delta       = zero_neumann.parche.delta[index];
+            const auto& vecNormUnit = zero_neumann.parche.vecUnitNormal;
+
+            mdotstar = vel * delta * vecNormUnit;
+
+            ++index;
+
+        }
     }
 
     Zero_Neumann_MDot zero_neumann;
@@ -154,7 +171,6 @@ public:
 /*-----------------------------------------------------------------------------
                             Fin Especializaciones
 -----------------------------------------------------------------------------*/
-
 
 
 
@@ -190,9 +206,6 @@ void asignar_condiciones_de_frontera_MDot
     std::vector<CF_MDot<Dirichlet_MDot>>     & lista_Dirichlet,
     std::vector<CF_MDot<Zero_Neumann_MDot>>  & lista_Zero_Neumann
 );
-
-// TODO: Implementar la funcion "asignar_condiciones_de_frontera_MDot" similar a la de "asignar_condiciones_de_frontera" en "condiciones_de_frontera.*"
-// Usar "emplace_back" en lugar de "push_back" para evitar temporales innecesarios. Más información en "tests/template_specialization.cpp"
 
 
 /*-----------------------------------------------------------------------------
