@@ -7,9 +7,15 @@
 
 #include <vector>
 
+// TODO: crear un constructor para que asigne el tamaño
+
 struct Grad_explicito {
     // Gradiente explicito multiplicado por el volumen
     std::vector<double> grad_x_vol, grad_y_vol;
+
+    // Constructor
+    Grad_explicito(int, int);
+
 };
 
 struct fluxes_convectivos {
@@ -18,6 +24,9 @@ struct fluxes_convectivos {
 
     // Coeficientes convectivos en las caras para el coeficiente agrupado C
     std::vector<double> fluxCConv_e, fluxCConv_w, fluxCConv_n, fluxCConv_s;
+
+    // Constructor
+    fluxes_convectivos(int, int);
 };
 
 struct fluxes_difusivos {
@@ -26,6 +35,9 @@ struct fluxes_difusivos {
 
     // Coeficientes difusivos en las caras para el coeficiente agrupado C
     std::vector<double> fluxCDif_e, fluxCDif_w, fluxCDif_n, fluxCDif_s;
+
+    // Constructor
+    fluxes_difusivos(int, int);
 };
 
 #endif //VARIABLES_DISCRETIZACION_HPP

@@ -97,7 +97,14 @@ TODO (para la siguiente sesión):
 
 1. Se implementó la función miembro `aplicar` de la clase `condiciones_de_frontera_MDot.hpp::CF_MDot<Zero_Neumann_MDot>`, añadiendo el vector normal. Se comprobó que el cálculo está bien.
 
+
+# 10 septiembre 2025
+
+1. Se retrasó lo del cálculo del flujo de masa debido a que primero se deben de calcular los coeficientes agrupados para la ecuación de momentum.
+2. Se comenzó el cálculo de la conductancia difusiva, agregando los archivos `conductancia_difusiva.*`.
+
 TODO (para la siguiente sesión):
 
-1. [ ] Investigar una herramienta para pruebas unitarias.
-2. [ ] Comenzar a implementar el cálculo del flujo de masa a través de la interpolación de Rhie-Chow.
+1. [ ] Codificar los constructores en `variables_discretizacion.cpp` y crear las variables en el `main` para uso posterior.
+2. [ ] Implementar el cálculo de la conductancia difusiva en `conductancia_difusiva.*`
+3. [ ] Investigar una herramienta para pruebas unitarias.

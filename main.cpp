@@ -20,8 +20,7 @@
 
 
 constexpr bool debug = false; // Parches flujo de masa
-constexpr bool debug2 = true; // Listas para las especializaciones
-constexpr bool debug3 = debug2; // Flujo de masa
+constexpr bool debug2 = true; // Listas para las especializaciones y flujo de masa
 
 int main() {
 
@@ -272,9 +271,6 @@ int main() {
         mdotstar.lista_Dirichlet_y[1].aplicar();
         mdotstar.lista_Zero_Neumann_y[0].aplicar();
         mdotstar.lista_Zero_Neumann_y[1].aplicar();
-    }
-
-    if (debug3) {
 
         for (int j = 0 ; j < ny ; ++j) {
             for (int i = 0 ; i < nx ; ++i) {
@@ -283,12 +279,23 @@ int main() {
             }
         }
 
-
     }
 
 
     /*-----------------------------------------------------------------------------
                       Fin asignacion condiciones de frontera
+    -----------------------------------------------------------------------------*/
+
+
+
+    /*-----------------------------------------------------------------------------
+                        Calculo de la conductancia difusiva
+    -----------------------------------------------------------------------------*/
+
+
+
+    /*-----------------------------------------------------------------------------
+                     Fin Calculo de la conductancia difusiva
     -----------------------------------------------------------------------------*/
 
 

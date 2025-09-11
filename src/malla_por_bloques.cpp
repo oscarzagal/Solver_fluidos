@@ -315,7 +315,7 @@ namespace Malla {
     );
 
     // Nodos que deben de ser borrados en y
-    for (int i=0; i<coord_final_y.size()-1; ++i) {
+    for (int i=0; i<(int)coord_final_y.size()-1; ++i) {
       y_tmp.erase
       (
         std::remove(y_tmp.begin(),y_tmp.end(),coord_final_y[i]),y_tmp.end()
