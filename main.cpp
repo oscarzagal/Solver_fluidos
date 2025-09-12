@@ -8,6 +8,8 @@
 #include "condiciones_de_frontera.hpp"
 #include "condiciones_de_frontera_MDot.hpp"
 #include "Campo.hpp"
+#include "variables_discretizacion.hpp"
+#include "ecuacion_momentum.hpp"
 #include "config_control.hpp"
 #include "solvers_lineales.hpp"
 #include "calculo_del_error.hpp"
@@ -19,8 +21,8 @@
 #include <vector>
 
 
-constexpr bool debug = false; // Parches flujo de masa
-constexpr bool debug2 = true; // Listas para las especializaciones y flujo de masa
+constexpr bool debug  = false; // Parches flujo de masa
+constexpr bool debug2 = false; // Listas para las especializaciones y flujo de masa
 
 int main() {
 
@@ -56,6 +58,7 @@ int main() {
     //     printf("deltay[%d] = %f\n", i, malla.deltay[i]);
     // }
 
+    // std::cout << "ge en el main.cpp \n";
     // for (int j = 0; j < ny; ++j) {
     //     for (int i = 0; i < nx; ++i) {
     //         printf("ge[%d] = %f\n", i + nx * j, inter.ge[i + nx * j]);
@@ -169,14 +172,20 @@ int main() {
     -----------------------------------------------------------------------------*/
 
 
+
     /*-----------------------------------------------------------------------------
                             Inicializacion de campos
     -----------------------------------------------------------------------------*/
 
-    Campo::Momentum vecU(nx, ny, - 99.0, 1.0);
+    Campo::Momentum velU(nx, ny, - 99.0, 1.0);
     Campo::Presion  presion(nx, ny, 0.0);
     Campo::velFace  velface(nx, ny, 0.0);
     Campo::MDotStar mdotstar(nx, ny, 0.0);
+
+    Gradiente grad(nx, ny); // Gradiente de presion por volumen
+    fluxes_difusivos flux_dif(nx, ny);
+    fluxes_convectivos flux_conv(nx, ny);
+
 
     /*-----------------------------------------------------------------------------
                            Fin inicializacion de campos
@@ -196,10 +205,10 @@ int main() {
         Parches_sur,
         Parches_este,
         Parches_oeste,
-        vecU.u_star,
+        velU.u_star,
         nx,
-        vecU.lista_parches_dirichlet_u,
-        vecU.lista_parches_dinamicos_u,
+        velU.lista_parches_dirichlet_u,
+        velU.lista_parches_dinamicos_u,
         g_dirichlet_u,
         g_zero_neumann_u
     );
@@ -210,10 +219,10 @@ int main() {
         Parches_sur,
         Parches_este,
         Parches_oeste,
-        vecU.v_star,
+        velU.v_star,
         nx,
-        vecU.lista_parches_dirichlet_v,
-        vecU.lista_parches_dinamicos_v,
+        velU.lista_parches_dirichlet_v,
+        velU.lista_parches_dinamicos_v,
         g_dirichlet_v,
         g_zero_neumann_v
     );
@@ -241,8 +250,8 @@ int main() {
         parches_sur_FM,
         parches_este_FM,
         parches_oeste_FM,
-        vecU.u_star,
-        vecU.v_star,
+        velU.u_star,
+        velU.v_star,
         mdotstar.mDotStar_x,
         mdotstar.mDotStar_y,
         mdotstar.lista_Dirichlet_x,
@@ -289,14 +298,29 @@ int main() {
 
 
     /*-----------------------------------------------------------------------------
-                        Calculo de la conductancia difusiva
+                               Armado de ecuaciones
+    -----------------------------------------------------------------------------*/
+
+    Ecuacion_Momentum ecuacion_momentum(malla,velU,presion,grad,flux_dif,flux_conv);
+
+    ecuacion_momentum.resolver();
+
+    /*-----------------------------------------------------------------------------
+                            Fin Armado de ecuaciones
+    -----------------------------------------------------------------------------*/
+
+
+    /*-----------------------------------------------------------------------------
+                               Inicio bucle SIMPLE
     -----------------------------------------------------------------------------*/
 
 
 
     /*-----------------------------------------------------------------------------
-                     Fin Calculo de la conductancia difusiva
+                               Fin Inicio bucle SIMPLE
     -----------------------------------------------------------------------------*/
+
+
 
 
     return 0;

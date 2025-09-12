@@ -7,14 +7,13 @@
 
 #include <vector>
 
-// TODO: crear un constructor para que asigne el tamaño
 
-struct Grad_explicito {
+struct Gradiente {
     // Gradiente explicito multiplicado por el volumen
     std::vector<double> grad_x_vol, grad_y_vol;
 
     // Constructor
-    Grad_explicito(int, int);
+    Gradiente(int, int);
 
 };
 
@@ -39,5 +38,7 @@ struct fluxes_difusivos {
     // Constructor
     fluxes_difusivos(int, int);
 };
+
+
 
 #endif //VARIABLES_DISCRETIZACION_HPP

@@ -10,45 +10,46 @@
 #include "variables_discretizacion.hpp"
 #include "Campo.hpp"
 
-namespace Esquemas_discretizacion {
+namespace Discretizacion {
 
-    void laplaciano_lineal
-    (
-        int nx,
-        int ny,
-        double gamma,
-        fluxes_difusivos &fluxes,
-        const Malla::Mallador &malla
-    );
+    namespace Implicita {
 
-    void gradiente_explicito
-    (
-        int nx,
-        int ny,
-        const Malla::Mallador::Interpolacion &inter,
-        Grad_explicito &grad_explicito,
-        const std::vector<double> &P,
-        const Malla::Mallador &malla
-    );
+        // Modifica el estado de "fluxes"
+        void laplaciano_lineal
+        (
+             int nx,
+             int ny,
+             double gamma,
+             fluxes_difusivos &fluxes,
+             const Malla::Mallador &malla
+        );
 
-    void divergencia_upwind
-    (
-        int nx,
-        int ny,
-        fluxes_convectivos &fluxes,
-        Campo::MDotStar &mdotstar
-    );
+        // Modifica el estado de "fluxes"
+        void divergencia_upwind
+        (
+             int nx,
+             int ny,
+             fluxes_convectivos &fluxes,
+             Campo::MDotStar &mdotstar
+        );
+    }
 
-    void divergencia_explicita
-    (
-        int nx,
-        int ny,
-        const Malla::Mallador::Interpolacion &inter,
-        fluxes_convectivos &fluxes,
-        const std::vector<double> &P,
-        const Malla::Mallador &malla
-    );
+    namespace Explicita {
 
+        // Modifica el estado de "grad_explicito"
+        void gradiente
+        (
+             int nx,
+             int ny,
+             const Malla::Mallador::Interpolacion &inter,
+             Gradiente &grad_explicito,
+             const std::vector<double> &P,
+             const Malla::Mallador &malla
+        );
+
+    }
+
+    // TODO: implementar funcion
     void construccion_matriz_A_momentum
     (
         int nx,
@@ -57,19 +58,32 @@ namespace Esquemas_discretizacion {
         const fluxes_convectivos &fluxes_conv,
         Ecuaciones_gobernantes::A_coef &A_u,
         Ecuaciones_gobernantes::A_coef &A_v,
-        Grad_explicito &grad_explicito
+        Gradiente &grad
     );
 
-    void construccion_coeficiente_b_momemtum
-    (
-        int nx,
-        int ny,
-        Ecuaciones_gobernantes::A_coef &A_u,
-        Ecuaciones_gobernantes::A_coef &A_v,
-        const Malla::Mallador &malla,
-        const Grad_explicito &grad_explicito,
-        double rho
-    );
+
+    // void divergencia_explicita
+    // (
+    //     int nx,
+    //     int ny,
+    //     const Malla::Mallador::Interpolacion &inter,
+    //     fluxes_convectivos &fluxes,
+    //     const std::vector<double> &P,
+    //     const Malla::Mallador &malla
+    // );
+
+
+
+    // void construccion_coeficiente_b_momemtum
+    // (
+    //     int nx,
+    //     int ny,
+    //     Ecuaciones_gobernantes::A_coef &A_u,
+    //     Ecuaciones_gobernantes::A_coef &A_v,
+    //     const Malla::Mallador &malla,
+    //     const Gradiente &grad_explicito,
+    //     double rho
+    // );
 
 
 } // Fin namespace Esquemas_discretizacion

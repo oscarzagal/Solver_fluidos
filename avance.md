@@ -105,6 +105,23 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. [ ] Codificar los constructores en `variables_discretizacion.cpp` y crear las variables en el `main` para uso posterior.
-2. [ ] Implementar el cálculo de la conductancia difusiva en `conductancia_difusiva.*`
-3. [ ] Investigar una herramienta para pruebas unitarias.
+1. [x] Codificar los constructores en `variables_discretizacion.cpp` y crear las variables en el `main` para uso posterior.
+2. [x] Implementar el cálculo de la conductancia difusiva en `conductancia_difusiva.*`
+
+
+# 11 septiembre 2025
+
+1. Se crearon los archivos `ecuacion_momentum.*`, donde se definió una clase
+   para facilitar el cálculo del campo de velocidad.
+2. Se refactorizó la función miembro
+   `malla_por_bloques.cpp::obtener_factores_de_interpolacion`, quitando a
+   `push_back`.
+3. Se refactorizó la función `esquemas_de_discretizacion.*::gradiente` para
+   hacerla más legible.
+4. Se añadieron `namespaces` en `esquemas_de_discretizacion.*` para diferenciar
+   entre esquemas implícitos y explícitos.
+
+TODO (para la siguiente sesión):
+
+1. [ ] Crear en la struct `Ecuacion_Momentum` de los archivos `ecuacion_momentum.*` una función miembro que calcule la conductancia difusiva.
+2. [ ] Investigar una herramienta para pruebas unitarias.

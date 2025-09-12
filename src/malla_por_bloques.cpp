@@ -353,16 +353,27 @@ namespace Malla {
     const int nx = static_cast<int>(malla.obtener_el_numero_de_nodos(Nodos::nx));
     const int ny = static_cast<int>(malla.obtener_el_numero_de_nodos(Nodos::ny));
 
+    inter.ge.resize(nx * ny, 0.0);
+    inter.gw.resize(nx * ny, 0.0);
+    inter.gn.resize(nx * ny, 0.0);
+    inter.gs.resize(nx * ny, 0.0);
+
     const std::vector<double> vol = malla.obtener_volumenes();
 
-    // Importante calcular a partir del cero para evitar cosas raras
-    for (int j = 0; j < ny; ++j) {
-      for (int i = 0; i < nx; ++i) {
-        inter.ge.push_back(vol[i+nx*j]/(vol[i+nx*j]+vol[i+1+nx*j]));
+    for (int j = 1; j < ny - 1; ++j) {
+      for (int i = 1; i < nx - 1; ++i) {
+
+        const int Centro = i + nx * j;
+        const int Este   = (i + 1) + nx * j;
+        const int Oeste  = (i - 1) + nx * j;
+        const int Norte  = i + nx * (j + 1);
+        const int Sur    = i + nx * (j - 1);
+
+        inter.ge[Centro] = (vol[Centro]/(vol[Centro]+vol[Este]));
+        inter.gw[Centro] = (vol[Centro]/(vol[Centro]+vol[Oeste]));
+        inter.gn[Centro] = (vol[Centro]/(vol[Centro]+vol[Norte]));
+        inter.gs[Centro] = (vol[Centro]/(vol[Centro]+vol[Sur]));
         // printf("%d: %f / (%f + %f) \n",i+nx*j,vol[i+nx*j],vol[i+nx*j],vol[i+1+nx*j]);
-        inter.gw.push_back(vol[i+nx*j]/(vol[i+nx*j]+vol[i-1+nx*j]));
-        inter.gn.push_back(vol[i+nx*j]/(vol[i+nx*j]+vol[i+nx*(j+1)]));
-        inter.gs.push_back(vol[i+nx*j]/(vol[i+nx*j]+vol[i+nx*(j-1)]));
       }
     }
 
