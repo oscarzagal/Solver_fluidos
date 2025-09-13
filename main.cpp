@@ -20,7 +20,6 @@
 #include <iostream>
 #include <vector>
 
-
 constexpr bool debug  = false; // Parches flujo de masa
 constexpr bool debug2 = false; // Listas para las especializaciones y flujo de masa
 
@@ -91,7 +90,7 @@ int main() {
     std::vector<Parches_Flujo_de_Masa> parches_este_FM;
     std::vector<Parches_Flujo_de_Masa> parches_oeste_FM;
 
-                            // Espacio, lo que lleva cada espacio (objeto)
+                            // NOTE: Espacio, lo que lleva cada espacio (objeto)
     parches_norte_FM.resize(Parches_norte.size(), Parches_Flujo_de_Masa(nx, ny));
     parches_sur_FM.resize(Parches_sur.size(), Parches_Flujo_de_Masa(nx, ny));
     parches_este_FM.resize(Parches_este.size(), Parches_Flujo_de_Masa(nx, ny));
@@ -177,14 +176,14 @@ int main() {
                             Inicializacion de campos
     -----------------------------------------------------------------------------*/
 
-    Campo::Momentum velU(nx, ny, - 99.0, 1.0);
+    Campo::Momentum velU(nx, ny, 5.2, 1.0);
     Campo::Presion  presion(nx, ny, 0.0);
     Campo::velFace  velface(nx, ny, 0.0);
     Campo::MDotStar mdotstar(nx, ny, 0.0);
 
-    Gradiente grad(nx, ny); // Gradiente de presion por volumen
+    Gradiente grad(nx, ny);               // Gradiente de presion por volumen
     fluxes_difusivos flux_dif(nx, ny);
-    fluxes_convectivos flux_conv(nx, ny);
+    fluxes_convectivos flux_conv(nx, ny); // Implica el calculo del flujo de masa
 
 
     /*-----------------------------------------------------------------------------
@@ -271,16 +270,6 @@ int main() {
         std::cout << "Tamaño de lista_Zero_Neumann_y: " << mdotstar.lista_Zero_Neumann_y.size() << "\n";
 
 
-        mdotstar.lista_Dirichlet_x[0].aplicar();
-        mdotstar.lista_Dirichlet_x[1].aplicar();
-        mdotstar.lista_Zero_Neumann_x[0].aplicar();
-        mdotstar.lista_Zero_Neumann_x[1].aplicar();
-
-        mdotstar.lista_Dirichlet_y[0].aplicar();
-        mdotstar.lista_Dirichlet_y[1].aplicar();
-        mdotstar.lista_Zero_Neumann_y[0].aplicar();
-        mdotstar.lista_Zero_Neumann_y[1].aplicar();
-
         for (int j = 0 ; j < ny ; ++j) {
             for (int i = 0 ; i < nx ; ++i) {
                 printf("mDotStar_x[%d] = %f \n", i + nx * j, mdotstar.mDotStar_x[i + nx * j]);
@@ -289,6 +278,16 @@ int main() {
         }
 
     }
+
+    mdotstar.lista_Dirichlet_x[0].aplicar();
+    mdotstar.lista_Dirichlet_x[1].aplicar();
+    mdotstar.lista_Zero_Neumann_x[0].aplicar();
+    mdotstar.lista_Zero_Neumann_x[1].aplicar();
+
+    mdotstar.lista_Dirichlet_y[0].aplicar();
+    mdotstar.lista_Dirichlet_y[1].aplicar();
+    mdotstar.lista_Zero_Neumann_y[0].aplicar();
+    mdotstar.lista_Zero_Neumann_y[1].aplicar();
 
 
     /*-----------------------------------------------------------------------------
@@ -301,13 +300,17 @@ int main() {
                                Armado de ecuaciones
     -----------------------------------------------------------------------------*/
 
-    Ecuacion_Momentum ecuacion_momentum(malla,velU,presion,grad,flux_dif,flux_conv);
+    // Instancia de la ecuacion de momentum
+    Ecuacion_Momentum ecuacion_momentum(malla, velU, presion, mdotstar, grad, flux_dif, flux_conv);
+
+    ecuacion_momentum.calcular_conductancia_difusiva(nu);
 
     ecuacion_momentum.resolver();
 
     /*-----------------------------------------------------------------------------
                             Fin Armado de ecuaciones
     -----------------------------------------------------------------------------*/
+
 
 
     /*-----------------------------------------------------------------------------

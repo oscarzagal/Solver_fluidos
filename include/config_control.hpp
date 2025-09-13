@@ -7,29 +7,41 @@
 #include <string>
 
 // Propiedades termofisicas
-// Conductividad termica
+// VARIABLE GLOBAL: Conductividad termica
 inline constexpr double k = 20.0;
 
-// Densidad
+// VARIABLE GLOBAL: Densidad
 inline constexpr double rho = 1.0;
 
-// Viscosidad cinemática
+// VARIABLE GLOBAL: Viscosidad cinemática
 inline constexpr double nu = 1.0e-3;
 
 // Control
-inline constexpr int num_iteraciones_max = 6000;
 
+// VARIABLE GLOBAL: Paso de tiempo
+inline constexpr double delta_t = 0.01;
+
+// VARIABLE GLOBAL: Numero maximo de iteraciones
+inline constexpr int num_iteraciones_max = 60000;
+
+// VARIABLE GLOBAL: Tolerancia
 inline constexpr double tolerancia = 1e-10;
 
 // Resolución del sistema de ecuaciones
-// Solver lineal
-inline std::string solver_elegido_Temp = "SOR";
+
+// VARIABLE GLOBAL: Solver lineal para u
 inline std::string solver_elegido_u = "SOR";
+
+// VARIABLE GLOBAL: Solver lineal para v
 inline std::string solver_elegido_v = "SOR";
+
+// VARIABLE GLOBAL: Solver lineal para P
 inline std::string solver_elegido_P = "SOR";
 
 // Factores de relajacion
-inline constexpr double lambda_T = 0.5;
-inline constexpr double lambda_u = 0.5;
-inline constexpr double lambda_v = 0.5;
+
+// VARIABLE GLOBAL: Factor de relajacion para u
+inline constexpr double lambda_Vel = 0.5;
+
+// VARIABLE GLOBAL: Factor de relajacion para P
 inline constexpr double lambda_P = 0.5;

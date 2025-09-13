@@ -123,5 +123,29 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. [ ] Crear en la struct `Ecuacion_Momentum` de los archivos `ecuacion_momentum.*` una función miembro que calcule la conductancia difusiva.
-2. [ ] Investigar una herramienta para pruebas unitarias.
+1. [x] Crear en la struct `Ecuacion_Momentum` de los archivos `ecuacion_momentum.*` una función miembro que calcule la conductancia difusiva.
+2. [x] Investigar una herramienta para pruebas unitarias.
+
+
+# 12 septiembre 2025
+
+1. Se implementó la función miembro `Ecuacion_Momentum::ecuacion_momentum.*::calcular_conductancia_difusiva`.
+2. Se investigó la herramienta Catch2.
+
+TODO (para la siguiente sesión):
+
+1. [x] Investigar a `std::variant` para poder elegir en tiempo de compilación y usarlo en la elección de solvers lineales.
+2. [ ] Implementar función `esquemas_de_discretizacion.*::construccion_matriz_A_momentum`
+3. [ ] Implementar una prueba unitaria con Catch2, [referencia](https://youtu.be/hNaj9AOGFGM?si=i51ppoGVgKTg71PU).
+
+
+# 13 septiembre 2025
+
+1. Se construyeron las funciones `esquemas_de_discretizacion.cpp::Discretizacion::construccion_matriz_A_momentum` y `esquemas_de_discretizacion.cpp::Discretizacion::construccion_coeficiente_b_momemtum`, aunque aún falta testeo.
+2. Se usaron las funciones mencionadas en el punto uno en la clase `ecuacion_momentum.cpp::Ecuacion_Momentum`.
+3. Se usó `std::variant` en `ecuacion_momentum.cpp::Ecuacion_Momentum`. Se implementó en `solvers_lineales.hpp::solverVariant`.
+
+
+TODO (para la siguiente sesión):
+
+1. [ ] Revisar cuidadosamente los cálculos para la obtención del coeficiente A.

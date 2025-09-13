@@ -7,6 +7,8 @@
 
 #include "Campo.hpp"
 #include "variables_discretizacion.hpp"
+#include "solvers_lineales.hpp"
+#include <vector>
 
 struct Ecuacion_Momentum{
 
@@ -16,6 +18,7 @@ struct Ecuacion_Momentum{
         Malla::Mallador    &,
         Campo::Momentum    &,
         Campo::Presion     &,
+        Campo::MDotStar    &,
         Gradiente          &,
         fluxes_difusivos   &,
         fluxes_convectivos &
@@ -26,6 +29,10 @@ struct Ecuacion_Momentum{
     // Modifica el estado de "velU"
     void resolver();
 
+    // Modifica el estado de "flux_dif". Para flujo incompresible solo es
+    // necesario calcularla una vez.
+    void calcular_conductancia_difusiva(const double nu);
+
 
     /* Miembros */
 
@@ -33,6 +40,7 @@ struct Ecuacion_Momentum{
     Malla::Mallador    & malla;
     Campo::Momentum    & velU;
     Campo::Presion     & presion;
+    Campo::MDotStar    & mdotstar;
     Gradiente          & grad;
     fluxes_difusivos   & flux_dif;
     fluxes_convectivos & flux_conv;
@@ -40,7 +48,12 @@ struct Ecuacion_Momentum{
     // Miembros adicionales que se inicializan en la lista de inicializacion
     const int nx;
     const int ny;
+    const std::vector<double> vol; // Volumenes de las celdas
     const Malla::Mallador::Interpolacion inter;
+
+    // Eleccion del solver lineal
+    Solver_lineal::solverVariant solver_u;
+    Solver_lineal::solverVariant solver_v;
 
 };
 

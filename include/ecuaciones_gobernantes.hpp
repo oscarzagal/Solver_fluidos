@@ -18,7 +18,7 @@ struct MDotStar {
 
 struct A_coef {
     // Matriz A que almacena los coeficientes agrupados
-    std::vector<double> ap, ae, aw, an, as, b;
+    std::vector<double> ac, ae, aw, an, as, b;
 };
 
 struct Momentum {

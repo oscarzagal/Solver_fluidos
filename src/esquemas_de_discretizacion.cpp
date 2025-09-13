@@ -3,8 +3,10 @@
 //
 
 #include "esquemas_de_discretizacion.hpp"
+#include "config_control.hpp"
 #include "utilidades.hpp"
 #include <algorithm>
+#include <vector>
 
 namespace Discretizacion {
 
@@ -42,10 +44,10 @@ namespace Discretizacion {
                 for (int i = 1; i < nx - 1; i++) {
 
                     // Coeficientes difusivos en las caras para el coeficiente agrupado a_F
-                    fluxFDif_e[idx(i,j,nx)] = - gamma * deltay[j] / (x[i + 1] - x[i]);
-                    fluxFDif_w[idx(i,j,nx)] = - gamma * deltay[j] / (x[i] - x[i - 1]);
-                    fluxFDif_n[idx(i,j,nx)] = - gamma * deltax[i] / (y[j + 1] - y[j]);
-                    fluxFDif_s[idx(i,j,nx)] = - gamma * deltax[i] / (y[j] - y[j - 1]);
+                    fluxFDif_e[idx(i, j, nx)] = - gamma * deltay[j] / (x[i + 1] - x[i]);
+                    fluxFDif_w[idx(i, j, nx)] = - gamma * deltay[j] / (x[i] - x[i - 1]);
+                    fluxFDif_n[idx(i, j, nx)] = - gamma * deltax[i] / (y[j + 1] - y[j]);
+                    fluxFDif_s[idx(i, j, nx)] = - gamma * deltax[i] / (y[j] - y[j - 1]);
 
                     // Coeficientes difusivos en las caras para el coeficiente agrupado a_C
                     fluxCDif_e[idx(i, j, nx)] = - fluxFDif_e[idx(i, j, nx)];
@@ -131,7 +133,7 @@ namespace Discretizacion {
                 // Solo se calcula una vez por cada paso de "j"
                 const auto Deltay = deltay[j];
 
-                for (int i=1; i<nx-1; ++i) {
+                for (int i = 1 ; i < nx - 1 ; ++i) {
 
                     const int Centro = i + nx * j;
                     const int Este   = (i + 1) + nx * j;
@@ -158,6 +160,8 @@ namespace Discretizacion {
                     const auto P_n = interpolar(P_C, P_N, gn);
                     const auto P_s = interpolar(P_C, P_S, gs);
 
+                    // NOTE: recordar que los gradientes de presion van multiplicados por
+                    // el inverso de la densidad
                     gPstar_x_vol[Centro] = (P_e - P_w) * Deltay;
                     gPstar_y_vol[Centro] = (P_n - P_s) * Deltax;
                 }
@@ -168,7 +172,129 @@ namespace Discretizacion {
     } // Fin namespace Explicita
 
 
+    void construccion_coeficiente_b_momemtum
+    (
+         const int nx,
+         const int ny,
+         Campo::A_coef             & A,
+         const std::vector<double> & vol,
+         const std::vector<double> & grad_vol,
+         const std::vector<double> & vel
+    )
+    {
 
+        auto& b        = A.b;
+        const auto& ac = A.ac;
+
+        const double inv_rho = 1.0 / rho;
+
+        for (int j = 1 ; j < ny - 1 ; ++j) {
+            for (int i = 1 ; i < nx - 1 ; ++i) {
+
+                const int Centro = i + nx * j;
+
+                const auto Grad_vol = grad_vol[Centro];
+                const auto Ac = ac[Centro];
+                const auto Vel = vel[Centro];
+                const auto Vol = vol[Centro];
+
+                /*                         discretizacion implicita    +   pseudo transitorio */
+                b[Centro] = - inv_rho * Grad_vol + (1.0 - lambda_Vel) * Ac * Vel + Vel * Vol / delta_t;
+
+            }
+        }
+
+    }
+
+
+    void construccion_matriz_A_momentum
+    (
+         const int nx,
+         const int ny,
+         const fluxes_difusivos    & fluxes_dif,
+         const fluxes_convectivos  & fluxes_conv,
+         const std::vector<double> & vol,
+         const std::vector<double> & vel_u,
+         const std::vector<double> & vel_v,
+         Campo::A_coef             & A_u,
+         Campo::A_coef             & A_v,
+         Gradiente                 & grad
+    )
+    {
+
+        auto& ae = A_u.ae;
+        auto& aw = A_u.aw;
+        auto& an = A_u.an;
+        auto& as = A_u.as;
+        auto& ac = A_u.ac;
+
+        for (int j = 1 ; j < ny - 1 ; ++j) {
+            for (int i = 1 ; i < nx - 1 ; ++i) {
+
+                const int Centro = i + nx * j;
+
+                /*-----------------------------------------------------------------------------
+                  Coeficientes vecinos
+                  -----------------------------------------------------------------------------*/
+
+                const auto fluxFDif_e = fluxes_dif.fluxFDif_e[Centro];
+                const auto fluxFDif_w = fluxes_dif.fluxFDif_w[Centro];
+                const auto fluxFDif_n = fluxes_dif.fluxFDif_n[Centro];
+                const auto fluxFDif_s = fluxes_dif.fluxFDif_s[Centro];
+
+                const auto fluxFConv_e = fluxes_conv.fluxFConv_e[Centro];
+                const auto fluxFConv_w = fluxes_conv.fluxFConv_w[Centro];
+                const auto fluxFConv_n = fluxes_conv.fluxFConv_n[Centro];
+                const auto fluxFConv_s = fluxes_conv.fluxFConv_s[Centro];
+
+                /*-----------------------------------------------------------------------------
+                  Fin Coeficientes vecinos
+                  -----------------------------------------------------------------------------*/
+
+
+
+                /*-----------------------------------------------------------------------------
+                  Coeficientes centrales
+                  -----------------------------------------------------------------------------*/
+
+                const auto fluxCDif_e = fluxes_dif.fluxCDif_e[Centro];
+                const auto fluxCDif_w = fluxes_dif.fluxCDif_w[Centro];
+                const auto fluxCDif_n = fluxes_dif.fluxCDif_n[Centro];
+                const auto fluxCDif_s = fluxes_dif.fluxCDif_s[Centro];
+
+                const auto fluxCConv_e = fluxes_conv.fluxCConv_e[Centro];
+                const auto fluxCConv_w = fluxes_conv.fluxCConv_w[Centro];
+                const auto fluxCConv_n = fluxes_conv.fluxCConv_n[Centro];
+                const auto fluxCConv_s = fluxes_conv.fluxCConv_s[Centro];
+
+                const auto sumFluxCDif  = fluxCDif_e + fluxCDif_w + fluxCDif_n + fluxCDif_s;
+                const auto sumFluxCConv = fluxCConv_e + fluxCConv_w + fluxCConv_n + fluxCConv_s;
+
+                /*-----------------------------------------------------------------------------
+                  Fin Coeficientes centrales
+                  -----------------------------------------------------------------------------*/
+
+                ae[Centro] = fluxFDif_e + fluxFConv_e;
+                aw[Centro] = fluxFDif_w + fluxFConv_w;
+                an[Centro] = fluxFDif_n + fluxFConv_n;
+                as[Centro] = fluxFDif_s + fluxFConv_s;
+                ac[Centro] = (sumFluxCDif + sumFluxCConv + vol[Centro] / delta_t) / lambda_Vel;
+
+            }
+        }
+
+        // Asignacion para los coeficientes de "v", recordar que son los mismos,
+        // el unico que cambia es "b".
+        A_v.ae = ae;
+        A_v.aw = aw;
+        A_v.an = an;
+        A_v.as = as;
+        A_v.ac = ac;
+
+        Discretizacion::construccion_coeficiente_b_momemtum(nx, ny, A_u, vol, grad.grad_x_vol, vel_u);
+        Discretizacion::construccion_coeficiente_b_momemtum(nx, ny, A_v, vol, grad.grad_y_vol, vel_v);
+
+    }
 
 
 } // Fin namespace Esquemas_discretizacion

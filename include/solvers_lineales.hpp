@@ -7,26 +7,14 @@
 
 #include <iostream>
 #include <memory>
-#include <vector>
 #include <stdexcept>
-
-#include "config_control.hpp"
-#include "ecuaciones_gobernantes.hpp"
+#include <variant>
+#include <vector>
+#include "Campo.hpp"
 
 namespace Solver_lineal {
 
-    class Base {
-    public:
-
-        // Metodo virtual puro
-        virtual void resolver() = 0;
-
-        // Destructor virtual por defecto
-        virtual ~Base() = default;
-
-    };
-
-    class SOR : public Base {
+    class SOR {
     public:
 
         // Constructor
@@ -34,25 +22,26 @@ namespace Solver_lineal {
         (
             const int nx_,
             const int ny_,
+            const double lambda_,
             std::vector<double> &phi_,
-            std::vector<double> &phi_old_,
-            const Ecuaciones_gobernantes::A_coef& A_
+            std::vector<double> &phi_old_
+
         ) :
             nx(nx_),
             ny(ny_),
+            lambda(lambda_),
             phi(phi_),
-            phi_old(phi_old_),
-            A(A_) {
+            phi_old(phi_old_)
+            {}
 
-        }
-
-        void resolver() override {
+            // Se lo pasas por parametro porque ese objeto se obtiene en "runtime"
+            void resolver(const Campo::A_coef& A) {
 
             for (int j=1; j<ny-1; ++j) {
               for (int i=1; i<nx-1; ++i) {
-                phi[i+nx*j]=lambda_T*((phi[i+1+nx*j]*A.ae[i+nx*j]+phi[i-1+nx*j]*A.aw[i+nx*j]
+                phi[i+nx*j]=lambda*((phi[i+1+nx*j]*A.ae[i+nx*j]+phi[i-1+nx*j]*A.aw[i+nx*j]
                   +phi[i+nx*(j+1)]*A.an[i+nx*j]+phi[i+nx*(j-1)]*A.as[i+nx*j]+A.b[i+nx*j])
-                  /A.ap[i+nx*j])+(1.0-lambda_T)*phi_old[i+nx*j];
+                  /A.ac[i+nx*j])+(1.0-lambda)*phi_old[i+nx*j];
               }
             }
 
@@ -64,34 +53,43 @@ namespace Solver_lineal {
         const int nx;
         const int ny;
 
+        const double lambda;
+
         // Campos
         std::vector<double>& phi;
         std::vector<double>& phi_old;
 
-        // Coeficientes agrupados
-        const Ecuaciones_gobernantes::A_coef& A;
-
     };
 
-    inline void asignar
+
+    /*-----------------------------------------------------------------------------
+            Eleccion del solver lineal (auqnue por el momento solo hay uno)
+    -----------------------------------------------------------------------------*/
+
+    // Declaracion del variant
+    using solverVariant = std::variant<SOR>;
+
+    inline solverVariant solverElegido
     (
-        const int &nx,
-        const int &ny,
+        const int nx,
+        const int ny,
+        const double lambda,
         std::vector<double>& phi,
-        std::vector<double> &phi_old,
-        const Ecuaciones_gobernantes::A_coef& A,
-        const std::string& solver_elegido,
-        std::unique_ptr<Base>& campo
+        std::vector<double>& phi_old,
+        const std::string& solver_elegido
     )
     {
-
         if (solver_elegido == "SOR") {
-            campo = std::make_unique<SOR>(nx,ny,phi,phi_old,A);
+            return SOR(nx, ny, lambda, phi, phi_old);
         } else {
-            throw std::runtime_error("No existe el solver " + solver_elegido);
+            throw std::runtime_error("Solver no soportado: " + solver_elegido);
         }
 
     }
+
+    /*-----------------------------------------------------------------------------
+          Fin Eleccion del solver lineal (auqnue por el momento solo hay uno)
+    -----------------------------------------------------------------------------*/
 
 
 } // Fin namespace Solver_lineal

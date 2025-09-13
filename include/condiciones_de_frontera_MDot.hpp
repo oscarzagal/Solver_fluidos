@@ -92,8 +92,6 @@ public:
 };
 
 // Especializacion para Dirichlet_MDot
-// TODO: Implementar la aplicacion de la condicion de frontera en ambas
-// especializaciones.
 template<>
 class CF_MDot<Dirichlet_MDot> {
 public:

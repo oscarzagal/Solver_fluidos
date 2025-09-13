@@ -6,9 +6,9 @@
 #define ESQUEMAS_DE_DISCRETIZACION_HPP
 
 #include "malla_por_bloques.hpp"
-#include "ecuaciones_gobernantes.hpp"
 #include "variables_discretizacion.hpp"
 #include "Campo.hpp"
+#include <vector>
 
 namespace Discretizacion {
 
@@ -49,17 +49,33 @@ namespace Discretizacion {
 
     }
 
-    // TODO: implementar funcion
+    // Modifica el estado de "A", espeficamente al miembro "b"
+    void construccion_coeficiente_b_momemtum
+    (
+        int nx,
+        int ny,
+        Campo::A_coef & A,
+        const std::vector<double>      & vol,
+        const std::vector<double>      & grad_vol,
+        const std::vector<double>      & vel
+    );
+
+    // Modifica a "A_u" y "A_v"
     void construccion_matriz_A_momentum
     (
         int nx,
         int ny,
-        const fluxes_difusivos &fluxes_dif,
-        const fluxes_convectivos &fluxes_conv,
-        Ecuaciones_gobernantes::A_coef &A_u,
-        Ecuaciones_gobernantes::A_coef &A_v,
-        Gradiente &grad
+        const fluxes_difusivos         & fluxes_dif,
+        const fluxes_convectivos       & fluxes_conv,
+        const std::vector<double>      & vol,
+        const std::vector<double>      & vel_u,
+        const std::vector<double>      & vel_v,
+        Campo::A_coef & A_u,
+        Campo::A_coef & A_v,
+        Gradiente                      & grad
     );
+
+
 
 
     // void divergencia_explicita
@@ -71,20 +87,6 @@ namespace Discretizacion {
     //     const std::vector<double> &P,
     //     const Malla::Mallador &malla
     // );
-
-
-
-    // void construccion_coeficiente_b_momemtum
-    // (
-    //     int nx,
-    //     int ny,
-    //     Ecuaciones_gobernantes::A_coef &A_u,
-    //     Ecuaciones_gobernantes::A_coef &A_v,
-    //     const Malla::Mallador &malla,
-    //     const Gradiente &grad_explicito,
-    //     double rho
-    // );
-
 
 } // Fin namespace Esquemas_discretizacion
 
