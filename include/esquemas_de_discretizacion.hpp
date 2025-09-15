@@ -36,7 +36,8 @@ namespace Discretizacion {
 
     namespace Explicita {
 
-        // Modifica el estado de "grad_explicito"
+        // Modifica el estado de "grad_explicito". Esta funcion calcula el gradiente
+        // por el volumen del elemento computacional.
         void gradiente
         (
              int nx,

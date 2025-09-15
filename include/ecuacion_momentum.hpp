@@ -10,7 +10,7 @@
 #include "solvers_lineales.hpp"
 #include <vector>
 
-struct Ecuacion_Momentum{
+struct Ecuacion_Momentum {
 
     // Constructor
     Ecuacion_Momentum
@@ -31,7 +31,7 @@ struct Ecuacion_Momentum{
 
     // Modifica el estado de "flux_dif". Para flujo incompresible solo es
     // necesario calcularla una vez.
-    void calcular_conductancia_difusiva(const double nu);
+    void calcular_conductancia_difusiva();
 
 
     /* Miembros */

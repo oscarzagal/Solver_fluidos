@@ -49,10 +49,6 @@ int main() {
     // Numero de nodos en y
     const int ny = malla.obtener_el_numero_de_nodos(Malla::Nodos::ny);
 
-    const std::vector<double> vol = malla.obtener_volumenes();
-
-    const Malla::Mallador::Interpolacion inter = Malla::Mallador::obtener_factores_de_interpolacion(malla);
-
     // for (int i = 0; i < ny; ++i) {
     //     printf("deltay[%d] = %f\n", i, malla.deltay[i]);
     // }
@@ -303,9 +299,15 @@ int main() {
     // Instancia de la ecuacion de momentum
     Ecuacion_Momentum ecuacion_momentum(malla, velU, presion, mdotstar, grad, flux_dif, flux_conv);
 
-    ecuacion_momentum.calcular_conductancia_difusiva(nu);
+    ecuacion_momentum.calcular_conductancia_difusiva();
 
     ecuacion_momentum.resolver();
+
+    for (int j = 0 ; j < ny ; ++j) {
+      for (int i = 0 ; i < nx ; ++i) {
+          printf("vel_u[%d] = %f\n", i + nx * j, velU.u_star[i + nx * j]);
+      }
+    }
 
     /*-----------------------------------------------------------------------------
                             Fin Armado de ecuaciones

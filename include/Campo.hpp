@@ -15,6 +15,7 @@ namespace Campo {
 struct velFace {
     // Velocidades en las caras en "x" e "y"
     std::vector<double> uFace_x, vFace_y;
+    std::vector<double> uFace_x_n, vFace_y_n; // Iteracion anterior
 
     // Constructor
     velFace(int, int, double);

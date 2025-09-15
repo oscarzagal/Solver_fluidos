@@ -8,7 +8,6 @@
 #include "esquemas_de_discretizacion.hpp"
 #include "malla_por_bloques.hpp"
 #include "solvers_lineales.hpp"
-#include <iostream>
 #include <variant>
 
 /*-----------------------------------------------------------------------------
@@ -49,13 +48,17 @@ Ecuacion_Momentum::Ecuacion_Momentum
                              Funciones miembro
 -----------------------------------------------------------------------------*/
 
-void Ecuacion_Momentum::calcular_conductancia_difusiva(const double nu) {
+void Ecuacion_Momentum::calcular_conductancia_difusiva() {
 
     Discretizacion::Implicita::laplaciano_lineal(nx, ny, nu, flux_dif, malla);
 
 }
 
 void Ecuacion_Momentum::resolver() {
+
+    /*-----------------------------------------------------------------------------
+                            Resolucion ecuacion Momentum
+    -----------------------------------------------------------------------------*/
 
     Discretizacion::Explicita::gradiente(nx, ny, inter, grad, presion.P_star, malla);
 
@@ -75,50 +78,33 @@ void Ecuacion_Momentum::resolver() {
         grad
     );
 
-
     // NOTE: Si la lambda está dentro de un método y solo accede a miembros: usa [this]
-    // Solucion del sistema de ecuaciones
-    std::visit([this](auto& s){
-            s.resolver(velU.A_u);
+    // Solucion del sistema de ecuaciones a traves de un metodo elegido en tiempo de
+    // ejecucion.
+    std::visit([this](auto& campo_u){
+            campo_u.resolver(this->velU.A_u);
             }, solver_u);
 
-    std::visit([this](auto& s){
-            s.resolver(velU.A_v);
+    std::visit([this](auto& campo_v){
+            campo_v.resolver(this->velU.A_v);
             }, solver_v);
 
 
-    for (int j = 0 ; j < ny ; ++j) {
-      for (int i = 0 ; i < nx ; ++i) {
-          printf("vel_u[%d] = %f\n", i + nx * j, velU.u_star[i + nx * j]);
-      }
-    }
+    /*-----------------------------------------------------------------------------
+                          Fin Resolucion ecuacion Momentum
+    -----------------------------------------------------------------------------*/
 
 
 
-    // TODO: Llamar al solver lineal
-
-    // std::cout << "nx: " << nx << "\n";
-    // std::cout << "ny: " << ny << "\n";
-
-    // std::vector<double> vol = malla.obtener_volumenes();
-
-    // std::cout << "ge en el ecuacion_momentum.cpp \n";
-    // for (int j = 0; j < ny; ++j) {
-    //     for (int i = 0; i < nx; ++i) {
-    //         printf("ge[%d] = %f\n", i + nx * j, inter.ge[i + nx * j]);
-    //     }
-    // }
-
-    // std::cout << "\n\n";
-
-    // std::cout << "volumenes en ecuacion_momentum.cpp \n";
-    // for (int j = 0; j < ny; ++j) {
-    //     for (int i = 0; i < nx; ++i) {
-    //         printf("vol[%d] = %f\n", i + nx * j, vol[i + nx * j]);
-    //     }
-    // }
+    /*-----------------------------------------------------------------------------
+                           Actulizacion flujo de masa
+    -----------------------------------------------------------------------------*/
 
 
+
+    /*-----------------------------------------------------------------------------
+                         Fin Actulizacion flujo de masa
+    -----------------------------------------------------------------------------*/
 
 }
 

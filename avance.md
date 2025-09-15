@@ -148,4 +148,14 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. [ ] Revisar cuidadosamente los cálculos para la obtención del coeficiente A.
+1. [x] Revisar cuidadosamente los cálculos para la obtención del coeficiente A de la ecuación de momentum.
+
+
+# 14 septiembre 2025
+
+1. Se revisó el cálculo de la matriz de coeficientes A. No encontré nada raro, pero bueno, puede ser que esté mal algo que no haya notado y sea la raíz de un debuggeo del infierno.
+
+
+TODO (para la siguiente sesión):
+
+1. [ ] Implementar las funciones para el cálculo del flujo de masa en `flujo_de_masa.hpp`.
