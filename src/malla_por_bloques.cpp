@@ -369,10 +369,10 @@ namespace Malla {
         const int Norte  = i + nx * (j + 1);
         const int Sur    = i + nx * (j - 1);
 
-        inter.ge[Centro] = (vol[Centro]/(vol[Centro]+vol[Este]));
-        inter.gw[Centro] = (vol[Centro]/(vol[Centro]+vol[Oeste]));
-        inter.gn[Centro] = (vol[Centro]/(vol[Centro]+vol[Norte]));
-        inter.gs[Centro] = (vol[Centro]/(vol[Centro]+vol[Sur]));
+        inter.ge[Centro] = (vol[Centro] / (vol[Centro] + vol[Este]));
+        inter.gw[Centro] = (vol[Centro] / (vol[Centro] + vol[Oeste]));
+        inter.gn[Centro] = (vol[Centro] / (vol[Centro] + vol[Norte]));
+        inter.gs[Centro] = (vol[Centro] / (vol[Centro] + vol[Sur]));
         // printf("%d: %f / (%f + %f) \n",i+nx*j,vol[i+nx*j],vol[i+nx*j],vol[i+1+nx*j]);
       }
     }

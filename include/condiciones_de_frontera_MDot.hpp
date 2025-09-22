@@ -96,7 +96,7 @@ template<>
 class CF_MDot<Dirichlet_MDot> {
 public:
 
-    CF_MDot<Dirichlet_MDot>
+    CF_MDot
     (
         const Parches_Flujo_de_Masa& parche_,
         const std::vector<double>& vel_,
@@ -132,7 +132,7 @@ public:
 template<>
 class CF_MDot<Zero_Neumann_MDot> {
 public:
-    CF_MDot<Zero_Neumann_MDot>
+    CF_MDot
     (
         const Parches_Flujo_de_Masa& parche_,
         const std::vector<double>& vel_,

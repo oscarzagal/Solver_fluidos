@@ -8,6 +8,7 @@
 #include "Campo.hpp"
 #include "variables_discretizacion.hpp"
 #include "solvers_lineales.hpp"
+#include "flujo_de_masa.hpp"
 #include <vector>
 
 struct Ecuacion_Momentum {
@@ -34,6 +35,13 @@ struct Ecuacion_Momentum {
     void calcular_conductancia_difusiva();
 
 
+    // Helper para el solver lineal
+    template<typename Variant, class Mat>
+        void resolver_con(Variant& var, Mat& A) {
+            std::visit([&](auto& campo){ campo.resolver(A); }, var);
+        }
+
+
     /* Miembros */
 
     // Parametros del constructor
@@ -54,6 +62,9 @@ struct Ecuacion_Momentum {
     // Eleccion del solver lineal
     Solver_lineal::solverVariant solver_u;
     Solver_lineal::solverVariant solver_v;
+
+    // Coeficiente "d"
+    Coeficiente_d coef_d;
 
 };
 

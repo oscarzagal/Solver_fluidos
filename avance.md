@@ -158,4 +158,36 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
+1. [x] Investigar como se trata la ecuación de corrección en las fronteras para cuando sean tipo Dirichlet y Zero Neumann.
+
+
+# 15 septiembre 2025
+
+1. Se investigó el tratamiento adecuado para las condiciones de frontera Dirichlet y Zero Neumann para la ecuación de corrección de presión.
+
+
+# 16 septiembre 2025
+
+1. Se elaboró la función para calcular el coeficiente $d$ en `flujo_de_masa.cpp::Coeficiente_d::calcular`, aunque aún no se ha probado.
+2. Se elaboró una función de apoyo para llamar al solver lineal elegido en `ecuacion_momentum.hpp::Ecuacion_Momentum::resolver_con`.
+
+
+TODO (para la siguiente sesión):
+
+1. [x] Probar la función para el cálculo del coeficiente $d$ (`flujo_de_masa.cpp::Coeficiente_d::calcular`).
+2. [x] Corregir la implementación del coeficiente $d$ en `flujo_de_masa.cpp::Coeficiente_d::calcular`, de tal forma que no haya coeficientes $d$ para las caras $w$ y $s$.
+
+
+# 21 septiembre 2025
+
+1. Se probó la función `flujo_de_masa.cpp::Coeficiente_d::calcular`. No le vi nada raro, pero es uno de los puntos donde revisar cuando venga el debuggeo del infierno.
+
+
+# 22 septiembre 2025
+
+1. Se comprobó que el coeficiente $d_{n} = 0$ en la frontera correspondiente para la ecuación de corrección de presión, por lo que no será necesario el uso del coeficiente $a_{N}$ en las fronteras para ninguna de las condiciones de frontera.
+
+TODO (para la siguiente sesión):
+
 1. [ ] Implementar las funciones para el cálculo del flujo de masa en `flujo_de_masa.hpp`.
+2. [x] Comprobar que para la condición de frontera tipo Dirichlet para la ecuación de **corrección de presión** el coeficiente $d_{n}$ ($^{V_{n}}/_{a_{n}}$) es cero, dado que si se interpola se requiere el valor de $V_{N}$, y este es cero porque $\Delta_x$ o $\Delta_y$ pueden ser cero. En dado caso de ser cierto entonces será necesario hacer $a_{N} = 0$ en la frontera $N$ (se considera a $N$ como una frontera genérica, entonces no necesariamente corresponde con la frontera norte).

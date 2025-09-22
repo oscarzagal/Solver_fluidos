@@ -6,8 +6,10 @@
 #include "Campo.hpp"
 #include "config_control.hpp"
 #include "esquemas_de_discretizacion.hpp"
+#include "flujo_de_masa.hpp"
 #include "malla_por_bloques.hpp"
 #include "solvers_lineales.hpp"
+#include "logs.hpp"
 #include <variant>
 
 /*-----------------------------------------------------------------------------
@@ -36,7 +38,8 @@ Ecuacion_Momentum::Ecuacion_Momentum
     vol(malla_.obtener_volumenes()),
     inter(Malla::Mallador::obtener_factores_de_interpolacion(malla_)),
     solver_u(Solver_lineal::solverElegido(nx, ny, lambda_Vel, velU.u_star, velU.u_old, solver_elegido_u)),
-    solver_v(Solver_lineal::solverElegido(nx, ny, lambda_Vel, velU.v_star, velU.v_old, solver_elegido_v))
+    solver_v(Solver_lineal::solverElegido(nx, ny, lambda_Vel, velU.v_star, velU.v_old, solver_elegido_v)),
+    coef_d(nx, ny, vol)
 {}
 
 /*-----------------------------------------------------------------------------
@@ -53,6 +56,7 @@ void Ecuacion_Momentum::calcular_conductancia_difusiva() {
     Discretizacion::Implicita::laplaciano_lineal(nx, ny, nu, flux_dif, malla);
 
 }
+
 
 void Ecuacion_Momentum::resolver() {
 
@@ -81,19 +85,31 @@ void Ecuacion_Momentum::resolver() {
     // NOTE: Si la lambda está dentro de un método y solo accede a miembros: usa [this]
     // Solucion del sistema de ecuaciones a traves de un metodo elegido en tiempo de
     // ejecucion.
-    std::visit([this](auto& campo_u){
-            campo_u.resolver(this->velU.A_u);
-            }, solver_u);
 
-    std::visit([this](auto& campo_v){
-            campo_v.resolver(this->velU.A_v);
-            }, solver_v);
+    // std::visit([this](auto& campo_u){
+    //         campo_u.resolver(this->velU.A_u);
+    //         }, solver_u);
+
+    // std::visit([this](auto& campo_v){
+    //         campo_v.resolver(this->velU.A_v);
+    //         }, solver_v);
+
+    resolver_con(solver_u, velU.A_u);
+    resolver_con(solver_v, velU.A_v);
+
+    coef_d.calcular(velU.A_u, velU.A_v);
 
 
     /*-----------------------------------------------------------------------------
                           Fin Resolucion ecuacion Momentum
     -----------------------------------------------------------------------------*/
 
+    // LOG("calculo de los volumenes");
+    // for (int j = 0; j < ny; ++j) {
+    //     for (int i = 0; i < nx; ++i) {
+    //         printf("vol[%d] = %f\n", i + nx * j, vol[i + nx * j]);
+    //     }
+    // }
 
 
     /*-----------------------------------------------------------------------------
@@ -109,6 +125,8 @@ void Ecuacion_Momentum::resolver() {
 }
 
 
+
 /*-----------------------------------------------------------------------------
                          Fin Funciones miembro
 -----------------------------------------------------------------------------*/
+

@@ -8,6 +8,7 @@
 #include "condiciones_de_frontera.hpp"
 #include "condiciones_de_frontera_MDot.hpp"
 #include "Campo.hpp"
+#include "utilidades.hpp"
 #include "variables_discretizacion.hpp"
 #include "ecuacion_momentum.hpp"
 #include "config_control.hpp"
@@ -22,6 +23,7 @@
 
 constexpr bool debug  = false; // Parches flujo de masa
 constexpr bool debug2 = false; // Listas para las especializaciones y flujo de masa
+constexpr bool debug3 = true;  // Coeficiente_d
 
 int main() {
 
@@ -56,7 +58,7 @@ int main() {
     // std::cout << "ge en el main.cpp \n";
     // for (int j = 0; j < ny; ++j) {
     //     for (int i = 0; i < nx; ++i) {
-    //         printf("ge[%d] = %f\n", i + nx * j, inter.ge[i + nx * j]);
+    //         printf("vol[%d] = %f\n", i + nx * j, vol[i + nx * j]);
     //     }
     // }
 
@@ -79,8 +81,7 @@ int main() {
                             Parches para el flujo de masa
     -----------------------------------------------------------------------------*/
 
-    // TODO: hacer toda esta madre una funcion
-
+    // TODO: refactorizar basandose en el snippet del test/ranges_y_transform.md
     std::vector<Parches_Flujo_de_Masa> parches_norte_FM;
     std::vector<Parches_Flujo_de_Masa> parches_sur_FM;
     std::vector<Parches_Flujo_de_Masa> parches_este_FM;
@@ -92,9 +93,6 @@ int main() {
     parches_este_FM.resize(Parches_este.size(), Parches_Flujo_de_Masa(nx, ny));
     parches_oeste_FM.resize(Parches_oeste.size(), Parches_Flujo_de_Masa(nx, ny));
 
-    // NOTE: se debe de cuidar mucho el orden, lo cual hace que el codigo sea muy
-    // fragil. Es necesario corregir este defecto en el futuro, por ahora funciona
-    // y no es la prioridad.
     for (int i = 0; i < static_cast<int>(parches_norte_FM.size()); ++i) {
         parches_norte_FM[i].obtener_nodos_del_parche = Parches_norte[i].obtener_nodos_del_parche;
         parches_norte_FM[i].obtener_nombre = Parches_norte[i].obtener_nombre;
@@ -303,11 +301,86 @@ int main() {
 
     ecuacion_momentum.resolver();
 
-    for (int j = 0 ; j < ny ; ++j) {
-      for (int i = 0 ; i < nx ; ++i) {
-          printf("vel_u[%d] = %f\n", i + nx * j, velU.u_star[i + nx * j]);
-      }
-    }
+    // for (int j = 0 ; j < ny ; ++j) {
+    //   for (int i = 0 ; i < nx ; ++i) {
+    //       printf("vel_u[%d] = %f\n", i + nx * j, velU.u_star[i + nx * j]);
+    //   }
+    // }
+
+    if (debug3) {
+
+        const auto dC_u = ecuacion_momentum.coef_d.dC_u;
+        const auto dE_u = ecuacion_momentum.coef_d.dE_u;
+        const auto dW_u = ecuacion_momentum.coef_d.dW_u;
+        const auto dC_v = ecuacion_momentum.coef_d.dC_v;
+        const auto dN_v = ecuacion_momentum.coef_d.dN_v;
+        const auto dS_v = ecuacion_momentum.coef_d.dS_v;
+
+        const auto gx = ecuacion_momentum.inter.ge;
+        const auto gw = ecuacion_momentum.inter.gw;
+        const auto gy = ecuacion_momentum.inter.gn;
+        const auto gs = ecuacion_momentum.inter.gs;
+
+        // NOTE: solo habrian dos coeficientes "d" interpolados: "d_x" y "d_y", entonces
+        // creo que sera necesario corregir a `flujo_de_masa.cpp::Coeficiente_d::calcular`
+        std::vector<double> d_x(nx * ny, 0.0);
+        std::vector<double> d_y(nx * ny, 0.0);
+
+        // Fronteras de presion
+        for (int j = 1 ; j < ny - 1 ; ++j) {
+
+            const int Centro = 1 + nx * j;
+
+            d_x[Centro] = interpolar(dC_u[Centro], dW_u[Centro], gw[Centro]);
+            // printf("d_x[%d] = %f\n", Centro, d_x[Centro]);
+
+        }
+
+        // std::cout << "\n\n";
+
+        for (int i = 1 ; i < nx - 1 ; ++i) {
+
+            const int Centro = i + nx * 1;
+
+            d_y[Centro] = interpolar(dC_v[Centro], dS_v[Centro], gs[Centro]);
+            // printf("d_y[%d] = %f\n", Centro, d_y[Centro]);
+
+        }
+
+
+        for (int j = 1 ; j < ny - 1 ; ++j) {
+            for (int i = 1 ; i < nx - 2 ; ++i) {
+
+                const int Centro = i + nx * j;
+                const int Este   = (i + 1) + nx * j;
+
+                // Cara este local
+                d_x[Este] = interpolar(dC_u[Centro], dE_u[Centro], gx[Centro]);
+            }
+        }
+
+        for (int j = 1 ; j < ny - 2 ; ++j) {
+          for (int i = 1 ; i < nx - 1 ; ++i) {
+
+              const int Centro = i + nx * j;
+              const int Norte  = i + nx * (j + 1);
+
+              // Cara norte local
+              d_y[Norte] = interpolar(dC_v[Centro], dN_v[Centro], gy[Centro]);
+
+          }
+        }
+
+
+        for (int j = 0 ; j < ny ; ++j) {
+            for (int i = 0 ; i < nx ; ++i) {
+                // printf("d_x[%d] = %f\n", i + nx * j, d_x[i + nx * j]);
+                printf("d_y[%d] = %f\n", i + nx * j, d_y[i + nx * j]);
+            }
+        }
+
+    } // Fin debug3
+
 
     /*-----------------------------------------------------------------------------
                             Fin Armado de ecuaciones

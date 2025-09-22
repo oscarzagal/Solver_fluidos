@@ -5,8 +5,6 @@
 #ifndef SOLVERS_LINEALES_HPP
 #define SOLVERS_LINEALES_HPP
 
-#include <iostream>
-#include <memory>
 #include <stdexcept>
 #include <variant>
 #include <vector>
