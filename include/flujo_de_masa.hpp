@@ -43,6 +43,7 @@ void calcular_flujo_de_masa
      Campo::velFace                       & velFace,
      Campo::MDotStar                      & mdotstar,
      Coeficiente_d                        & coef_d,
+     const Malla::Mallador                & malla,
      const Campo::Momentum                & vel,
      const Campo::Presion                 & Pstar,
      const Gradiente                      & gradP,

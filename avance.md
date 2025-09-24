@@ -189,5 +189,15 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. [ ] Implementar las funciones para el cálculo del flujo de masa en `flujo_de_masa.hpp`.
-2. [x] Comprobar que para la condición de frontera tipo Dirichlet para la ecuación de **corrección de presión** el coeficiente $d_{n}$ ($^{V_{n}}/_{a_{n}}$) es cero, dado que si se interpola se requiere el valor de $V_{N}$, y este es cero porque $\Delta_x$ o $\Delta_y$ pueden ser cero. En dado caso de ser cierto entonces será necesario hacer $a_{N} = 0$ en la frontera $N$ (se considera a $N$ como una frontera genérica, entonces no necesariamente corresponde con la frontera norte).
+1. [x] Comprobar que para la condición de frontera tipo Dirichlet para la ecuación de **corrección de presión** el coeficiente $d_{n}$ ($^{V_{n}}/_{a_{n}}$) es cero, dado que si se interpola se requiere el valor de $V_{N}$, y este es cero porque $\Delta_x$ o $\Delta_y$ pueden ser cero. En dado caso de ser cierto entonces será necesario hacer $a_{N} = 0$ en la frontera $N$ (se considera a $N$ como una frontera genérica, entonces no necesariamente corresponde con la frontera norte).
+
+
+# 24 septiembre 2025
+
+1. Se empezó la construcción de la función `flujo_de_masa.cpp::calcular_flujo_de_masa`. Falta por probar y hacer el cálculo para la dirección $y$.
+
+
+TODO (para la siguiente sesión):
+
+1. [ ] Terminar de implementar la función para el cálculo del flujo de masa en `flujo_de_masa.hpp::calcular_flujo_de_masa`.
+2. [ ] Pasar también una instancia de `Campo::velFace` en `main.cpp`.

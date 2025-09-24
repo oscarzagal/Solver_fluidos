@@ -10,7 +10,9 @@ namespace Campo {
 
 velFace::velFace(const int nx, const int ny, double campo_inicial)
     : uFace_x(nx * ny, campo_inicial), vFace_y(nx * ny, campo_inicial),
-      uFace_x_n(nx * ny, campo_inicial), vFace_y_n(nx * ny, campo_inicial)
+      uFace_x_interp(nx * ny, campo_inicial), vFace_y_interp(nx * ny, campo_inicial),
+      uFace_x_n(nx * ny, campo_inicial), vFace_y_n(nx * ny, campo_inicial),
+      uFace_x_interp_n(nx * ny, campo_inicial), vFace_y_interp_n(nx * ny, campo_inicial)
 {}
 
 MDotStar::MDotStar(const int nx, const int ny, double campo_inicial)

@@ -161,7 +161,7 @@ namespace Discretizacion {
                     const auto P_s = interpolar(P_C, P_S, gs);
 
                     // NOTE: recordar que los gradientes de presion van multiplicados por
-                    // el inverso de la densidad
+                    // el inverso de la densidad en la ecuacion de momentum
                     gPstar_x_vol[Centro] = (P_e - P_w) * Deltay;
                     gPstar_y_vol[Centro] = (P_n - P_s) * Deltax;
                 }
@@ -194,11 +194,11 @@ namespace Discretizacion {
                 const int Centro = i + nx * j;
 
                 const auto Grad_vol = grad_vol[Centro];
-                const auto Ac = ac[Centro];
-                const auto Vel = vel[Centro];
-                const auto Vol = vol[Centro];
+                const auto Ac       = ac[Centro];
+                const auto Vel      = vel[Centro];
+                const auto Vol      = vol[Centro];
 
-                /*                         discretizacion implicita    +   pseudo transitorio */
+                /*                                 discretizacion implicita      +   pseudo transitorio */
                 b[Centro] = - inv_rho * Grad_vol + (1.0 - lambda_Vel) * Ac * Vel + Vel * Vol / delta_t;
 
             }

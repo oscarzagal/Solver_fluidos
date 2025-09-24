@@ -66,6 +66,9 @@ struct Ecuacion_Momentum {
     // Coeficiente "d"
     Coeficiente_d coef_d;
 
+    // Velocidad en las caras
+    Campo::velFace velface;
+
 };
 
 

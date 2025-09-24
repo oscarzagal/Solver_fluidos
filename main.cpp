@@ -23,7 +23,7 @@
 
 constexpr bool debug  = false; // Parches flujo de masa
 constexpr bool debug2 = false; // Listas para las especializaciones y flujo de masa
-constexpr bool debug3 = true;  // Coeficiente_d
+constexpr bool debug3 = false;  // Coeficiente_d
 
 int main() {
 
@@ -254,24 +254,6 @@ int main() {
     );
 
 
-    if (debug2)
-    {
-        std::cout << "\n\n";
-        std::cout << "Tamaño de lista_Dirichlet_x: " << mdotstar.lista_Dirichlet_x.size() << "\n";
-        std::cout << "Tamaño de lista_Zero_Neumann_x: " << mdotstar.lista_Zero_Neumann_x.size() << "\n";
-
-        std::cout << "Tamaño de lista_Dirichlet_y: " << mdotstar.lista_Dirichlet_y.size() << "\n";
-        std::cout << "Tamaño de lista_Zero_Neumann_y: " << mdotstar.lista_Zero_Neumann_y.size() << "\n";
-
-
-        for (int j = 0 ; j < ny ; ++j) {
-            for (int i = 0 ; i < nx ; ++i) {
-                printf("mDotStar_x[%d] = %f \n", i + nx * j, mdotstar.mDotStar_x[i + nx * j]);
-                // printf("mDotStar_y[%d] = %f \n", i + nx * j, mdotstar.mDotStar_y[i + nx * j]);
-            }
-        }
-
-    }
 
     mdotstar.lista_Dirichlet_x[0].aplicar();
     mdotstar.lista_Dirichlet_x[1].aplicar();
@@ -282,6 +264,26 @@ int main() {
     mdotstar.lista_Dirichlet_y[1].aplicar();
     mdotstar.lista_Zero_Neumann_y[0].aplicar();
     mdotstar.lista_Zero_Neumann_y[1].aplicar();
+
+    if (debug2)
+    {
+
+        std::cout << "\n\n";
+        std::cout << "Tamaño de lista_Dirichlet_x: " << mdotstar.lista_Dirichlet_x.size() << "\n";
+        std::cout << "Tamaño de lista_Zero_Neumann_x: " << mdotstar.lista_Zero_Neumann_x.size() << "\n";
+
+        std::cout << "Tamaño de lista_Dirichlet_y: " << mdotstar.lista_Dirichlet_y.size() << "\n";
+        std::cout << "Tamaño de lista_Zero_Neumann_y: " << mdotstar.lista_Zero_Neumann_y.size() << "\n";
+
+        for (int j = 0 ; j < ny ; ++j) {
+            for (int i = 0 ; i < nx ; ++i) {
+                printf("mDotStar_x[%d] = %f \n", i + nx * j, mdotstar.mDotStar_x[i + nx * j]);
+                // printf("mDotStar_y[%d] = %f \n", i + nx * j, mdotstar.mDotStar_y[i + nx * j]);
+            }
+        }
+
+    } // Fin debug2
+
 
 
     /*-----------------------------------------------------------------------------
@@ -295,6 +297,8 @@ int main() {
     -----------------------------------------------------------------------------*/
 
     // Instancia de la ecuacion de momentum
+    // TODO: pasar tambien una instancia de Campo::velFace porque se va a requerir
+    // reasignar valores
     Ecuacion_Momentum ecuacion_momentum(malla, velU, presion, mdotstar, grad, flux_dif, flux_conv);
 
     ecuacion_momentum.calcular_conductancia_difusiva();
@@ -307,7 +311,8 @@ int main() {
     //   }
     // }
 
-    if (debug3) {
+    if (debug3)
+    {
 
         const auto dC_u = ecuacion_momentum.coef_d.dC_u;
         const auto dE_u = ecuacion_momentum.coef_d.dE_u;
@@ -326,7 +331,7 @@ int main() {
         std::vector<double> d_x(nx * ny, 0.0);
         std::vector<double> d_y(nx * ny, 0.0);
 
-        // Fronteras de presion
+        // Fronteras oeste y sur para el flujo de masa
         for (int j = 1 ; j < ny - 1 ; ++j) {
 
             const int Centro = 1 + nx * j;
@@ -348,6 +353,7 @@ int main() {
         }
 
 
+        // Flujo de masa en la direccion "x"
         for (int j = 1 ; j < ny - 1 ; ++j) {
             for (int i = 1 ; i < nx - 2 ; ++i) {
 
@@ -374,8 +380,8 @@ int main() {
 
         for (int j = 0 ; j < ny ; ++j) {
             for (int i = 0 ; i < nx ; ++i) {
-                // printf("d_x[%d] = %f\n", i + nx * j, d_x[i + nx * j]);
-                printf("d_y[%d] = %f\n", i + nx * j, d_y[i + nx * j]);
+                printf("d_x[%d] = %f\n", i + nx * j, d_x[i + nx * j]);
+                // printf("d_y[%d] = %f\n", i + nx * j, d_y[i + nx * j]);
             }
         }
 

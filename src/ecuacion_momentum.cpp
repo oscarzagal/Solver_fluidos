@@ -39,7 +39,8 @@ Ecuacion_Momentum::Ecuacion_Momentum
     inter(Malla::Mallador::obtener_factores_de_interpolacion(malla_)),
     solver_u(Solver_lineal::solverElegido(nx, ny, lambda_Vel, velU.u_star, velU.u_old, solver_elegido_u)),
     solver_v(Solver_lineal::solverElegido(nx, ny, lambda_Vel, velU.v_star, velU.v_old, solver_elegido_v)),
-    coef_d(nx, ny, vol)
+    coef_d(nx, ny, vol),
+    velface(nx, ny, 0.0)
 {}
 
 /*-----------------------------------------------------------------------------
@@ -97,19 +98,12 @@ void Ecuacion_Momentum::resolver() {
     resolver_con(solver_u, velU.A_u);
     resolver_con(solver_v, velU.A_v);
 
-    coef_d.calcular(velU.A_u, velU.A_v);
 
 
     /*-----------------------------------------------------------------------------
                           Fin Resolucion ecuacion Momentum
     -----------------------------------------------------------------------------*/
 
-    // LOG("calculo de los volumenes");
-    // for (int j = 0; j < ny; ++j) {
-    //     for (int i = 0; i < nx; ++i) {
-    //         printf("vol[%d] = %f\n", i + nx * j, vol[i + nx * j]);
-    //     }
-    // }
 
 
     /*-----------------------------------------------------------------------------
