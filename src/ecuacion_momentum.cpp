@@ -99,6 +99,23 @@ void Ecuacion_Momentum::resolver() {
     resolver_con(solver_v, velU.A_v);
 
 
+    calcular_flujo_de_masa
+    (
+        nx,
+        ny,
+        velface,
+        mdotstar,
+        coef_d,
+        malla,
+        velU,
+        presion,
+        grad,
+        vol,
+        inter,
+        velU.A_u,
+        velU.A_v
+    );
+
 
     /*-----------------------------------------------------------------------------
                           Fin Resolucion ecuacion Momentum

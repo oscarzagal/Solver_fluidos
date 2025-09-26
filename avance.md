@@ -195,9 +195,16 @@ TODO (para la siguiente sesión):
 # 24 septiembre 2025
 
 1. Se empezó la construcción de la función `flujo_de_masa.cpp::calcular_flujo_de_masa`. Falta por probar y hacer el cálculo para la dirección $y$.
+2. Se llegó a la conclusión de que pasar una instancia de `Campo::velFace` para crear un objeto del tipo `Ecuacion_Momentum` no es necesario, pues se puede obtener a través de este sin mayor inconveniente (eso creo).
+
+
+# 26 septiembre 2025
+
+1. Se concluyó la implementación del cálculo de flujo de masa en `flujo_de_masa.hpp::calcular_flujo_de_masa`. Esta es una de las partes cruciales que se deben de revisar cuando comience el debuggeo del infierno.
 
 
 TODO (para la siguiente sesión):
 
-1. [ ] Terminar de implementar la función para el cálculo del flujo de masa en `flujo_de_masa.hpp::calcular_flujo_de_masa`.
-2. [ ] Pasar también una instancia de `Campo::velFace` en `main.cpp`.
+1. [ ] Revisar de nuevo la implementación del cálculo del flujo de masa en `flujo_de_masa.hpp::calcular_flujo_de_masa`.
+2. [ ] Comenzar con la implementación de la ecuación de corrección de presión, con base en lo aprendido del coeficiente "d".
+
