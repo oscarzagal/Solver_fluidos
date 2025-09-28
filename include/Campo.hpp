@@ -69,6 +69,7 @@ struct Momentum {
 
 struct Presion {
     std::vector<double> P_star, P_old; // Presión
+    std::vector<double> Pprime;        // Presion de correccion
     A_coef A_p;
 
     // Listas de condiciones de frontera (PROVISIONAL: cambiaran los tipos luego de

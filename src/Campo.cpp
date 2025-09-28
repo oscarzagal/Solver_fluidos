@@ -50,7 +50,7 @@ Momentum::Momentum(const int nx, const int ny, double campo_inicial_u, double ca
 {}
 
 Presion::Presion(const int nx, const int ny, double campo_inicial)
-    : P_star(nx * ny, campo_inicial), P_old(nx * ny, campo_inicial),
+    : P_star(nx * ny, campo_inicial), P_old(nx * ny, campo_inicial), Pprime(nx * ny, 0.0),
       A_p{std::vector<double>(nx * ny, 1.0), std::vector<double>(nx * ny, 0.0),
           std::vector<double>(nx * ny, 0.0), std::vector<double>(nx * ny, 0.0),
           std::vector<double>(nx * ny, 0.0), std::vector<double>(nx * ny, 0.0)}

@@ -205,6 +205,16 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. [ ] Revisar de nuevo la implementación del cálculo del flujo de masa en `flujo_de_masa.hpp::calcular_flujo_de_masa`.
-2. [ ] Comenzar con la implementación de la ecuación de corrección de presión, con base en lo aprendido del coeficiente "d".
+1. [x] Revisar de nuevo la implementación del cálculo del flujo de masa en `flujo_de_masa.hpp::calcular_flujo_de_masa`.
+2. [x] Comenzar con la implementación de la ecuación de corrección de presión, con base en lo aprendido del coeficiente "d".
 
+
+# (Poner fecha)
+
+1. Se revisó un poco la implementación de `flujo_de_masa.hpp::calcular_flujo_de_masa` para no perder tiempo. Luego veré si eso da problemas.
+2. Se comenzó con la implementación de `ecuacion_presion.*` para calcular la presión de corrección.
+
+
+TODO (para la siguiente sesión):
+
+1. [ ] Terminar la implementación de `ecuacion_presion.*`.

@@ -38,10 +38,21 @@ inline std::string solver_elegido_v = "SOR";
 // VARIABLE GLOBAL: Solver lineal para P
 inline std::string solver_elegido_P = "SOR";
 
-// Factores de relajacion
+// Factores de relajacion para las ecuaciones de gobierno
 
 // VARIABLE GLOBAL: Factor de relajacion para u
 inline constexpr double lambda_Vel = 0.5;
 
 // VARIABLE GLOBAL: Factor de relajacion para P
 inline constexpr double lambda_P = 0.5;
+
+// Factores de relajacion para las ecuaciones de gobierno para el solver lineal
+
+// VARIABLE GLOBAL: Factor de relajacion para u usado en solver lineal
+inline constexpr double lambda_Vel_SL = 0.5;
+
+// VARIABLE GLOBAL: Factor de relajacion para P usado en solver lineal
+// (en este caso aun no se que valor para phi_old se puede utilizar como
+// parametro para el de la iteracion anterior, por lo que configuro a esta
+// variable como 0.0 para no ignorar el efecto de phi_old)
+inline constexpr double lambda_P_SL = 0.0;

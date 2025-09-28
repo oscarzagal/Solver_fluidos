@@ -37,8 +37,8 @@ Ecuacion_Momentum::Ecuacion_Momentum
     ny(malla_.obtener_el_numero_de_nodos(Malla::Nodos::ny)),
     vol(malla_.obtener_volumenes()),
     inter(Malla::Mallador::obtener_factores_de_interpolacion(malla_)),
-    solver_u(Solver_lineal::solverElegido(nx, ny, lambda_Vel, velU.u_star, velU.u_old, solver_elegido_u)),
-    solver_v(Solver_lineal::solverElegido(nx, ny, lambda_Vel, velU.v_star, velU.v_old, solver_elegido_v)),
+    solver_u(Solver_lineal::solverElegido(nx, ny, lambda_Vel_SL, velU.u_star, velU.u_old, solver_elegido_u)),
+    solver_v(Solver_lineal::solverElegido(nx, ny, lambda_Vel_SL, velU.v_star, velU.v_old, solver_elegido_v)),
     coef_d(nx, ny, vol),
     velface(nx, ny, 0.0)
 {}
@@ -98,6 +98,15 @@ void Ecuacion_Momentum::resolver() {
     resolver_con(solver_u, velU.A_u);
     resolver_con(solver_v, velU.A_v);
 
+    /*-----------------------------------------------------------------------------
+                          Fin Resolucion ecuacion Momentum
+    -----------------------------------------------------------------------------*/
+
+
+
+    /*-----------------------------------------------------------------------------
+                           Actulizacion flujo de masa
+    -----------------------------------------------------------------------------*/
 
     calcular_flujo_de_masa
     (
@@ -115,18 +124,6 @@ void Ecuacion_Momentum::resolver() {
         velU.A_u,
         velU.A_v
     );
-
-
-    /*-----------------------------------------------------------------------------
-                          Fin Resolucion ecuacion Momentum
-    -----------------------------------------------------------------------------*/
-
-
-
-    /*-----------------------------------------------------------------------------
-                           Actulizacion flujo de masa
-    -----------------------------------------------------------------------------*/
-
 
 
     /*-----------------------------------------------------------------------------

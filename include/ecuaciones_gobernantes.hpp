@@ -2,6 +2,8 @@
 // Created by oscar on 22/06/25.
 //
 
+// WARNING: este achivo creo que no se usa (comprobar)
+
 #ifndef ECUACIONES_GOBERNANTES_HPP
 #define ECUACIONES_GOBERNANTES_HPP
 
