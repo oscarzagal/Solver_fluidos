@@ -209,12 +209,19 @@ TODO (para la siguiente sesión):
 2. [x] Comenzar con la implementación de la ecuación de corrección de presión, con base en lo aprendido del coeficiente "d".
 
 
-# (Poner fecha)
+# 27 septiembre 2025
 
 1. Se revisó un poco la implementación de `flujo_de_masa.hpp::calcular_flujo_de_masa` para no perder tiempo. Luego veré si eso da problemas.
 2. Se comenzó con la implementación de `ecuacion_presion.*` para calcular la presión de corrección.
 
 
+# 30 septiembre 2025
+
+1. Se culminó la implementación de la función `esquemas_de_discretizacion.hpp::laplaciano_lineal_presion`
+2. Se comenzó con la implementación de la función `esquemas_de_discretizacion.cpp::construccion_matriz_A_presion`
+
+
 TODO (para la siguiente sesión):
 
 1. [ ] Terminar la implementación de `ecuacion_presion.*`.
+2. [ ] Terminar la implementación de de la función `esquemas_de_discretizacion.cpp::construccion_matriz_A_presion`

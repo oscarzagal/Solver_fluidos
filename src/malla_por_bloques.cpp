@@ -411,11 +411,11 @@ namespace Malla {
     y=y_;
   }
 
-  std::vector<double> Mallador::obtener_coord_pers_x() const {
+  const std::vector<double>& Mallador::obtener_coord_pers_x() const {
     return x;
   }
 
-  std::vector<double> Mallador::obtener_coord_pers_y() const {
+  const std::vector<double>& Mallador::obtener_coord_pers_y() const {
     return y;
   }
 

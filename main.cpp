@@ -3,6 +3,7 @@
 //
 
 
+#include "ecuacion_presion.hpp"
 #include "malla_por_bloques.hpp"
 #include "config_malla.hpp"
 #include "condiciones_de_frontera.hpp"
@@ -22,8 +23,9 @@
 #include <vector>
 
 constexpr bool debug  = false; // Parches flujo de masa
-constexpr bool debug2 = true; // Listas para las especializaciones y flujo de masa
+constexpr bool debug2 = false; // Listas para las especializaciones y flujo de masa
 constexpr bool debug3 = false;  // Coeficiente_d
+constexpr bool debug4 = false;  // Coeficiente_d central
 
 int main() {
 
@@ -175,9 +177,9 @@ int main() {
     Campo::velFace  velface(nx, ny, 0.0);
     Campo::MDotStar mdotstar(nx, ny, 0.0);
 
-    Gradiente grad(nx, ny);               // Gradiente de presion por volumen
-    fluxes_difusivos flux_dif(nx, ny);
-    fluxes_convectivos flux_conv(nx, ny); // Implica el calculo del flujo de masa
+    Gradiente grad(nx, ny);                   // Gradiente de presion por volumen
+    fluxes_difusivos flux_dif_Vel(nx, ny);    // Fluxes difusivos momentum
+    fluxes_convectivos flux_conv_Vel(nx, ny); // Implica el calculo del flujo de masa
 
 
     /*-----------------------------------------------------------------------------
@@ -277,11 +279,16 @@ int main() {
     -----------------------------------------------------------------------------*/
 
     // Instancia de la ecuacion de momentum
-    Ecuacion_Momentum ecuacion_momentum(malla, velU, presion, mdotstar, grad, flux_dif, flux_conv);
+    Ecuacion_Momentum ecuacion_momentum(malla, velU, presion, mdotstar, grad, flux_dif_Vel, flux_conv_Vel);
 
     ecuacion_momentum.calcular_conductancia_difusiva();
 
     ecuacion_momentum.resolver();
+
+    // Instancia de la ecuacion de correccion de presion
+    Ecuacion_Presion ecuacion_presion(malla, presion, mdotstar, ecuacion_momentum.coef_d);
+
+    ecuacion_presion.resolver();
 
     if (debug2)
     {
@@ -379,6 +386,18 @@ int main() {
 
     } // Fin debug3
 
+
+    if (debug4) {
+
+        for (int j = 0 ; j < ny ; ++j) {
+            for (int i = 0 ; i < nx ; ++i) {
+                printf("dS_v[%d] = %f\n", i + nx * j, ecuacion_momentum.coef_d.dS_v[i + nx * j]);
+                // printf("d_y[%d] = %f\n", i + nx * j, d_y[i + nx * j]);
+            }
+        }
+
+
+    }
 
     /*-----------------------------------------------------------------------------
                             Fin Armado de ecuaciones

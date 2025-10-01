@@ -81,7 +81,7 @@ struct Presion {
     Presion(int, int, double);
 };
 
-} // Fin namespace Campo_Escalar
+} // Fin namespace Campo
 
 
 

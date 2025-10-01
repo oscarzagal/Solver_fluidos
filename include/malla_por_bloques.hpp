@@ -164,10 +164,10 @@ namespace Malla {
 
 
     // Obtener coordenada persistente en x
-    [[nodiscard]] std::vector<double> obtener_coord_pers_x() const;
+    [[nodiscard]] const std::vector<double>& obtener_coord_pers_x() const;
 
     // Obtener coordenada persistente en y
-    [[nodiscard]] std::vector<double> obtener_coord_pers_y() const;
+    [[nodiscard]] const std::vector<double>& obtener_coord_pers_y() const;
 
     // Asignacion de parches frontera
     void preparar_parches_fronteras();

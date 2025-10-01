@@ -34,9 +34,9 @@ MDotStar::MDotStar(const int nx, const int ny, double campo_inicial)
 // demas son cero, se tiene la condicion de frontera de Dirichlet.
 //
 // Debido a como está construido el codigo en cuestion de las condiciones de frontera para
-// variables escalares, solo es necesario que a_{C} = 1.0 debido a la razon expuesta arriba.
+// variables escalares, solo es necesario que a_{C} = 1.0 debido a la primer razon expuesta.
 // Los otros coeficientes no son necesarios ya que en `condiciones_de_frontera.cpp` se obtienen
-// los valores de frontera sin usar la ecuacion generadora, solo el correspondiente campo \phi
+// los valores de frontera sin usar la ecuacion generadora, solo el correspondiente campo \phi.
 
 Momentum::Momentum(const int nx, const int ny, double campo_inicial_u, double campo_inicial_v)
     : u_star(nx * ny, campo_inicial_u), u_old(nx * ny, campo_inicial_u),

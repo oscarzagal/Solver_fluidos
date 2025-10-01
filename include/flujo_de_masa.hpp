@@ -32,8 +32,6 @@ Coeficiente_d(int, int, const std::vector<double>&);
 
 };
 
-// TODO: implementar funcion
-
 // Modifica a "coef_d", "velFace", y "mdotstar". Calcula el flujo de masa a traves de la
 // interpolacion de Rhie-Chow
 void calcular_flujo_de_masa

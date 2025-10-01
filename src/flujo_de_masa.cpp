@@ -137,7 +137,7 @@ void calcular_flujo_de_masa
             const double P_C = Pstar.P_star[Centro];
             const double P_E = Pstar.P_star[Este];
 
-            // δX_{CE}
+            // δx_{CE}
             const double delta_x_CE = x[Este] - x[Centro];
 
             // Gradiente de presion sobre la cara "e"

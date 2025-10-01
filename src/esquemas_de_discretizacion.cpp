@@ -14,11 +14,11 @@ namespace Discretizacion {
 
         void laplaciano_lineal
         (
-             const int nx,
-             const int ny,
-             const double gamma,
-             fluxes_difusivos &fluxes,
-             const Malla::Mallador &malla
+            const int nx,
+            const int ny,
+            const double gamma,
+            fluxes_difusivos &fluxes,
+            const Malla::Mallador &malla
         )
         {
             // Obtencion de las deltas
@@ -27,6 +27,9 @@ namespace Discretizacion {
             std::vector<double> deltay = malla.deltay;
 
             // Obtencion de las cordenadas
+            // const std::vector<double>& x = malla.x_tmp;
+            // const std::vector<double>& y = malla.y_tmp;
+
             std::vector<double> x = malla.retornar_coordanas_tmp(Malla::Nodos::nx);
             std::vector<double> y = malla.retornar_coordanas_tmp(Malla::Nodos::ny);
 
@@ -58,6 +61,103 @@ namespace Discretizacion {
             }
 
         } // Fin funcion laplaciano_lineal
+
+        void laplaciano_lineal_presion
+        (
+            const int nx,
+            const int ny,
+            const Coeficiente_d                  & coef_d,
+            fluxes_difusivos                     & fluxes,
+            const Malla::Mallador::Interpolacion & inter,
+            const Malla::Mallador                & malla
+        )
+        {
+
+            // Area de las caras locales
+            const std::vector<double>& deltax = malla.deltax;
+            const std::vector<double>& deltay = malla.deltay;
+
+            // Coordenadas de los centroides de las celdas
+            const auto& x = malla.obtener_coord_pers_x();
+            const auto& y = malla.obtener_coord_pers_y();
+
+            // Flux difusivo
+            auto& fluxFDif_e = fluxes.fluxFDif_e;
+            auto& fluxFDif_w = fluxes.fluxFDif_w;
+            auto& fluxFDif_n = fluxes.fluxFDif_n;
+            auto& fluxFDif_s = fluxes.fluxFDif_s;
+            auto& fluxCDif_e = fluxes.fluxCDif_e;
+            auto& fluxCDif_w = fluxes.fluxCDif_w;
+            auto& fluxCDif_n = fluxes.fluxCDif_n;
+            auto& fluxCDif_s = fluxes.fluxCDif_s;
+
+            for (int j = 1 ; j < ny - 1 ; ++j) {
+
+               // Area para las caras "e" y "w" (variable local)
+               const double S_ew = deltay[j];
+
+              for (int i = 1 ; i < nx - 1 ; ++i) {
+
+                  /*-----------------------------------------------------------------------------
+                                                Variables locales
+                  -----------------------------------------------------------------------------*/
+
+                  // Area para las caras "n" y "s"
+                  const double S_ns = deltax[i];
+
+                  const int Centro = i + nx * j;
+                  const int Este   = (i + 1) + nx * j;
+                  const int Oeste  = (i - 1) + nx * j;
+                  const int Norte  = i + nx * (j + 1);
+                  const int Sur    = i + nx * (j - 1);
+
+                  // Coeficente "d" en los centroides de las celdas
+                  const double dC_u = coef_d.dC_u[Centro];
+                  const double dE_u = coef_d.dE_u[Centro];
+                  const double dW_u = coef_d.dW_u[Centro];
+                  const double dC_v = coef_d.dC_v[Centro];
+                  const double dN_v = coef_d.dN_v[Centro];
+                  const double dS_v = coef_d.dS_v[Centro];
+
+                  // Factores de interpolacion
+                  const double ge = inter.ge[Centro];
+                  const double gw = inter.gw[Centro];
+                  const double gn = inter.gn[Centro];
+                  const double gs = inter.gs[Centro];
+
+                  // Coeficiente "d" inteprolado
+                  const double de_i = interpolar(dC_u, dE_u, ge);
+                  const double dw_i = interpolar(dC_u, dW_u, gw);
+                  const double dn_i = interpolar(dC_v, dN_v, gn);
+                  const double ds_i = interpolar(dC_v, dS_v, gs);
+
+                  // "δx_{CE}", "δx_{CW}", "δy_{CN}" y "δy_{CS}"
+                  const double delta_x_CE = x[Este] - x[Centro];
+                  const double delta_x_CW = x[Centro] - x[Oeste];
+                  const double delta_y_CN = y[Norte] - y[Centro];
+                  const double delta_y_CS = y[Centro] - y[Sur];
+
+                  /*-----------------------------------------------------------------------------
+                                             Fin Variables locales
+                  -----------------------------------------------------------------------------*/
+
+                  // Coeficientes difusivos en las caras para el coeficiente agrupado a_F
+                  fluxFDif_e[Centro] = - de_i * S_ew / delta_x_CE;
+                  fluxFDif_w[Centro] = - dw_i * S_ew / delta_x_CW;
+                  fluxFDif_n[Centro] = - dn_i * S_ns / delta_y_CN;
+                  fluxFDif_s[Centro] = - ds_i * S_ns / delta_y_CS;
+
+                  // Coeficientes difusivos en las caras para el coeficiente agrupado a_C
+                  fluxCDif_e[Centro] = fluxFDif_e[Centro];
+                  fluxCDif_w[Centro] = fluxFDif_w[Centro];
+                  fluxCDif_n[Centro] = fluxFDif_n[Centro];
+                  fluxCDif_s[Centro] = fluxFDif_s[Centro];
+
+              }
+            }
+
+
+        } // Fin funcion laplaciano_lineal_presion
 
         void divergencia_upwind
         (
@@ -294,7 +394,21 @@ namespace Discretizacion {
         Discretizacion::construccion_coeficiente_b_momemtum(nx, ny, A_u, vol, grad.grad_x_vol, vel_u);
         Discretizacion::construccion_coeficiente_b_momemtum(nx, ny, A_v, vol, grad.grad_y_vol, vel_v);
 
-    }
+    } // Fin funcion construccion_matriz_A_momentum
+
+
+    // TODO: implementar
+    void construccion_matriz_A_presion
+    (
+        const int nx,
+        const int ny,
+        const fluxes_difusivos & fluxes_difusivos,
+        const Campo::MDotStar  & mdotstar,
+        Campo::A_coef          & A_p
+    )
+    {
+
+    } // Fin funcion construccion_matriz_A_presion
 
 
 } // Fin namespace Esquemas_discretizacion

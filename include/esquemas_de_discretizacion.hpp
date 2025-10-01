@@ -8,6 +8,7 @@
 #include "malla_por_bloques.hpp"
 #include "variables_discretizacion.hpp"
 #include "Campo.hpp"
+#include "flujo_de_masa.hpp"
 #include <vector>
 
 namespace Discretizacion {
@@ -20,8 +21,19 @@ namespace Discretizacion {
              int nx,
              int ny,
              double gamma,
-             fluxes_difusivos &fluxes,
-             const Malla::Mallador &malla
+             fluxes_difusivos      & fluxes,
+             const Malla::Mallador & malla
+        );
+
+        // Modifica el estado de "fluxes"
+        void laplaciano_lineal_presion
+        (
+            int nx,
+            int ny,
+            const Coeficiente_d                  & coef_d,
+            fluxes_difusivos                     & fluxes,
+            const Malla::Mallador::Interpolacion & inter,
+            const Malla::Mallador                & malla
         );
 
         // Modifica el estado de "fluxes"
@@ -29,8 +41,8 @@ namespace Discretizacion {
         (
              int nx,
              int ny,
-             fluxes_convectivos &fluxes,
-             Campo::MDotStar &mdotstar
+             fluxes_convectivos & fluxes,
+             Campo::MDotStar    & mdotstar
         );
     }
 
@@ -66,28 +78,26 @@ namespace Discretizacion {
     (
         int nx,
         int ny,
-        const fluxes_difusivos         & fluxes_dif,
-        const fluxes_convectivos       & fluxes_conv,
-        const std::vector<double>      & vol,
-        const std::vector<double>      & vel_u,
-        const std::vector<double>      & vel_v,
-        Campo::A_coef & A_u,
-        Campo::A_coef & A_v,
-        Gradiente                      & grad
+        const fluxes_difusivos    & fluxes_dif,
+        const fluxes_convectivos  & fluxes_conv,
+        const std::vector<double> & vol,
+        const std::vector<double> & vel_u,
+        const std::vector<double> & vel_v,
+        Campo::A_coef             & A_u,
+        Campo::A_coef             & A_v,
+        Gradiente                 & grad
     );
 
+    // Modifica a "A_p"
+    void construccion_matriz_A_presion
+    (
+        int nx,
+        int ny,
+        const fluxes_difusivos & fluxes_difusivos,
+        const Campo::MDotStar  & mdotstar,
+        Campo::A_coef          & A_p
+    );
 
-
-
-    // void divergencia_explicita
-    // (
-    //     int nx,
-    //     int ny,
-    //     const Malla::Mallador::Interpolacion &inter,
-    //     fluxes_convectivos &fluxes,
-    //     const std::vector<double> &P,
-    //     const Malla::Mallador &malla
-    // );
 
 } // Fin namespace Esquemas_discretizacion
 

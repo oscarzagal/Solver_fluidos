@@ -9,8 +9,6 @@
 #include "flujo_de_masa.hpp"
 #include "malla_por_bloques.hpp"
 #include "solvers_lineales.hpp"
-#include "logs.hpp"
-#include <variant>
 
 /*-----------------------------------------------------------------------------
                                  Constructor
