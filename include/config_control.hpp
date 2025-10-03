@@ -54,5 +54,5 @@ inline constexpr double lambda_Vel_SL = 0.5;
 // VARIABLE GLOBAL: Factor de relajacion para P usado en solver lineal
 // (en este caso aun no se que valor para phi_old se puede utilizar como
 // parametro para el de la iteracion anterior, por lo que configuro a esta
-// variable como 0.0 para no ignorar el efecto de phi_old)
-inline constexpr double lambda_P_SL = 0.0;
+// variable como 1.0 para ignorar el efecto de phi_old)
+inline constexpr double lambda_P_SL = 1.0;

@@ -47,8 +47,12 @@ void Ecuacion_Presion::resolver() {
 
     Discretizacion::Implicita::laplaciano_lineal_presion(nx, ny, coef_d, flux_dif_P, inter, malla);
 
-    // TODO: implementar una funcion para la obtencion de los coeficientes agrupados
     Discretizacion::construccion_matriz_A_presion(nx, ny, flux_dif_P, mdotstar, presion.A_p);
+
+    // Resolucion de la ecuacion de correccione de presion
+    std::visit([this](auto& campo_Pprime){
+            campo_Pprime.resolver(this->presion.A_p);
+            }, solver_Pprime);
 
 }
 

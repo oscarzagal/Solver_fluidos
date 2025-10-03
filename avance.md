@@ -223,5 +223,17 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. [ ] Terminar la implementación de `ecuacion_presion.*`.
-2. [ ] Terminar la implementación de de la función `esquemas_de_discretizacion.cpp::construccion_matriz_A_presion`
+1. [x] Terminar la implementación de `ecuacion_presion.*`.
+2. [x] Terminar la implementación de de la función `esquemas_de_discretizacion.cpp::construccion_matriz_A_presion`
+
+
+# 3 octubre 2025
+
+1. Se implementó la función `esquemas_de_discretizacion.cpp::construccion_matriz_A_presion`.
+2. Se implementó a `ecuacion_presion.cpp::Ecuacion_Presion::resolver`.
+
+
+TODO (para la siguiente sesión):
+
+1. [ ] Probar la implementación de `ecuacion_presion.cpp::Ecuacion_Presion::resolver`.
+2. [ ] Comenzar con la corrección de los campos.

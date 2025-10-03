@@ -177,17 +177,17 @@ namespace Discretizacion {
             auto &fluxCConv_w = fluxes.fluxCConv_w;
             auto &fluxCConv_n = fluxes.fluxCConv_n;
             auto &fluxCConv_s = fluxes.fluxCConv_s;
-            const auto &mDotstar_x = mstar.mDotStar_x;
-            const auto &mDotstar_y = mstar.mDotStar_y;
+            const auto &mDotStar_x = mstar.mDotStar_x;
+            const auto &mDotStar_y = mstar.mDotStar_y;
 
             for (int j = 1 ; j < ny - 1 ; ++j) {
                 for (int i = 1 ; i< nx - 1 ; ++i) {
 
                     // Renombrar de nuevo por legibilidad
-                    const auto& mDotStar_e = mDotstar_x[idx(i+1,j,nx)];
-                    const auto& mDotStar_w = mDotstar_x[idx(i,j,nx)];
-                    const auto& mDotStar_n = mDotstar_y[idx(i,j+1,nx)];
-                    const auto& mDotStar_s = mDotstar_y[idx(i,j,nx)];
+                    const auto& mDotStar_e = mDotStar_x[idx(i+1,j,nx)];
+                    const auto& mDotStar_w = mDotStar_x[idx(i,j,nx)];
+                    const auto& mDotStar_n = mDotStar_y[idx(i,j+1,nx)];
+                    const auto& mDotStar_s = mDotStar_y[idx(i,j,nx)];
 
                     // Flux para las celdas vecinas
                     fluxFConv_e[idx(i,j,nx)] = - std::max(0.0, - mDotStar_e);
@@ -397,7 +397,6 @@ namespace Discretizacion {
     } // Fin funcion construccion_matriz_A_momentum
 
 
-    // TODO: implementar
     void construccion_matriz_A_presion
     (
         const int nx,
@@ -407,6 +406,74 @@ namespace Discretizacion {
         Campo::A_coef          & A_p
     )
     {
+
+        auto& ae = A_p.ae;
+        auto& aw = A_p.aw;
+        auto& an = A_p.an;
+        auto& as = A_p.as;
+        auto& ac = A_p.ac;
+        auto& b  = A_p.b;
+
+        for (int j = 1 ; j < ny - 1 ; ++j) {
+            for (int i = 1 ; i < nx - 1 ; ++i) {
+
+                const int Centro = i + nx * j;
+                const int Este   = (i + 1) + nx * j;
+                const int Norte  = i + nx * (j + 1);
+
+                /*-----------------------------------------------------------------------------
+                  Coeficientes vecinos
+                  -----------------------------------------------------------------------------*/
+
+                const auto fluxFDif_e = fluxes_difusivos.fluxFDif_e[Centro];
+                const auto fluxFDif_w = fluxes_difusivos.fluxFDif_w[Centro];
+                const auto fluxFDif_n = fluxes_difusivos.fluxFDif_n[Centro];
+                const auto fluxFDif_s = fluxes_difusivos.fluxFDif_s[Centro];
+
+                /*-----------------------------------------------------------------------------
+                  Fin Coeficientes vecinos
+                  -----------------------------------------------------------------------------*/
+
+                /*-----------------------------------------------------------------------------
+                  Coeficientes centrales
+                  -----------------------------------------------------------------------------*/
+
+                const auto fluxCDif_e = fluxes_difusivos.fluxCDif_e[Centro];
+                const auto fluxCDif_w = fluxes_difusivos.fluxCDif_w[Centro];
+                const auto fluxCDif_n = fluxes_difusivos.fluxCDif_n[Centro];
+                const auto fluxCDif_s = fluxes_difusivos.fluxCDif_s[Centro];
+
+                const auto sumFluxCDif = fluxCDif_e + fluxCDif_w + fluxCDif_n + fluxCDif_s;
+
+                /*-----------------------------------------------------------------------------
+                  Fin Coeficientes centrales
+                  -----------------------------------------------------------------------------*/
+
+                /*-----------------------------------------------------------------------------
+                  Flujo de masa
+                  -----------------------------------------------------------------------------*/
+
+                const double mDotStar_e = mdotstar.mDotStar_x[Este];
+                const double mDotStar_w = mdotstar.mDotStar_x[Centro];
+                const double mDotStar_n = mdotstar.mDotStar_y[Norte];
+                const double mDotStar_s = mdotstar.mDotStar_y[Centro];
+
+                const double sumMDotStar = mDotStar_e + mDotStar_w + mDotStar_n + mDotStar_s;
+
+
+                /*-----------------------------------------------------------------------------
+                  Fin Flujo de masa
+                  -----------------------------------------------------------------------------*/
+
+                ae[Centro] = fluxFDif_e;
+                aw[Centro] = fluxFDif_w;
+                an[Centro] = fluxFDif_n;
+                as[Centro] = fluxFDif_s;
+                ac[Centro] = - sumFluxCDif;
+                b[Centro]  = - sumMDotStar;
+
+            }
+        }
 
     } // Fin funcion construccion_matriz_A_presion
 

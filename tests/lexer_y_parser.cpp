@@ -27,11 +27,11 @@ enum Token {
 
 };
 
-static std::string IdentifierStr; // Se llena se tok_identifier
+static std::string IdentifierStr; // Se llena si tok_identifier
 static double NumVal;             // Se llena si tok_number
 
-static int gettok() {
     static int LastChar = ' ';
+    static int gettok() {
 
     // Saltar espacios en blanco
     while (isspace(LastChar)) {

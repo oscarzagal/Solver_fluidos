@@ -17,7 +17,6 @@
 #include "calculo_del_error.hpp"
 #include "escritura.hpp"
 #include "config_CF.hpp"
-#include <algorithm>
 #include <cstdio>
 #include <iostream>
 #include <vector>
@@ -26,6 +25,7 @@ constexpr bool debug  = false; // Parches flujo de masa
 constexpr bool debug2 = false; // Listas para las especializaciones y flujo de masa
 constexpr bool debug3 = false;  // Coeficiente_d
 constexpr bool debug4 = false;  // Coeficiente_d central
+constexpr bool debug5 = true;  // Coeficiente_d central
 
 int main() {
 
@@ -393,6 +393,18 @@ int main() {
             for (int i = 0 ; i < nx ; ++i) {
                 printf("dS_v[%d] = %f\n", i + nx * j, ecuacion_momentum.coef_d.dS_v[i + nx * j]);
                 // printf("d_y[%d] = %f\n", i + nx * j, d_y[i + nx * j]);
+            }
+        }
+
+
+    }
+
+    if (debug5) {
+
+        for (int j = 0 ; j < ny ; ++j) {
+            for (int i = 0 ; i < nx ; ++i) {
+                // printf("ap_c[%d] = %f\n", i + nx * j, presion.A_p.ac[i + nx * j]);
+                printf("Pprime[%d] = %f\n", i + nx * j, presion.Pprime[i + nx * j]);
             }
         }
 
