@@ -235,5 +235,17 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. [ ] Probar la implementación de `ecuacion_presion.cpp::Ecuacion_Presion::resolver`.
-2. [ ] Comenzar con la corrección de los campos.
+1. [x] Probar la implementación de `ecuacion_presion.cpp::Ecuacion_Presion::resolver`.
+2. [x] Comenzar con la corrección de los campos.
+
+
+# 6 octubre 2025
+
+1. No se probó la implementación de `ecuacion_presion.cpp::Ecuacion_Presion::resolver`, pero se revisó lo suficiente como para confiar de que está bien (eso espero). Esta es otra de las partes cruciales para revisar cuando comienzo el debuggeo del infierno.
+2. Se comenzó con la corrección de los campos en `correccion_campos.*`.
+3. Se implementó un `for_each` para el cálculo de la corrección de campos en `correccion_campos.cpp::corregir`.
+
+
+TODO (para la siguiente sesión):
+
+1. [ ] Terminar la implementación de la corrección de los campos en `correccion_campos.*`.

@@ -9,7 +9,7 @@
 
 
 struct Gradiente {
-    // Gradiente explicito multiplicado por el volumen
+    // Gradiente explicito
     std::vector<double> grad_x_vol, grad_y_vol;
 
     // Constructor

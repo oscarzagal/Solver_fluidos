@@ -12,6 +12,7 @@
 #include "utilidades.hpp"
 #include "variables_discretizacion.hpp"
 #include "ecuacion_momentum.hpp"
+#include "correccion_campos.hpp"
 #include "config_control.hpp"
 #include "solvers_lineales.hpp"
 #include "calculo_del_error.hpp"
@@ -25,7 +26,7 @@ constexpr bool debug  = false; // Parches flujo de masa
 constexpr bool debug2 = false; // Listas para las especializaciones y flujo de masa
 constexpr bool debug3 = false;  // Coeficiente_d
 constexpr bool debug4 = false;  // Coeficiente_d central
-constexpr bool debug5 = true;  // Coeficiente_d central
+constexpr bool debug5 = false;  // Coeficiente_d central
 
 int main() {
 
@@ -83,7 +84,7 @@ int main() {
                             Parches para el flujo de masa
     -----------------------------------------------------------------------------*/
 
-    // TODO: refactorizar basandose en el snippet del test/ranges_y_transform.md
+    // TODO: refactorizar basandose en el snippet del tests/ranges_y_transform.md
     std::vector<Parches_Flujo_de_Masa> parches_norte_FM;
     std::vector<Parches_Flujo_de_Masa> parches_sur_FM;
     std::vector<Parches_Flujo_de_Masa> parches_este_FM;
@@ -289,6 +290,30 @@ int main() {
     Ecuacion_Presion ecuacion_presion(malla, presion, mdotstar, ecuacion_momentum.coef_d);
 
     ecuacion_presion.resolver();
+
+    // Correccion de campos
+    Correccion campos(malla, ecuacion_momentum.coef_d, mdotstar, velU, presion);
+
+    std::cout << "Antes de la correccion\n";
+    for (int j = 0 ; j < ny ; ++j) {
+      for (int i = 0 ; i < nx ; ++i) {
+          const int Centro = i + nx * j;
+          printf("u_star[%d] = %f\n", Centro, velU.u_star[Centro]);
+      }
+    }
+
+
+    campos.obtener_celdas_interiores();
+    campos.corregir();
+
+    std::cout << "\n\nDespues de la correccion\n";
+    for (int j = 0 ; j < ny ; ++j) {
+      for (int i = 0 ; i < nx ; ++i) {
+          const int Centro = i + nx * j;
+          printf("u_star[%d] = %f\n", Centro, velU.u_star[Centro]);
+      }
+    }
+
 
     if (debug2)
     {

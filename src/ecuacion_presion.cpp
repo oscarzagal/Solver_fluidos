@@ -26,8 +26,6 @@ Ecuacion_Presion::Ecuacion_Presion
     ny(malla_.obtener_el_numero_de_nodos(Malla::Nodos::ny)),
     vol(malla_.obtener_volumenes()),
     solver_Pprime(Solver_lineal::solverElegido(nx, ny, lambda_P_SL, presion.Pprime, presion.P_old, solver_elegido_P)),
-    gPprime_x(nx * ny, 0.0),
-    gPprime_y(nx * ny, 0.0),
     flux_dif_P(nx, ny),
     inter(Malla::Mallador::obtener_factores_de_interpolacion(malla_))
 {}

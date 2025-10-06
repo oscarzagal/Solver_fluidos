@@ -30,10 +30,6 @@ struct Ecuacion_Presion {
     // "presion.Pprime"
     void resolver();
 
-    // Calculo del gradiente de presion de correccion. Modifica el estado de
-    // "gPprime_x" y "gPprime_y"
-    void gradiente_Pprime();
-
 
     /* Miembros */
 
@@ -50,10 +46,6 @@ struct Ecuacion_Presion {
 
     // Eleccion del solver lineal
     Solver_lineal::solverVariant solver_Pprime;
-
-    // Gradiente de presion de correccion
-    std::vector<double> gPprime_x;
-    std::vector<double> gPprime_y;
 
     // Fluxes difusivos para la ecuacion de presion
     fluxes_difusivos flux_dif_P;
