@@ -248,4 +248,15 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. [ ] Terminar la implementación de la corrección de los campos en `correccion_campos.*`.
+1. [x] Terminar la implementación de la corrección de los campos en `correccion_campos.*`.
+
+
+# 6 octubre 2025 (segunda parte)
+
+1. Se terminó de implementar la corrección de campos (`correccion_campos.cpp::corregir`). Además se utilizaron flags de pre procesamiento para elegir entre un bucle en paralelo o serial.
+
+
+TODO (para la siguiente sesión):
+
+1. [ ] Revirar la implementación de la corrección de los campos en `correccion_campos.cpp::corregir` en busca de errores.
+2. [ ] Comenzar con la función para verificar la convergencia.

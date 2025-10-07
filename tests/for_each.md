@@ -28,8 +28,8 @@ void gradP_interior_par(
 
     // 2) Lambda sin dependencias: cada celda escribe su propio gPx/gPy
     auto work = [&](int C) {
-        const int j = C / nx;
         const int i = C % nx;
+        const int j = C / nx;
 
         const int E = C + 1;
         const int W = C - 1;

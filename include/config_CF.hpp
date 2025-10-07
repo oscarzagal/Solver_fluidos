@@ -2,7 +2,7 @@
 #include <string>
 #include <array>
 
-constexpr int limite_num_parches = 10;
+constexpr int limite_num_parches = 20;
 
 struct CF_Dirichlet {
     const std::string nombre;

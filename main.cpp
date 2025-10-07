@@ -174,7 +174,7 @@ int main() {
     -----------------------------------------------------------------------------*/
 
     Campo::Momentum velU(nx, ny, 5.2, 1.0);
-    Campo::Presion  presion(nx, ny, 0.0);
+    Campo::Presion  presion(nx, ny, 2.0);
     Campo::velFace  velface(nx, ny, 0.0);
     Campo::MDotStar mdotstar(nx, ny, 0.0);
 
@@ -298,7 +298,7 @@ int main() {
     for (int j = 0 ; j < ny ; ++j) {
       for (int i = 0 ; i < nx ; ++i) {
           const int Centro = i + nx * j;
-          printf("u_star[%d] = %f\n", Centro, velU.u_star[Centro]);
+          printf("Pstar[%d] = %f\n", Centro, presion.P_star[Centro]);
       }
     }
 
@@ -306,13 +306,20 @@ int main() {
     campos.obtener_celdas_interiores();
     campos.corregir();
 
+    for (int i = 0; i < static_cast<int>(presion.lista_parches_dinamicos.size()); ++i) {
+        presion.lista_parches_dinamicos[i]->aplicar();
+    }
+
+
     std::cout << "\n\nDespues de la correccion\n";
     for (int j = 0 ; j < ny ; ++j) {
       for (int i = 0 ; i < nx ; ++i) {
           const int Centro = i + nx * j;
-          printf("u_star[%d] = %f\n", Centro, velU.u_star[Centro]);
+          printf("Pstar[%d] = %f\n", Centro, presion.P_star[Centro]);
       }
     }
+
+
 
 
     if (debug2)
