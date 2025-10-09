@@ -14,8 +14,7 @@
 #include "ecuacion_momentum.hpp"
 #include "correccion_campos.hpp"
 #include "config_control.hpp"
-#include "solvers_lineales.hpp"
-#include "calculo_del_error.hpp"
+#include "convergencia.hpp"
 #include "escritura.hpp"
 #include "config_CF.hpp"
 #include <cstdio>
@@ -173,9 +172,8 @@ int main() {
                             Inicializacion de campos
     -----------------------------------------------------------------------------*/
 
-    Campo::Momentum velU(nx, ny, 5.2, 1.0);
-    Campo::Presion  presion(nx, ny, 2.0);
-    Campo::velFace  velface(nx, ny, 0.0);
+    Campo::Momentum velU(nx, ny, 1.0, 1.0);
+    Campo::Presion  presion(nx, ny, 0.0);
     Campo::MDotStar mdotstar(nx, ny, 0.0);
 
     Gradiente grad(nx, ny);                   // Gradiente de presion por volumen
@@ -294,32 +292,38 @@ int main() {
     // Correccion de campos
     Correccion campos(malla, ecuacion_momentum.coef_d, mdotstar, velU, presion);
 
-    std::cout << "Antes de la correccion\n";
-    for (int j = 0 ; j < ny ; ++j) {
-      for (int i = 0 ; i < nx ; ++i) {
-          const int Centro = i + nx * j;
-          printf("Pstar[%d] = %f\n", Centro, presion.P_star[Centro]);
-      }
-    }
+    // std::cout << "Antes de la correccion\n";
+    // for (int j = 0 ; j < ny ; ++j) {
+    //   for (int i = 0 ; i < nx ; ++i) {
+    //       const int Centro = i + nx * j;
+    //       printf("Pstar[%d] = %f\n", Centro, presion.P_star[Centro]);
+    //   }
+    // }
 
 
     campos.obtener_celdas_interiores();
     campos.corregir();
 
-    for (int i = 0; i < static_cast<int>(presion.lista_parches_dinamicos.size()); ++i) {
-        presion.lista_parches_dinamicos[i]->aplicar();
+    // Ya que hay 5 campos
+    std::vector<double> error_mayor_por_campo(5);
+    auto [mayor, nombre_del_campo] = error_mayor(nx, ny, velU, presion, mdotstar, error_mayor_por_campo);
+
+    std::cout << "Residual mayor = " << mayor << ", " << "Campo: " << nombre_del_campo << "\n";
+
+    for (int i = 0; i < static_cast<int>(error_mayor_por_campo.size()); ++i) {
+        std::cout << "error_mayor_por_campo[" << i << "] = " << error_mayor_por_campo[i] << "\n";
     }
 
 
-    std::cout << "\n\nDespues de la correccion\n";
-    for (int j = 0 ; j < ny ; ++j) {
-      for (int i = 0 ; i < nx ; ++i) {
-          const int Centro = i + nx * j;
-          printf("Pstar[%d] = %f\n", Centro, presion.P_star[Centro]);
-      }
-    }
 
 
+    // std::cout << "\n\nDespues de la correccion\n";
+    // for (int j = 0 ; j < ny ; ++j) {
+    //   for (int i = 0 ; i < nx ; ++i) {
+    //       const int Centro = i + nx * j;
+    //       printf("Pstar[%d] = %f\n", Centro, presion.P_star[Centro]);
+    //   }
+    // }
 
 
     if (debug2)

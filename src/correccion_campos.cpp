@@ -73,7 +73,7 @@ void Correccion::corregir() {
     const auto& dN_v = coef_d.dN_v;
 
     /*-----------------------------------------------------------------------------
-                           Inicio de la lambda iterativa
+                           Inicio Lambda iterativa
     -----------------------------------------------------------------------------*/
 
     auto bucle = [&](int Centro) {
@@ -88,9 +88,9 @@ void Correccion::corregir() {
         const double S_e = deltay[j];
         const double S_n = deltax[i];
 
-        // Gradiente de presion de correccion
-        const double gradPrime_x = gradPrime_times_vol.grad_x_vol[Centro] / vol[Centro];
-        const double gradPrime_y = gradPrime_times_vol.grad_y_vol[Centro] / vol[Centro];
+        // Gradientes de presion de correccion en la celda "C"
+        const double gradPrime_Cx = gradPrime_times_vol.grad_x_vol[Centro] / vol[Centro];
+        const double gradPrime_Cy = gradPrime_times_vol.grad_y_vol[Centro] / vol[Centro];
 
         // Factores de interpolacion
         const double gx = inter.ge[Centro];
@@ -125,8 +125,8 @@ void Correccion::corregir() {
         -----------------------------------------------------------------------------*/
 
         // Velocidad en los centroides de los elementos
-        u_star[Centro] = u_star[Centro] - dC_u[Centro] * gradPrime_x;
-        v_star[Centro] = v_star[Centro] - dC_v[Centro] * gradPrime_y;
+        u_star[Centro] = u_star[Centro] - dC_u[Centro] * gradPrime_Cx;
+        v_star[Centro] = v_star[Centro] - dC_v[Centro] * gradPrime_Cy;
 
         // Flujos de masa
         mdotstar_e = mdotstar_e - d_interp_x * gradPprime_e * S_e;
@@ -142,7 +142,7 @@ void Correccion::corregir() {
     };
 
     /*-----------------------------------------------------------------------------
-                           Fin Inicio de la lambda iterativa
+                                Fin Lambda iterativa
     -----------------------------------------------------------------------------*/
 
     // DEBUG
@@ -162,6 +162,20 @@ void Correccion::corregir() {
         bucle
     );
 
+
+
+    /*-----------------------------------------------------------------------------
+                        Actualizar condiciones de frontera
+    -----------------------------------------------------------------------------*/
+
+    // Actualizacion de los parches dinamicos para la presion dinamica
+    for (int i = 0; i < static_cast<int>(presion.lista_parches_dinamicos.size()); ++i) {
+        presion.lista_parches_dinamicos[i]->aplicar();
+    }
+
+    /*-----------------------------------------------------------------------------
+                      Fin Actualizar condiciones de frontera
+    -----------------------------------------------------------------------------*/
 
 }
 

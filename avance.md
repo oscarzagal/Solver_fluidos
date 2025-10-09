@@ -258,5 +258,18 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. [ ] Revirar la implementación de la corrección de los campos en `correccion_campos.cpp::corregir` en busca de errores.
-2. [ ] Comenzar con la función para verificar la convergencia.
+1. [x] Revisar la implementación de la corrección de los campos en `correccion_campos.cpp::corregir` en busca de errores.
+2. [x] Comenzar con la función para verificar la convergencia.
+
+
+# 8 octubre 2025
+
+1. Se modificó a `CMakeLists.txt` con ayuda de chatGPT para definir los siguientes modos de construcción: `Debug`, `Release` y `RelWithDebInfo`.
+2. Se revisó la implementación de `correccion_campos.cpp::corregir`, esperando que esté bien. De todos modos, esta es una de las partes que hay que revisar en el debuggeo del infierno.
+3. Se terminó la función para verificar la convergencia en `convergencia.*`.
+
+
+TODO (para la siguiente sesión):
+
+1. [ ] Revisar la implementación de `convergencia.*`.
+2. [ ] Terminar y probar el SIMPLE.

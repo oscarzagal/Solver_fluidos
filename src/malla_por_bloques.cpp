@@ -318,7 +318,7 @@ namespace Malla {
     for (int i=0; i<(int)coord_final_y.size()-1; ++i) {
       y_tmp.erase
       (
-        std::remove(y_tmp.begin(),y_tmp.end(),coord_final_y[i]),y_tmp.end()
+        std::remove(y_tmp.begin(), y_tmp.end(), coord_final_y[i]), y_tmp.end()
       );
     }
 
@@ -511,7 +511,9 @@ namespace Malla {
     const int ny=static_cast<int>(this->obtener_coordenadas_tmp_y().size());
 
     // La funcion "cortar_nodos" calcula los limites de las aristas en base a
-    // los nodos cortados
+    // los nodos cortados.
+    // TODO: cambiar de nombre a la funcion "cortar_nodos",
+    // me confundió. Algo mas adecuado sería "calcular_limites"
     if (nodos_x.size()>1) {
       cortar_nodos(nodos_x,lim_inf_nodos_x,lim_sup_nodos_x);
     } else {

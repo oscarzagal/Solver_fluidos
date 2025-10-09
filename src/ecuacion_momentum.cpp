@@ -128,6 +128,26 @@ void Ecuacion_Momentum::resolver() {
                          Fin Actulizacion flujo de masa
     -----------------------------------------------------------------------------*/
 
+
+
+    /*-----------------------------------------------------------------------------
+                        Actualizar condiciones de frontera
+    -----------------------------------------------------------------------------*/
+
+    // Para el campo "u"
+    for (int i = 0; i < static_cast<int>(velU.lista_parches_dinamicos_u.size()); ++i) {
+        velU.lista_parches_dinamicos_u[i]->aplicar();
+    }
+
+    // Para el campo "v"
+    for (int i = 0; i < static_cast<int>(velU.lista_parches_dinamicos_v.size()); ++i) {
+        velU.lista_parches_dinamicos_v[i]->aplicar();
+    }
+
+    /*-----------------------------------------------------------------------------
+                        Actualizar condiciones de frontera
+    -----------------------------------------------------------------------------*/
+
 }
 
 

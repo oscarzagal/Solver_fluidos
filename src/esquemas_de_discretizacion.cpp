@@ -425,10 +425,10 @@ namespace Discretizacion {
                   Coeficientes vecinos
                   -----------------------------------------------------------------------------*/
 
-                const auto fluxFDif_e = fluxes_difusivos.fluxFDif_e[Centro];
-                const auto fluxFDif_w = fluxes_difusivos.fluxFDif_w[Centro];
-                const auto fluxFDif_n = fluxes_difusivos.fluxFDif_n[Centro];
-                const auto fluxFDif_s = fluxes_difusivos.fluxFDif_s[Centro];
+                const double fluxFDif_e = fluxes_difusivos.fluxFDif_e[Centro];
+                const double fluxFDif_w = fluxes_difusivos.fluxFDif_w[Centro];
+                const double fluxFDif_n = fluxes_difusivos.fluxFDif_n[Centro];
+                const double fluxFDif_s = fluxes_difusivos.fluxFDif_s[Centro];
 
                 /*-----------------------------------------------------------------------------
                   Fin Coeficientes vecinos
@@ -438,12 +438,12 @@ namespace Discretizacion {
                   Coeficientes centrales
                   -----------------------------------------------------------------------------*/
 
-                const auto fluxCDif_e = fluxes_difusivos.fluxCDif_e[Centro];
-                const auto fluxCDif_w = fluxes_difusivos.fluxCDif_w[Centro];
-                const auto fluxCDif_n = fluxes_difusivos.fluxCDif_n[Centro];
-                const auto fluxCDif_s = fluxes_difusivos.fluxCDif_s[Centro];
+                const double fluxCDif_e = fluxes_difusivos.fluxCDif_e[Centro];
+                const double fluxCDif_w = fluxes_difusivos.fluxCDif_w[Centro];
+                const double fluxCDif_n = fluxes_difusivos.fluxCDif_n[Centro];
+                const double fluxCDif_s = fluxes_difusivos.fluxCDif_s[Centro];
 
-                const auto sumFluxCDif = fluxCDif_e + fluxCDif_w + fluxCDif_n + fluxCDif_s;
+                const double sumFluxCDif = fluxCDif_e + fluxCDif_w + fluxCDif_n + fluxCDif_s;
 
                 /*-----------------------------------------------------------------------------
                   Fin Coeficientes centrales
