@@ -6,6 +6,9 @@
 
 #include <string>
 
+// VARIABLE GLOBAL: Número de campos a resolver
+inline constexpr int NUM_CAMPOS = 5;
+
 // Propiedades termofisicas
 // VARIABLE GLOBAL: Conductividad termica
 inline constexpr double k = 20.0;

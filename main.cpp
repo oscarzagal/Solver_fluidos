@@ -9,6 +9,7 @@
 #include "condiciones_de_frontera.hpp"
 #include "condiciones_de_frontera_MDot.hpp"
 #include "Campo.hpp"
+#include "reasignacion.hpp"
 #include "utilidades.hpp"
 #include "variables_discretizacion.hpp"
 #include "ecuacion_momentum.hpp"
@@ -301,18 +302,23 @@ int main() {
     // }
 
 
+    // NOTE: "obtener_celdas_interiores" debe de ser declarada antes del bucle
+    // SIMPLE
     campos.obtener_celdas_interiores();
+
     campos.corregir();
 
-    // Ya que hay 5 campos
-    std::vector<double> error_mayor_por_campo(5);
+    // NOTE: "error_mayor_por_campo" debe de ser declarada antes del bucle SIMPLE
+    std::vector<double> error_mayor_por_campo(NUM_CAMPOS);
     auto [mayor, nombre_del_campo] = error_mayor(nx, ny, velU, presion, mdotstar, error_mayor_por_campo);
 
     std::cout << "Residual mayor = " << mayor << ", " << "Campo: " << nombre_del_campo << "\n";
 
-    for (int i = 0; i < static_cast<int>(error_mayor_por_campo.size()); ++i) {
-        std::cout << "error_mayor_por_campo[" << i << "] = " << error_mayor_por_campo[i] << "\n";
-    }
+    reasignar(presion, velU, mdotstar, ecuacion_momentum.velface);
+
+    // for (int i = 0; i < static_cast<int>(error_mayor_por_campo.size()); ++i) {
+    //     std::cout << "error_mayor_por_campo[" << i << "] = " << error_mayor_por_campo[i] << "\n";
+    // }
 
 
 

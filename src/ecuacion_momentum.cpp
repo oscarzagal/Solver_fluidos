@@ -81,17 +81,6 @@ void Ecuacion_Momentum::resolver() {
         grad
     );
 
-    // NOTE: Si la lambda está dentro de un método y solo accede a miembros: usa [this]
-    // Solucion del sistema de ecuaciones a traves de un metodo elegido en tiempo de
-    // ejecucion.
-
-    // std::visit([this](auto& campo_u){
-    //         campo_u.resolver(this->velU.A_u);
-    //         }, solver_u);
-
-    // std::visit([this](auto& campo_v){
-    //         campo_v.resolver(this->velU.A_v);
-    //         }, solver_v);
 
     resolver_con(solver_u, velU.A_u);
     resolver_con(solver_v, velU.A_v);

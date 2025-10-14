@@ -3,6 +3,7 @@
 //
 
 #include "convergencia.hpp"
+#include "config_control.hpp"
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -14,8 +15,8 @@
 
 std::pair<double, std::string> error_mayor
 (
-    int nx,
-    int ny,
+    const int nx,
+    const int ny,
     const Campo::Momentum & velU,
     const Campo::Presion  & presion,
     const Campo::MDotStar & mdotstar,
@@ -43,28 +44,28 @@ std::pair<double, std::string> error_mayor
     error_por_campo(nx, ny, Residual::mdotstar_x, mdotstar_x, mdotstar_x_old, error_mayor_por_campo);
     error_por_campo(nx, ny, Residual::mdotstar_y, mdotstar_y, mdotstar_y_old, error_mayor_por_campo);
 
-    if (error_mayor_por_campo.empty()) throw std::runtime_error("El vector 'error_mayor_por_campo' esta vacio");
+    if (error_mayor_por_campo.empty()) throw std::runtime_error("El vector 'error_mayor_por_campo' esta vacio, panzón");
 
     const auto max_iterator = std::max_element(error_mayor_por_campo.begin(), error_mayor_por_campo.end());
 
     if (!std::isfinite(*max_iterator)) throw std::runtime_error("Residual de infinito o NAN detectado, panzón");
 
-    const double mayor = *max_iterator;
+    const double mayor_error = *max_iterator;
     const int indice_del_error_mayor = std::distance(error_mayor_por_campo.begin(), max_iterator);
 
-    const std::array<std::string, 5> campos {
+    static const std::array<std::string, NUM_CAMPOS> campos {
         "Presion", "u", "v", "mdotstar_x", "mdotstar_y"
     };
 
-    return {mayor, campos[indice_del_error_mayor]};
+    return {mayor_error, campos[indice_del_error_mayor]};
 
 }
 
 
 void error_por_campo
 (
-    int nx,
-    int ny,
+    const int nx,
+    const int ny,
     Residual residual,
     const std::vector<double> & phi_new,
     const std::vector<double> & phi_old,

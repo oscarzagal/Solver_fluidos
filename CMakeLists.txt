@@ -33,7 +33,9 @@ endif()
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
 add_executable(main main.cpp ${SRC_FILES}
         src/convergencia.cpp
-        include/convergencia.hpp)
+        include/convergencia.hpp
+        src/reasignacion.cpp
+        include/reasignacion.hpp)
 target_include_directories(main PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # ===== oneTBB (necesario para std::execution::par en libstdc++) =====

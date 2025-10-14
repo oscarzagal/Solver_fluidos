@@ -271,5 +271,16 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. [ ] Revisar la implementación de `convergencia.*`.
-2. [ ] Terminar y probar el SIMPLE.
+1. [x] Revisar la implementación de `convergencia.*`.
+2. [x] Implementar una función para la reasignación de campos para la nueva iteración.
+
+
+# 13 octubre 2025
+
+1. Se revisó la implementación de `convergencia.*`, pero no lo suficiente como para descartarla cuando comience el debuggeo del infierno.
+2. Se implementó la función `reasignacion.*::reasignar`.
+
+TODO (para la siguiente sesión):
+
+1. [ ] Revisar la función `reasignacion.*::reasignar`.
+2. [ ] Preparar todo para la primer corrida del SIMPLE.

@@ -17,7 +17,7 @@ enum class Residual {
     mdotstar_y
 };
 
-// Devuelve el error mayor de todos los campos
+// Devuelve el error mayor de todos los campos y el campo en cuestion
 std::pair<double, std::string> error_mayor
 (
     int nx,
