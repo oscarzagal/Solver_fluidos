@@ -10,17 +10,19 @@
 inline constexpr int NUM_CAMPOS = 5;
 
 // Propiedades termofisicas
+// VARIABLE GLOBAL: Conductividad termica
+inline constexpr double k = 20.0;
 
 // VARIABLE GLOBAL: Densidad
 inline constexpr double rho = 1.0;
 
 // VARIABLE GLOBAL: Viscosidad cinemática
-inline constexpr double nu = 2.5e-3;
+inline constexpr double nu = 1.0e-3;
 
 // Control
 
 // VARIABLE GLOBAL: Paso de tiempo
-inline constexpr double delta_t = 0.5;
+inline constexpr double delta_t = 0.01;
 
 // VARIABLE GLOBAL: Numero maximo de iteraciones
 inline constexpr int num_iteraciones_max = 60000;
@@ -42,15 +44,15 @@ inline std::string solver_elegido_P = "SOR";
 // Factores de relajacion para las ecuaciones de gobierno
 
 // VARIABLE GLOBAL: Factor de relajacion para u
-inline constexpr double lambda_Vel = 0.6;
+inline constexpr double lambda_Vel = 0.5;
 
 // VARIABLE GLOBAL: Factor de relajacion para P
-inline constexpr double lambda_P = 0.3;
+inline constexpr double lambda_P = 0.5;
 
 // Factores de relajacion para las ecuaciones de gobierno para el solver lineal
 
 // VARIABLE GLOBAL: Factor de relajacion para u usado en solver lineal
-inline constexpr double lambda_Vel_SL = 1.0;
+inline constexpr double lambda_Vel_SL = 0.5;
 
 // VARIABLE GLOBAL: Factor de relajacion para P usado en solver lineal
 // (en este caso aun no se que valor para phi_old se puede utilizar como

@@ -280,7 +280,18 @@ TODO (para la siguiente sesión):
 1. Se revisó la implementación de `convergencia.*`, pero no lo suficiente como para descartarla cuando comience el debuggeo del infierno.
 2. Se implementó la función `reasignacion.*::reasignar`.
 
+
 TODO (para la siguiente sesión):
 
-1. [ ] Revisar la función `reasignacion.*::reasignar`.
-2. [ ] Preparar todo para la primer corrida del SIMPLE.
+1. [x] Preparar todo para la primer corrida del SIMPLE.
+
+
+# 14 octubre 2025
+
+1. Comenzó el debuggeo del infierno.
+
+
+TODO (para la siguiente sesión):
+
+1. [x] Revisar la función `reasignacion.*::reasignar`.
+2. [ ] Revisar a `ecuacion_presion.*` en busca de bugs.

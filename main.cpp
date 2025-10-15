@@ -18,8 +18,11 @@
 #include "convergencia.hpp"
 #include "escritura.hpp"
 #include "config_CF.hpp"
+#include <algorithm>
 #include <cstdio>
 #include <iostream>
+#include <string>
+#include <utility>
 #include <vector>
 
 constexpr bool debug  = false; // Parches flujo de masa
@@ -256,20 +259,40 @@ int main() {
     );
 
 
+    /*-----------------------------------------------------------------------------
+                      Fin asignacion condiciones de frontera
+    -----------------------------------------------------------------------------*/
 
-    mdotstar.lista_Dirichlet_x[0].aplicar();
-    mdotstar.lista_Dirichlet_x[1].aplicar();
-    mdotstar.lista_Zero_Neumann_x[0].aplicar();
-    mdotstar.lista_Zero_Neumann_x[1].aplicar();
+    /*-----------------------------------------------------------------------------
+                        Condiciones de Frontera de Dirichlet
+    -----------------------------------------------------------------------------*/
 
-    mdotstar.lista_Dirichlet_y[0].aplicar();
-    mdotstar.lista_Dirichlet_y[1].aplicar();
-    mdotstar.lista_Zero_Neumann_y[0].aplicar();
-    mdotstar.lista_Zero_Neumann_y[1].aplicar();
+    // Momentum
+    for (int i = 0 ; i < static_cast<int>(velU.lista_parches_dirichlet_u.size()) ; ++i) {
+        velU.lista_parches_dirichlet_u[i].aplicar();
+    }
+
+    for (int i = 0 ; i < static_cast<int>(velU.lista_parches_dirichlet_v.size()) ; ++i) {
+        velU.lista_parches_dirichlet_v[i].aplicar();
+    }
+
+    // Flujo de masa
+    for (int i = 0 ; i < static_cast<int>(mdotstar.lista_Dirichlet_x.size()) ; ++i) {
+        mdotstar.lista_Dirichlet_x[i].aplicar();
+    }
+
+    for (int i = 0 ; i < static_cast<int>(mdotstar.lista_Dirichlet_y.size()) ; ++i) {
+        mdotstar.lista_Dirichlet_y[i].aplicar();
+    }
+
+    // Presion
+    for (int i = 0 ; i < static_cast<int>(presion.lista_parches_dirichlet.size()) ; ++i) {
+        presion.lista_parches_dirichlet[i].aplicar();
+    }
 
 
     /*-----------------------------------------------------------------------------
-                      Fin asignacion condiciones de frontera
+                     Fin Condiciones de Frontera de Dirichlet
     -----------------------------------------------------------------------------*/
 
 
@@ -280,56 +303,78 @@ int main() {
 
     // Instancia de la ecuacion de momentum
     Ecuacion_Momentum ecuacion_momentum(malla, velU, presion, mdotstar, grad, flux_dif_Vel, flux_conv_Vel);
-
     ecuacion_momentum.calcular_conductancia_difusiva();
-
-    ecuacion_momentum.resolver();
 
     // Instancia de la ecuacion de correccion de presion
     Ecuacion_Presion ecuacion_presion(malla, presion, mdotstar, ecuacion_momentum.coef_d);
 
-    ecuacion_presion.resolver();
-
     // Correccion de campos
     Correccion campos(malla, ecuacion_momentum.coef_d, mdotstar, velU, presion);
-
-    // std::cout << "Antes de la correccion\n";
-    // for (int j = 0 ; j < ny ; ++j) {
-    //   for (int i = 0 ; i < nx ; ++i) {
-    //       const int Centro = i + nx * j;
-    //       printf("Pstar[%d] = %f\n", Centro, presion.P_star[Centro]);
-    //   }
-    // }
-
-
-    // NOTE: "obtener_celdas_interiores" debe de ser declarada antes del bucle
-    // SIMPLE
     campos.obtener_celdas_interiores();
 
-    campos.corregir();
 
-    // NOTE: "error_mayor_por_campo" debe de ser declarada antes del bucle SIMPLE
+    /*-----------------------------------------------------------------------------
+                            Fin Armado de ecuaciones
+    -----------------------------------------------------------------------------*/
+
+
+
+    /*-----------------------------------------------------------------------------
+                               Inicio bucle SIMPLE
+    -----------------------------------------------------------------------------*/
+
     std::vector<double> error_mayor_por_campo(NUM_CAMPOS);
-    auto [mayor, nombre_del_campo] = error_mayor(nx, ny, velU, presion, mdotstar, error_mayor_por_campo);
+    std::pair<double, std::string> errorMayor_y_campo = {1.0, ""};
+    int numit = 0;
 
-    std::cout << "Residual mayor = " << mayor << ", " << "Campo: " << nombre_del_campo << "\n";
+    while (errorMayor_y_campo.first > tolerancia) {
 
-    reasignar(presion, velU, mdotstar, ecuacion_momentum.velface);
+        // Campo Pprime iniciado en cero cada iteracion
+        std::fill(presion.Pprime.begin(), presion.Pprime.end(), 0.0);
+
+        #define CAMPO_ACTUAL presion.P_star
+        #define NOMBRE_CAMPO_ACTUAL "P_star"
+
+        for (int j = 0 ; j < ny ; ++j) {
+          for (int i = 0 ; i < nx ; ++i) {
+
+                const int Centro = i + nx * j;
+                std::cout << NOMBRE_CAMPO_ACTUAL << "[" << Centro  << "] = " << CAMPO_ACTUAL[Centro] << "\n";
+          }
+        }
+
+        if (numit == 2) break;
+
+        std::cout << "Tamaño: " << CAMPO_ACTUAL.size() << "\n";
+
+        // Bucle SIMPLE
+        ecuacion_momentum.resolver();
+        ecuacion_presion.resolver();
+        campos.corregir();
+
+        errorMayor_y_campo = error_mayor(nx, ny, velU, presion, mdotstar, error_mayor_por_campo);
+
+        ++numit;
+
+        std::cout << numit << " : Residual mayor = " << errorMayor_y_campo.first << ", " << "Campo: " << errorMayor_y_campo.second << "\n";
+
+        reasignar(presion, velU, mdotstar, ecuacion_momentum.velface);
+
+        if (numit == num_iteraciones_max) break;
+
+
+    }
+
+    /*-----------------------------------------------------------------------------
+                               Fin Inicio bucle SIMPLE
+    -----------------------------------------------------------------------------*/
+
+
 
     // for (int i = 0; i < static_cast<int>(error_mayor_por_campo.size()); ++i) {
     //     std::cout << "error_mayor_por_campo[" << i << "] = " << error_mayor_por_campo[i] << "\n";
     // }
 
-
-
-
-    // std::cout << "\n\nDespues de la correccion\n";
-    // for (int j = 0 ; j < ny ; ++j) {
-    //   for (int i = 0 ; i < nx ; ++i) {
-    //       const int Centro = i + nx * j;
-    //       printf("Pstar[%d] = %f\n", Centro, presion.P_star[Centro]);
-    //   }
-    // }
 
 
     if (debug2)
@@ -452,25 +497,6 @@ int main() {
 
 
     }
-
-    /*-----------------------------------------------------------------------------
-                            Fin Armado de ecuaciones
-    -----------------------------------------------------------------------------*/
-
-
-
-    /*-----------------------------------------------------------------------------
-                               Inicio bucle SIMPLE
-    -----------------------------------------------------------------------------*/
-
-
-
-    /*-----------------------------------------------------------------------------
-                               Fin Inicio bucle SIMPLE
-    -----------------------------------------------------------------------------*/
-
-
-
 
     return 0;
 }
