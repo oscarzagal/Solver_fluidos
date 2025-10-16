@@ -51,7 +51,11 @@ void Parches_Flujo_de_Masa::calcular_vector_normal_unitario() {
 
     // Frontera oeste (-\hat{i})
     if (index_i == 0) {
-        vecUnitNormal = -1.0;
+
+        // NOTE: orignial
+        // vecUnitNormal = -1.0;
+
+        vecUnitNormal = 1.0;
         frontera_fisica = "oeste";
     }
 
@@ -63,7 +67,11 @@ void Parches_Flujo_de_Masa::calcular_vector_normal_unitario() {
 
     // Frontera sur (-\hat{j})
     if (index_j == 0) {
-        vecUnitNormal = -1.0;
+
+        // NOTE: orignial
+        // vecUnitNormal = -1.0;
+
+        vecUnitNormal = 1.0;
         frontera_fisica = "sur";
     }
 

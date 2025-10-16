@@ -19,6 +19,7 @@
 #include "escritura.hpp"
 #include "config_CF.hpp"
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <iostream>
 #include <string>
@@ -176,7 +177,7 @@ int main() {
                             Inicializacion de campos
     -----------------------------------------------------------------------------*/
 
-    Campo::Momentum velU(nx, ny, 1.0, 1.0);
+    Campo::Momentum velU(nx, ny, 0.0, 0.0);
     Campo::Presion  presion(nx, ny, 0.0);
     Campo::MDotStar mdotstar(nx, ny, 0.0);
 
@@ -332,25 +333,27 @@ int main() {
         // Campo Pprime iniciado en cero cada iteracion
         std::fill(presion.Pprime.begin(), presion.Pprime.end(), 0.0);
 
-        #define CAMPO_ACTUAL presion.P_star
-        #define NOMBRE_CAMPO_ACTUAL "P_star"
+        // #define CAMPO_ACTUAL mdotstar.mDotStar_x
+        // #define NOMBRE_CAMPO_ACTUAL "mDotStar_x"
 
-        for (int j = 0 ; j < ny ; ++j) {
-          for (int i = 0 ; i < nx ; ++i) {
+        // for (int j = 0 ; j < ny ; ++j) {
+        //   for (int i = 0 ; i < nx ; ++i) {
 
-                const int Centro = i + nx * j;
-                std::cout << NOMBRE_CAMPO_ACTUAL << "[" << Centro  << "] = " << CAMPO_ACTUAL[Centro] << "\n";
-          }
-        }
+        //         const int Centro = i + nx * j;
+        //         // std::cout << NOMBRE_CAMPO_ACTUAL << "[" << Centro  << "] = " << mdotstar.mDotStar_x[Centro] << "\n";
+        //         printf(NOMBRE_CAMPO_ACTUAL"[%d] = %f\n", Centro, CAMPO_ACTUAL[Centro]);
+        //   }
+        // }
 
-        if (numit == 2) break;
+        // // if (numit == 2) break;
 
-        std::cout << "Tamaño: " << CAMPO_ACTUAL.size() << "\n";
+        // std::cout << "Tamaño: " << CAMPO_ACTUAL.size() << "\n";
 
         // Bucle SIMPLE
         ecuacion_momentum.resolver();
         ecuacion_presion.resolver();
         campos.corregir();
+
 
         errorMayor_y_campo = error_mayor(nx, ny, velU, presion, mdotstar, error_mayor_por_campo);
 
@@ -368,6 +371,19 @@ int main() {
     /*-----------------------------------------------------------------------------
                                Fin Inicio bucle SIMPLE
     -----------------------------------------------------------------------------*/
+
+    std::vector<double> Umag(nx * ny, 0.0);
+    for (int j = 0 ; j < ny ; ++j) {
+      for (int i = 0 ; i < nx ; ++i) {
+
+            const int Centro = i + nx * j;
+
+            Umag[Centro] = std::pow(( velU.u_star[Centro] * velU.u_star[Centro] + velU.v_star[Centro] * velU.v_star[Centro] ), 0.5);
+
+      }
+    }
+
+    escribir("U.dat", "U", x, y, nx, ny, velU.u_star);
 
 
 

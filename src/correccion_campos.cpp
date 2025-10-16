@@ -9,6 +9,7 @@
 #include "esquemas_de_discretizacion.hpp"
 #include <algorithm>
 #include <execution>
+#include <iostream>
 
 // Constructor
 Correccion::Correccion
@@ -38,6 +39,7 @@ Correccion::Correccion
                             Funciones miembro
 -----------------------------------------------------------------------------*/
 
+// NOTE: COMPROBADO QUE ESTA BIEN
 void Correccion::obtener_celdas_interiores() {
 
     int iter = 0;
@@ -162,6 +164,29 @@ void Correccion::corregir() {
         bucle
     );
 
+    // NOTE: DEBUG
+
+    // std::vector<double> sumMdotStar(nx * ny, 0.0);
+    // for (int j = 1 ; j < ny - 1 ; ++j) {
+    //     for (int i = 1 ; i < nx - 1 ; ++i) {
+
+    //         const int Centro = i + nx * j;
+    //         const int Este   = (i + 1) + nx * j;
+    //         const int Norte  = i + nx * (j + 1);
+
+    //         const double mDotStar_e = mdotstar.mDotStar_x[Este];
+    //         const double mDotStar_w = mdotstar.mDotStar_x[Centro];
+    //         const double mDotStar_n = mdotstar.mDotStar_y[Norte];
+    //         const double mDotStar_s = mdotstar.mDotStar_y[Centro];
+
+    //         const double sumMDotStar = mDotStar_e + mDotStar_w + mDotStar_n + mDotStar_s;
+    //         sumMdotStar[Centro] = sumMDotStar;
+
+    //         std::cout << "sumMdotStar[" << Centro <<  "] = " << sumMdotStar[Centro] << "\n";
+    //     }
+    // }
+
+    // std::cout << "\n\n";
 
 
     /*-----------------------------------------------------------------------------

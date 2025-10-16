@@ -26,7 +26,7 @@ inline constexpr double delta_t = 0.5;
 inline constexpr int num_iteraciones_max = 60000;
 
 // VARIABLE GLOBAL: Tolerancia
-inline constexpr double tolerancia = 1e-10;
+inline constexpr double tolerancia = 1e-5;
 
 // Resolución del sistema de ecuaciones
 
@@ -41,7 +41,7 @@ inline std::string solver_elegido_P = "SOR";
 
 // Factores de relajacion para las ecuaciones de gobierno
 
-// VARIABLE GLOBAL: Factor de relajacion para u
+// VARIABLE GLOBAL: Factor de relajacion para U
 inline constexpr double lambda_Vel = 0.6;
 
 // VARIABLE GLOBAL: Factor de relajacion para P

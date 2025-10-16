@@ -294,4 +294,26 @@ TODO (para la siguiente sesión):
 TODO (para la siguiente sesión):
 
 1. [x] Revisar la función `reasignacion.*::reasignar`.
-2. [ ] Revisar a `ecuacion_presion.*` en busca de bugs.
+2. [x] Revisar a `ecuacion_presion.*` en busca de bugs.
+
+
+# 15 octubre 2025
+
+1. Descubrí (gracias al chatGPT) que al cálculo del flujo de masa le falta involucrar el vector normal a las caras, por lo que se debe de refactorizar esa parte.
+
+
+TODO (para la siguiente sesión):
+
+1. [ ] Refactorizar el cálculo del flujo de masa en `flujo_de_masa.cpp` para que se incluyan los vectores normales.
+
+
+# 16 octubre 2025
+
+1. Primero quiero simular el caso *lid driven cavity*, por lo que los vectores normales no interfieren en el cálculo porque el flujo de masa es cero en las fronteras, entonces solo tendría que ver que es lo que causa que no se lleguen a los resultados.
+2. En `esquemas_de_discretizacion.cpp::construccion_matriz_A_presion` y `esquemas_de_discretizacion.cpp::divergencia_upwind` cambié los signos para los flujos de masa en las caras oeste y sur, esto con el objetivo de incluir el vector normal de forma artificial.
+3. Se tiene que idear otra forma para calcular el flujo de masa en las caras. De primeras sugiero hacerlo como en el Fortran: para cada celda del dominio un vector por cara, aunque esto implicaría la refactorización de los métodos de la clase `condiciones_de_frontera_MDot.hpp::CF_MDot`, además de `condiciones_de_frontera_MDot.hpp::construir_CF_flujo_de_masa`.
+
+
+TODO (para la siguiente sesión):
+
+1. [ ] Encontrar la causa de los resultados feos ignorando lo de los vectores normales para el cálculo del flujo de masa en las fronteras.

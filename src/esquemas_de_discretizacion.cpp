@@ -191,15 +191,15 @@ namespace Discretizacion {
 
                     // Flux para las celdas vecinas
                     fluxFConv_e[idx(i,j,nx)] = - std::max(0.0, - mDotStar_e);
-                    fluxFConv_w[idx(i,j,nx)] = - std::max(0.0, - mDotStar_w);
+                    fluxFConv_w[idx(i,j,nx)] = - std::max(0.0, mDotStar_w);
                     fluxFConv_n[idx(i,j,nx)] = - std::max(0.0, - mDotStar_n);
-                    fluxFConv_s[idx(i,j,nx)] = - std::max(0.0, - mDotStar_s);
+                    fluxFConv_s[idx(i,j,nx)] = - std::max(0.0, mDotStar_s);
 
                     // Flux para la celda central
                     fluxCConv_e[idx(i,j,nx)] = std::max(0.0, mDotStar_e);
-                    fluxCConv_w[idx(i,j,nx)] = std::max(0.0, mDotStar_w);
+                    fluxCConv_w[idx(i,j,nx)] = std::max(0.0, - mDotStar_w);
                     fluxCConv_n[idx(i,j,nx)] = std::max(0.0, mDotStar_n);
-                    fluxCConv_s[idx(i,j,nx)] = std::max(0.0, mDotStar_s);
+                    fluxCConv_s[idx(i,j,nx)] = std::max(0.0, - mDotStar_s);
                 }
             }
 
@@ -458,7 +458,7 @@ namespace Discretizacion {
                 const double mDotStar_n = mdotstar.mDotStar_y[Norte];
                 const double mDotStar_s = mdotstar.mDotStar_y[Centro];
 
-                const double sumMDotStar = mDotStar_e + mDotStar_w + mDotStar_n + mDotStar_s;
+                const double sumMDotStar = mDotStar_e - mDotStar_w + mDotStar_n - mDotStar_s;
 
 
                 /*-----------------------------------------------------------------------------
