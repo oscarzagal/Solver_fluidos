@@ -12,41 +12,39 @@
 # cmake -S . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo
 # cmake --build build -j
 
+# Para ejecutar todos tests:
+# ctest --test-dir cmake-build-debug/ --output-on-failure -j
+
 cmake_minimum_required(VERSION 3.10)
 project(solver_fluidos VERSION 1.0 LANGUAGES CXX)
 
-# Estándar C++23 sin extensiones GNU (usa -std=c++23 en lugar de -std=gnu++23)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
-# compile_commands.json para LSP
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Tipos de build: si no especificas, por defecto Debug
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "No build type selected, defaulting to Debug")
   set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
 endif()
 
-# Fuentes
-file(GLOB_RECURSE SRC_FILES src/*.cpp)
-add_executable(main main.cpp ${SRC_FILES}
-        src/convergencia.cpp
-        include/convergencia.hpp
-        src/reasignacion.cpp
-        include/reasignacion.hpp)
-target_include_directories(main PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+# === Fuentes ===
+# NO metas main.cpp en la librería.
+file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS src/*.cpp)
+list(REMOVE_ITEM SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 
-# ===== oneTBB (necesario para std::execution::par en libstdc++) =====
-# Intento 1: paquete CONFIG moderno (TBB::tbb)
+add_library(core ${SRC_FILES})
+target_include_directories(core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+add_executable(main main.cpp)
+target_link_libraries(main PRIVATE core)
+
+# ===== oneTBB =====
 find_package(TBB QUIET CONFIG)
 if(NOT TBB_FOUND)
-  # Intento 2: modo clásico
   find_package(TBB REQUIRED)
 endif()
 
-# Determina el target correcto (TBB::tbb moderno o 'tbb' clásico)
 set(_TBB_TARGET "")
 if(TARGET TBB::tbb)
   set(_TBB_TARGET TBB::tbb)
@@ -58,34 +56,47 @@ if(_TBB_TARGET STREQUAL "")
   message(FATAL_ERROR "No se encontró un target de TBB exportado. Revisa que 'libtbb-dev' esté instalado.")
 endif()
 
-target_link_libraries(main PRIVATE ${_TBB_TARGET})
+# Enlaza TBB en core (PUBLIC para que main lo herede)
+target_link_libraries(core PUBLIC ${_TBB_TARGET})
 
 # ===== Definiciones y flags por configuración =====
-# Define PARALLEL en Release/RelWithDebInfo; DEBUG en Debug
-target_compile_definitions(main PRIVATE
-  $<$<CONFIG:Debug>:DEBUG>
-  $<$<CONFIG:Release>:NDEBUG;PARALLEL>
-  $<$<CONFIG:RelWithDebInfo>:NDEBUG;PARALLEL>
-)
+foreach(tgt IN ITEMS core main)
+  target_compile_definitions(${tgt} PRIVATE
+    $<$<CONFIG:Debug>:DEBUG>
+    $<$<CONFIG:Release>:NDEBUG;PARALLEL>
+    $<$<CONFIG:RelWithDebInfo>:NDEBUG;PARALLEL>
+  )
+  target_compile_options(${tgt} PRIVATE
+    $<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall;-Wextra;-Wpedantic>
+    $<$<AND:$<CONFIG:Debug>,$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>>:-fsanitize=address,undefined>
+  )
+  target_link_options(${tgt} PRIVATE
+    $<$<AND:$<CONFIG:Debug>,$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>>:-fsanitize=address,undefined>
+  )
+endforeach()
 
-# Warnings y sanitizers solo en Debug (GCC/Clang)
-target_compile_options(main PRIVATE
-  $<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall;-Wextra;-Wpedantic>
-  $<$<AND:$<CONFIG:Debug>,$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>>:-fsanitize=address,undefined>
-)
-target_link_options(main PRIVATE
-  $<$<AND:$<CONFIG:Debug>,$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>>:-fsanitize=address,undefined>
-)
-
-# Optimizaciones por build type (puedes ajustar a tu gusto)
-# Nota: CMake ya añade -O3/-O2 y -g según el tipo, pero aquí reforzamos por si acaso.
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
+  target_compile_options(core PRIVATE
+    $<$<CONFIG:Release>:-O3>
+    $<$<CONFIG:RelWithDebInfo>:-O2;-g>
+  )
   target_compile_options(main PRIVATE
     $<$<CONFIG:Release>:-O3>
     $<$<CONFIG:RelWithDebInfo>:-O2;-g>
   )
 endif()
 
-# Mensajes útiles
 message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 message(STATUS "Usando TBB target: ${_TBB_TARGET}")
+
+# === Tests ===
+include(FetchContent)
+FetchContent_Declare(
+  catch2
+  GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+  GIT_TAG        v3.6.0
+)
+FetchContent_MakeAvailable(catch2)
+
+enable_testing()
+add_subdirectory(tests)

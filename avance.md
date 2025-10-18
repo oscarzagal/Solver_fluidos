@@ -316,4 +316,14 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. [ ] Encontrar la causa de los resultados feos ignorando lo de los vectores normales para el cálculo del flujo de masa en las fronteras.
+1. [x] Revisar la función `esquemas_de_discretizacion.cpp::laplaciano_lineal`, ver si retorna la misma salida que en el código en Fortran dada la misma entrada. Ver como automatizar esto con algún framework de testeo.
+
+
+# 17 octubre 2025
+
+1. Se revisó la función `esquemas_de_discretizacion.cpp::laplaciano_lineal` al comparar con los resultados del Fortran y el framework Catch2, resultando en que la función arroja el mismo resultado que la salida que da el otro código.
+
+
+TODO (para la siguiente sesión):
+
+1. [ ] Revisar la función `esquemas_de_discretizacion.cpp::divergencia_upwind`.

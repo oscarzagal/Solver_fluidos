@@ -4,13 +4,17 @@
 #include <cctype>
 #include <vector>
 
-int main() {
 
-	std::vector<double> x;
-	std::vector<double> y;
-	std::vector<double> phi;
+inline void lectura_archivo
+(
+	const std::string& nombre_archivo,
+	std::vector<double>& x,
+	std::vector<double>& y,
+	std::vector<double>& phi
+)
+{
 
-	std::ifstream archivo_a_leer("T.dat");
+	std::ifstream archivo_a_leer(nombre_archivo);
 
 	std::string linea;
 
@@ -33,23 +37,23 @@ int main() {
 		std::cerr << "No se pudo abrir el archivo, panzón \n";
 	}
 
-	for (int i = 0 ; i < static_cast<int>(x.size()) ; ++i) {
-		std::cout << "x[" << i << "] = " << x[i] << "\n";
-	}
+	// for (int i = 0 ; i < static_cast<int>(x.size()) ; ++i) {
+	// 	std::cout << "x[" << i << "] = " << x[i] << "\n";
+	// }
 
-	std::cout << "\n\n";
+	// std::cout << "\n\n";
 
-	for (int i = 0 ; i < static_cast<int>(y.size()) ; ++i) {
-		std::cout << "y[" << i << "] = " << y[i] << "\n";
-	}
+	// for (int i = 0 ; i < static_cast<int>(y.size()) ; ++i) {
+	// 	std::cout << "y[" << i << "] = " << y[i] << "\n";
+	// }
 
-	std::cout << "\n\n";
+	// std::cout << "\n\n";
 
-	for (int i = 0 ; i < static_cast<int>(phi.size()) ; ++i) {
-		std::cout << "phi[" << i << "] = " << phi[i] << "\n";
-	}
+	// for (int i = 0 ; i < static_cast<int>(phi.size()) ; ++i) {
+	// 	std::cout << "phi[" << i << "] = " << phi[i] << "\n";
+	// }
 
-
-
-	return 0;
 }
+
+
+
