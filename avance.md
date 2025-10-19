@@ -326,4 +326,14 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. [ ] Revisar la función `esquemas_de_discretizacion.cpp::divergencia_upwind`.
+1. [x] Revisar la función `esquemas_de_discretizacion.cpp::construccion_matriz_A_momentum`.
+
+
+# 18 octubre 2025
+
+1. Se revisó la función `esquemas_de_discretizacion.cpp::construccion_matriz_A_momentum`, resultando en pruebas exitosas. El único problema es que si el campo inicial para el flujo de masa es diferente de cero el test truena, lo que me dice que los resultados feos se deben al flujo de masa mal calculado.
+
+
+TODO (para la siguiente sesión):
+
+1. [ ] Revisar la función `flujo_de_masa.cpp::calcular_flujo_de_masa`

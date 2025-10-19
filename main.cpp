@@ -177,8 +177,8 @@ int main() {
                             Inicializacion de campos
     -----------------------------------------------------------------------------*/
 
-    Campo::Momentum velU(nx, ny, 0.0, 0.0);
-    Campo::Presion  presion(nx, ny, 0.0);
+    Campo::Momentum velU(nx, ny, 0.0005, 0.0);
+    Campo::Presion  presion(nx, ny, 1.0);
     Campo::MDotStar mdotstar(nx, ny, 0.0);
 
     Gradiente grad(nx, ny);                   // Gradiente de presion por volumen

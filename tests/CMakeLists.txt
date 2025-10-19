@@ -1,5 +1,5 @@
 # Un binario de tests (puedes crear más: test_mdot.cpp, etc.)
-add_executable(tests test_laplaciano_lineal.cpp)
+add_executable(tests test_laplaciano_lineal.cpp test_coef_agrup_momentum.cpp)
 
 target_link_libraries(tests
   PRIVATE
