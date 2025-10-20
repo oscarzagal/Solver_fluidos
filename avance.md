@@ -336,4 +336,16 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. [ ] Revisar la función `flujo_de_masa.cpp::calcular_flujo_de_masa`
+1. [x] Revisar la función `flujo_de_masa.cpp::calcular_flujo_de_masa`
+
+
+# 19 octubre 2025
+
+1. Se implementó una prueba unitaria para `flujo_de_masa.cpp::calcular_flujo_de_masa`. Luego de muchos intentos resultó ser exitosa.
+2. Se simuló el *lid driven cavity* de forma exitosa, al menos cualitativamente comparado con lo que arrojó el solver hecho en Fortran. Resultó que el error estaba en `solvers_lineales.hpp::SOR::resolver`, ya que los coeficientes agrupados tenían el signo opuesto.
+
+
+TODO (para la siguiente sesión):
+
+1. Empezar a refactorizar a `flujo_de_masa.cpp::calcular_flujo_de_masa` y `condiciones_de_frontera_MDot.hpp` para no tener problemas con el flujo de masa ante simulaciones que tengan velocidades diferentes de cero en las fronteras.
+

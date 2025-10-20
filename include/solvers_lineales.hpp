@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <variant>
 #include <vector>
+#include <iostream>
 #include "Campo.hpp"
 
 namespace Solver_lineal {
@@ -38,9 +39,18 @@ namespace Solver_lineal {
                 // TODO: hacer mas legible esta madre
             for (int j = 1 ; j < ny - 1 ; ++j) {
               for (int i = 1 ; i < nx - 1 ; ++i) {
-                phi[i+nx*j]=lambda*((phi[i+1+nx*j]*A.ae[i+nx*j]+phi[i-1+nx*j]*A.aw[i+nx*j]
-                  +phi[i+nx*(j+1)]*A.an[i+nx*j]+phi[i+nx*(j-1)]*A.as[i+nx*j]+A.b[i+nx*j])
-                  /A.ac[i+nx*j])+(1.0-lambda)*phi_old[i+nx*j];
+                // phi[i+nx*j]=lambda*((phi[i+1+nx*j]*A.ae[i+nx*j]+phi[i-1+nx*j]*A.aw[i+nx*j]
+                //   +phi[i+nx*(j+1)]*A.an[i+nx*j]+phi[i+nx*(j-1)]*A.as[i+nx*j]+A.b[i+nx*j])
+                //   /A.ac[i+nx*j])+(1.0-lambda)*phi_old[i+nx*j];
+
+                // std::cout << " ( " << phi[i+1+nx*j] << " * " << -A.ae[i+nx*j] << " + " << phi[i-1+nx*j] << " * " << -A.aw[i+nx*j] << " + " << phi[i+nx*(j+1)] << " * " << -A.an[i+nx*j] << " + " << phi[i+nx*(j-1)] << " * " << -A.as[i+nx*j] << " + " << A.b[i+nx*j] << ") / " << A.ac[i+nx*j] << " = ";
+
+                phi[i+nx*j]=(phi[i+1+nx*j]*(-A.ae[i+nx*j])+phi[i-1+nx*j]*(-A.aw[i+nx*j])
+                  +phi[i+nx*(j+1)]*(-A.an[i+nx*j])+phi[i+nx*(j-1)]*(-A.as[i+nx*j])+A.b[i+nx*j])
+                  /A.ac[i+nx*j];
+
+                // std::cout << phi[i+nx*j] << "\n";
+
               }
             }
 

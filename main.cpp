@@ -383,7 +383,7 @@ int main() {
       }
     }
 
-    escribir("U.dat", "U", x, y, nx, ny, velU.u_star);
+    escribir("U.dat", "U", x, y, nx, ny, Umag);
 
 
 

@@ -26,7 +26,7 @@ inline constexpr double delta_t = 0.5;
 inline constexpr int num_iteraciones_max = 60000;
 
 // VARIABLE GLOBAL: Tolerancia
-inline constexpr double tolerancia = 1e-5;
+inline constexpr double tolerancia = 1e-11;
 
 // Resolución del sistema de ecuaciones
 
