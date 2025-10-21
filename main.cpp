@@ -384,6 +384,7 @@ int main() {
     }
 
     escribir("U.dat", "U", x, y, nx, ny, Umag);
+    escribir("P.dat", "P", x, y, nx, ny, presion.P_star);
 
 
 

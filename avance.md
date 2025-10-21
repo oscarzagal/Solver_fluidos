@@ -347,5 +347,10 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. Empezar a refactorizar a `flujo_de_masa.cpp::calcular_flujo_de_masa` y `condiciones_de_frontera_MDot.hpp` para no tener problemas con el flujo de masa ante simulaciones que tengan velocidades diferentes de cero en las fronteras.
+1. [ ] Empezar a refactorizar a `flujo_de_masa.cpp::calcular_flujo_de_masa` y `condiciones_de_frontera_MDot.hpp` para no tener problemas con el flujo de masa ante simulaciones que tengan velocidades diferentes de cero en las fronteras.
+2. [ ] Poner en `ecuacion_momentum.cpp` (luego de actualizar las fronteras para el campo de velocidad) la actualización de las condiciones de frontera para el flujo de masa.
 
+
+# (poner fecha)
+
+1. Me dí cuenta que sin los vectores normales para el flujo de masa en las fronteras y solo con un balance es posible obtener resultados adecuados, aunque aún tengo que probar esto.

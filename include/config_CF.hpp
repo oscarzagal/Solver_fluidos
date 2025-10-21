@@ -42,10 +42,10 @@ struct CF_Zero_Neumann {
 // Condiciones tipo dirichlet para la velocidad en u
 inline std::array<CF_Dirichlet, limite_num_parches> g_dirichlet_u = {
     {
-    {"norte", 1.0},
+    {"norte", 0.0},
     {"sur", 0.0},
-    {"este", 0.0},
-    {"oeste", 0.0}
+    {"oeste_abajo", 0.0},
+    {"oeste_arriba", 1.5}
     }
 };
 
@@ -54,31 +54,38 @@ inline std::array<CF_Dirichlet, limite_num_parches> g_dirichlet_v = {
     {
     {"norte", 0.0},
     {"sur", 0.0},
-    {"este", 0.0},
-    {"oeste", 0.0}
+    {"oeste_abajo", 0.0},
+    {"oeste_arriba", 0.0}
     }
 };
 
 // Condiciones tipo zero_neumann para la velocidad en u
 inline std::array<CF_Zero_Neumann, limite_num_parches> g_zero_neumann_u = {
     {
+        {"este_abajo", "este"},
+        {"este_arriba", "este"}
     }
 };
 
 // Condiciones tipo zero_neumann para la velocidad en v
 inline std::array<CF_Zero_Neumann, limite_num_parches> g_zero_neumann_v = {
     {
+        {"este_abajo", "este"},
+        {"este_arriba", "este"}
     }
 };
 
 
 inline std::array<CF_Dirichlet,limite_num_parches> g_dirichlet_P = {{
 
+    {"este_abajo", 0.0},
+    {"este_arriba", 0.0},
+
 }};
 
 inline std::array<CF_Zero_Neumann,limite_num_parches> g_zero_neumann_P = {{
     {"norte", "norte"},
     {"sur", "sur"},
-    {"este", "este"},
-    {"oeste", "oeste"},
+    {"oeste_abajo", "oeste"},
+    {"oeste_arriba", "oeste"}
 }};

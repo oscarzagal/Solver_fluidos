@@ -23,7 +23,7 @@ inline constexpr double nu = 2.5e-3;
 inline constexpr double delta_t = 0.5;
 
 // VARIABLE GLOBAL: Numero maximo de iteraciones
-inline constexpr int num_iteraciones_max = 60000;
+inline constexpr int num_iteraciones_max = 600000;
 
 // VARIABLE GLOBAL: Tolerancia
 inline constexpr double tolerancia = 1e-11;

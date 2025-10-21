@@ -133,6 +133,16 @@ void Ecuacion_Momentum::resolver() {
         velU.lista_parches_dinamicos_v[i]->aplicar();
     }
 
+    // Flujo de masa en la direccion "x"
+    for (int i = 0 ; i < static_cast<int>(mdotstar.lista_Zero_Neumann_x.size()); ++i) {
+        mdotstar.lista_Zero_Neumann_x[i].aplicar();
+    }
+
+    // Flujo de masa en la direccion "y"
+    for (int i = 0 ; i < static_cast<int>(mdotstar.lista_Zero_Neumann_y.size()); ++i) {
+        mdotstar.lista_Zero_Neumann_y[i].aplicar();
+    }
+
     /*-----------------------------------------------------------------------------
                         Actualizar condiciones de frontera
     -----------------------------------------------------------------------------*/

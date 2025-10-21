@@ -104,7 +104,7 @@ namespace Condicion_frontera {
 
 
     // Funcion para clasificar los parches en base a su tipo de condicion de
-    // frontera
+    // frontera. Modifica el estado de "lista_dirichlet" y "lista_parches_dinamicos"
     void asignar_condiciones_de_frontera
     (
         std::vector<Malla::Mallador::Parche>& parches,
