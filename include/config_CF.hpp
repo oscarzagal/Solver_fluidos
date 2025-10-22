@@ -43,8 +43,8 @@ struct CF_Zero_Neumann {
 inline std::array<CF_Dirichlet, limite_num_parches> g_dirichlet_u = {
     {
     {"norte", 0.0},
-    {"sur", 0.0},
     {"oeste_abajo", 0.0},
+    {"sur", 0.0},
     {"oeste_arriba", 1.5}
     }
 };
@@ -53,8 +53,8 @@ inline std::array<CF_Dirichlet, limite_num_parches> g_dirichlet_u = {
 inline std::array<CF_Dirichlet, limite_num_parches> g_dirichlet_v = {
     {
     {"norte", 0.0},
-    {"sur", 0.0},
     {"oeste_abajo", 0.0},
+    {"sur", 0.0},
     {"oeste_arriba", 0.0}
     }
 };

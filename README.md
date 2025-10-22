@@ -1,24 +1,45 @@
-# Solver de flujo de fluidos sencillos
+![Comparacion](./imagenes/comparacion_presion_Re_200.png)
 
-Este solver posee la capacidad de solucionar problemas de flujo de fluidos
-newtonianos, laminares, con transferencia de calor en geometrías rectangulares
-con un número arbitrario de parches.
+# Mini simulador 2D de flujo de fluidos
 
-## jueves 21 agosto 2025
+Simulador multiplataforma con la capacidad de solucionar problemas de flujo de
+fluidos newtonianos, laminares, incompresibles y en estado estacionario para
+geometrías rectangulares con un número arbitrario de parches.
 
-**NOTE**: el polimorfismo en tiempo de ejecución volvió horrible a mi código,
-muy complicado y difícil de mantener, por lo que decidí reescribirlo usando
-plantillas (polimorfismo en tiempo de compilación) y usando el paradigma
-orientada a datos.
+## Uso
 
-## lunes 8 agosto 2025
+Luego de clonar el repositorio usar el siguiente comando para compilar los archivos:
 
-**NOTE** (xaman pag. 232 PDF): Para cuando toque el desarrollo de la ecuación
-de corrección de presión:
-- En Dirichlet se hace todo el calculo normal pero
-P_{b}^{'} (presión en la frontera) es cero, haciendo que a_{N} sea cero del
-lado derecho de la igualdad pero no en su contribución al coeficiente central
-a_{C}.
-- En Zero Neumann se sabe cuál es el flujo de masa desde el principio, por lo
-que no hay contribución al coeficiente central por parte de a_{N} porque este
-nunca se forma.
+```
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j
+```
+
+Para correr el caso por defecto utilizar:
+
+```
+./build/main
+```
+
+Los archivos
+
+```
+./include/config_malla.hpp
+./include/config_CF.hpp
+./include/config_control.hpp
+```
+
+configuran la malla, las condiciones de frontera y el control de la simulación,
+respectivamente. Las instrucciones de uso para el mallador vienen en
+`/include/malla_por_bloques.hpp`
+
+## Roadmap
+
+1. [ ] Refinar el código.
+2. [ ] Mejorar la documentación.
+3. [ ] Añadir la ecuación de la energía.
+4. [ ] Implementar paralelización con `std::execution::par`
+
+## Advertencia
+
+Este es un simulador experimental, úselo bajo su propio riesgo.

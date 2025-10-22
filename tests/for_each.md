@@ -1,3 +1,5 @@
+Mejoras propuestas por chatGPT:
+
 ```cpp
 #include <algorithm>
 #include <execution>
