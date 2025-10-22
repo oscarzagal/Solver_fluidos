@@ -1,0 +1,243 @@
+//
+// Created by oscar on 31/08/25.
+//
+
+#include <stdexcept>
+#include <vector>
+
+#include "condiciones_de_frontera_MDot.hpp"
+#include "malla_por_bloques.hpp"
+#include "logs.hpp"
+
+// Constructor
+Parches_Flujo_de_Masa::Parches_Flujo_de_Masa(const int nx_, const int ny_)
+: nx(nx_), ny(ny_) {}
+
+void Parches_Flujo_de_Masa::cortar_nodos_esquina() {
+
+    if (obtener_nodos_del_parche.empty()) {
+        throw std::runtime_error("El parche " + obtener_nombre + "esta vacío");
+    }
+
+    for (int i = (int)obtener_nodos_del_parche.size() - 1 ; i >= 0 ; --i) {
+
+        // Se obtienen los indices locales "i" y "j"
+        int index_i = obtener_nodos_del_parche[i] % nx;
+        int index_j = obtener_nodos_del_parche[i] / nx;
+
+        if ((index_i == 0      && index_j == 0)      ||
+            (index_i == nx - 1 && index_j == ny - 1) ||
+            (index_i == nx - 1 && index_j == 0)      ||
+            (index_i == 0      && index_j == ny - 1)) {
+
+            obtener_nodos_del_parche.erase(obtener_nodos_del_parche.begin() + i);
+
+        }
+    }
+
+}
+
+void Parches_Flujo_de_Masa::calcular_vector_normal_unitario() {
+
+    // Se obtienen los indices locales "i" y "j"
+    int index_i = obtener_nodos_del_parche[0] % nx;
+    int index_j = obtener_nodos_del_parche[0] / nx;
+
+    // Frontera este (\hat{i})
+    if (index_i == nx - 1) {
+        vecUnitNormal = 1.0;
+        frontera_fisica = "este";
+    }
+
+    // Frontera oeste (-\hat{i})
+    if (index_i == 0) {
+
+        // NOTE: orignial
+        // vecUnitNormal = -1.0;
+
+        vecUnitNormal = 1.0;
+        frontera_fisica = "oeste";
+    }
+
+    // Frontera norte (\hat{j})
+    if (index_j == ny - 1) {
+        vecUnitNormal = 1.0;
+        frontera_fisica = "norte";
+    }
+
+    // Frontera sur (-\hat{j})
+    if (index_j == 0) {
+
+        // NOTE: orignial
+        // vecUnitNormal = -1.0;
+
+        vecUnitNormal = 1.0;
+        frontera_fisica = "sur";
+    }
+
+}
+
+std::string Parches_Flujo_de_Masa::añadir_tipo_de_CF
+(
+    std::array<CF_Dirichlet, limite_num_parches> g_dirichlet,
+    std::array<CF_Zero_Neumann, limite_num_parches> g_zero_neumann
+)
+{
+    for (int i = 0; i < static_cast<int>(g_dirichlet.size()); ++i) {
+
+        if (obtener_nombre == g_dirichlet[i].nombre) {
+            return "dirichlet";
+        }
+    }
+
+    for (int i = 0; i < static_cast<int>(g_zero_neumann.size()); ++i) {
+
+        if (obtener_nombre == g_zero_neumann[i].nombre) {
+            return "zero_neumann";
+        }
+    }
+
+    return {};
+
+}
+
+void Parches_Flujo_de_Masa::calcular_desfase() {
+
+    if (frontera_fisica == "norte") {
+        desfase=0;
+    } else if (frontera_fisica == "sur") {
+        desfase=nx;
+    } else if (frontera_fisica == "este") {
+        desfase=0;
+    } else if (frontera_fisica == "oeste") {
+        desfase=1;
+    } else {
+        throw std::runtime_error("La frontera "
+                                 + frontera_fisica + " no es un frontera");
+    }
+
+}
+
+void Parches_Flujo_de_Masa::asignar_deltas(const Malla::Mallador& malla) {
+
+    if (frontera_fisica == "este" || frontera_fisica == "oeste") {
+
+        std::vector<double> delta_malla_y(nx * ny);
+
+        for (int j = 0; j < ny; ++j) {
+            for (int i = 0; i < nx; ++i) {
+                delta_malla_y[i + nx * j] = malla.deltay[j];
+            }
+        }
+
+        for (const int nodo : obtener_nodos_del_parche) {
+            delta.push_back(delta_malla_y[nodo]);
+        }
+
+        que_delta_fue_asignada = "deltay";
+    }
+
+
+    if (frontera_fisica == "norte" || frontera_fisica == "sur") {
+
+        std::vector<double> delta_malla_x(nx * ny);
+
+        for (int j = 0 ; j < ny ; ++j) {
+            for (int i = 0 ; i < nx ; ++i) {
+                delta_malla_x[i + nx * j] = malla.deltax[i];
+            }
+        }
+
+        for (const int nodo : obtener_nodos_del_parche) {
+            delta.push_back(delta_malla_x[nodo]);
+        }
+
+        que_delta_fue_asignada = "deltax";
+    }
+
+
+}
+
+
+void construir_CF_flujo_de_masa
+(
+    const std::vector<Parches_Flujo_de_Masa> & parches_norte_FM,
+    const std::vector<Parches_Flujo_de_Masa> & parches_sur_FM,
+    const std::vector<Parches_Flujo_de_Masa> & parches_este_FM,
+    const std::vector<Parches_Flujo_de_Masa> & parches_oeste_FM,
+    const std::vector<double>                & u_star,
+    const std::vector<double>                & v_star,
+    std::vector<double>                      & mDotStar_x,
+    std::vector<double>                      & mDotStar_y,
+    std::vector<CF_MDot<Dirichlet_MDot>>     & lista_Dirichlet_x,
+    std::vector<CF_MDot<Zero_Neumann_MDot>>  & lista_Zero_Neumann_x,
+    std::vector<CF_MDot<Dirichlet_MDot>>     & lista_Dirichlet_y,
+    std::vector<CF_MDot<Zero_Neumann_MDot>>  & lista_Zero_Neumann_y
+)
+{
+        // Direccion "x"
+        asignar_condiciones_de_frontera_MDot
+        (
+            parches_este_FM,
+            u_star,
+            mDotStar_x,
+            lista_Dirichlet_x,
+            lista_Zero_Neumann_x
+        );
+
+        asignar_condiciones_de_frontera_MDot
+        (
+            parches_oeste_FM,
+            u_star,
+            mDotStar_x,
+            lista_Dirichlet_x,
+            lista_Zero_Neumann_x
+        );
+
+
+        // Direccion "y"
+        asignar_condiciones_de_frontera_MDot
+        (
+            parches_norte_FM,
+            v_star,
+            mDotStar_y,
+            lista_Dirichlet_y,
+            lista_Zero_Neumann_y
+        );
+
+        asignar_condiciones_de_frontera_MDot
+        (
+            parches_sur_FM,
+            v_star,
+            mDotStar_y,
+            lista_Dirichlet_y,
+            lista_Zero_Neumann_y
+        );
+
+}
+
+
+void asignar_condiciones_de_frontera_MDot
+(
+    const std::vector<Parches_Flujo_de_Masa> & parches,
+    const std::vector<double>                & vel_star,
+    std::vector<double>                      & mDotStar,
+    std::vector<CF_MDot<Dirichlet_MDot>>     & lista_Dirichlet,
+    std::vector<CF_MDot<Zero_Neumann_MDot>>  & lista_Zero_Neumann
+)
+{
+
+    for (int i = 0 ; i < static_cast<int>(parches.size()) ; ++i) {
+
+        if (parches[i].tipo_de_CF == "dirichlet") {
+            lista_Dirichlet.emplace_back(parches[i], vel_star, mDotStar);
+        }
+
+
+        if (parches[i].tipo_de_CF == "zero_neumann") {
+            lista_Zero_Neumann.emplace_back(parches[i], vel_star, mDotStar);
+        }
+
+    }
+
+}

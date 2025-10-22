@@ -48,7 +48,11 @@
 
   Se tendran tantas coordenadas como aristas.
 
-  TODO: escribir ejemplos
+  La asignación de los nombres de los parches debe de ser de izquierda a derecha
+  para las fronteras horizontales y de abajo a arriba para las fronteras
+  verticales
+
+  NOTE: escribir ejemplos
 
  */
 
@@ -66,6 +70,11 @@ namespace Malla {
     Sur,
     Este,
     Oeste
+  };
+
+  enum class Nodos {
+    nx,
+    ny
   };
 
   class Mallador {
@@ -144,19 +153,26 @@ namespace Malla {
     // Coordenadas temporales para y
     [[nodiscard]] std::vector<double> obtener_coordenadas_tmp_y();
 
+    // Esta se implementa para evitar problemas con eso de los valores constantes
+    [[nodiscard]] std::vector<double> retornar_coordanas_tmp(Nodos nodos) const;
+
+    [[nodiscard]] std::vector<double> obtener_volumenes() const;
+
+
     // Asignacion de coordenadas persistentes
     void preparar_coordenadas_persistentes();
 
 
     // Obtener coordenada persistente en x
-    [[nodiscard]] std::vector<double> obtener_coord_pers_x() const;
+    [[nodiscard]] const std::vector<double>& obtener_coord_pers_x() const;
 
     // Obtener coordenada persistente en y
-    [[nodiscard]] std::vector<double> obtener_coord_pers_y() const;
+    [[nodiscard]] const std::vector<double>& obtener_coord_pers_y() const;
 
     // Asignacion de parches frontera
     void preparar_parches_fronteras();
 
+    [[nodiscard]] int obtener_el_numero_de_nodos(const Nodos nodos) const;
 
     struct Parche {
 
@@ -167,15 +183,31 @@ namespace Malla {
 
     };
 
-    // Obtencion de los parches
+    struct Interpolacion {
+
+      // Factores de interpolacion para las caras de las celdas del elemnto C
+      std::vector<double> ge,gw,gn,gs;
+
+    };
+
     [[nodiscard]] std::vector<Parche> obtener_parches(Frontera frontera) const;
+
+    [[nodiscard]] static Interpolacion obtener_factores_de_interpolacion(const Mallador& malla);
 
     // Vector de deltas para su posterior uso en los esquemas de discretizacion
     std::vector<double> deltax;
     std::vector<double> deltay;
 
+    // Numero de nodos en "x" y "y"
+    int nx, ny;
+
+    // Para retornar las coordenadas temporales
+    std::vector<double> x_tmp, y_tmp;
+
 
   private:
+
+    void asignar_coordenas_temporales(const std::vector<double>& coordenadas, Nodos nodos);
 
     // Asignar coordenada persistente en x
     void asignar_coord_pers_x(const std::vector<double>& x_);
@@ -185,6 +217,8 @@ namespace Malla {
 
     // Asignar los parches fronteras
     void asignar_parches(const std::vector<Parche>& parche, Frontera frontera);
+
+    void asignar_numero_de_nodos(int nn, Nodos nodos);
 
     // Nodos por cada parche en la direccion x
     std::vector<int> nodos_en_x;

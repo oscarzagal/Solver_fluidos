@@ -1,2 +1,9 @@
 .idea
+*.out
+*.dat
 cmake-build-debug/
+cmake-build-relwithdebinfo/
+cmake-build-release/
+.cache/
+build/
+Testing/

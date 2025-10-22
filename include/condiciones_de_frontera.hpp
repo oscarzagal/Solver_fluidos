@@ -14,6 +14,10 @@
 
 namespace Condicion_frontera {
 
+// TODO: Implementar TEMPLATE SPECIALIZATION para las condiciones de frontera
+// luego de ver que el codigo funciona. Como esto funciona NO SE TOCA por el
+// momento.
+
     class Base {
     public:
 
@@ -31,21 +35,22 @@ namespace Condicion_frontera {
         // Constructor
         Dirichlet
         (
-            std::vector<double> &,
             std::vector<int> &,
-            double
+            double,
+            std::vector<double> &
         );
 
         void aplicar();
+
+        std::vector<int>& nodos_del_parche;
+
+        const double valor;
 
     private:
 
         // Campo
         std::vector<double>& phi;
 
-        std::vector<int>& nodos_del_parche;
-
-        const double valor;
     };
 
     class Zero_Neumann : public Base {
@@ -94,8 +99,12 @@ namespace Condicion_frontera {
 
     };
 
+
+
+
+
     // Funcion para clasificar los parches en base a su tipo de condicion de
-    // frontera
+    // frontera. Modifica el estado de "lista_dirichlet" y "lista_parches_dinamicos"
     void asignar_condiciones_de_frontera
     (
         std::vector<Malla::Mallador::Parche>& parches,
@@ -107,9 +116,15 @@ namespace Condicion_frontera {
         const std::array<CF_Zero_Neumann, limite_num_parches>& g_zero_neumann
     );
 
+
     // Funcion que retorna el tipo de CF. En caso de no encontrar el parche
     // retorna su nombre
-    std::pair<std::string,int> que_tipo_es(const std::string& nombre);
+    std::pair<std::string,int> que_tipo_es
+    (
+        const std::string& nombre,
+        const std::array<CF_Dirichlet, limite_num_parches>& g_dirichlet,
+        const std::array<CF_Zero_Neumann, limite_num_parches>& g_zero_neumann
+    );
 
     // Funcion contenedor que asigna las condiciones de frontera para evitar
     // codigo muy gordo en el main
@@ -120,11 +135,20 @@ namespace Condicion_frontera {
         std::vector<Malla::Mallador::Parche>& Parches_este,
         std::vector<Malla::Mallador::Parche>& Parches_oeste,
         std::vector<double>& phi,
-        const int& nx,
+        int nx,
         std::vector<Dirichlet>& lista_parches_dirichlet,
         std::vector<std::shared_ptr<Base>>& lista_parches_dinamicos,
         const std::array<CF_Dirichlet, limite_num_parches>& g_dirichlet,
         const std::array<CF_Zero_Neumann, limite_num_parches>& g_zero_neumann
+    );
+
+    void construir_CF_flujo_de_masa
+    (
+        const Malla::Mallador& malla,
+        std::vector<double>& u,
+        std::vector<double>& v,
+        std::vector<double>& velface,
+        std::vector<double>& mdotstar
     );
 
 

@@ -141,12 +141,12 @@ namespace Malla {
       if (i==0 || i==nodos.size()-1) {
         nodos_cortados+=1;
       }
-      if (i>0 && i<nodos.size()-1) {
+      if (i>0 && i<(int)nodos.size()-1) {
         nodos_cortados+=2;
       }
 
       lim_sup_nodos[i]=lim_sup_nodos[i]-nodos_cortados;
-      if (i<nodos.size()-1) {
+      if (i<(int)nodos.size()-1) {
         lim_inf_nodos[i+1]=lim_sup_nodos[i];
       }
     }
@@ -174,6 +174,29 @@ namespace Malla {
       );
     }
   }
+
+  void Mallador::asignar_coordenas_temporales(const std::vector<double> &coordenadas, Nodos nodos) {
+    switch (nodos) {
+      case Nodos::nx:
+        x_tmp = coordenadas;
+        break;
+      case Nodos::ny:
+        y_tmp = coordenadas;
+        break;
+    }
+  }
+
+  std::vector<double> Mallador::retornar_coordanas_tmp(Nodos nodos) const {
+    switch (nodos) {
+      case Nodos::nx:
+        return x_tmp;
+      case Nodos::ny:
+        return y_tmp;
+    }
+    return {};
+
+  }
+
 
   std::vector<double> Mallador::obtener_coordenadas_tmp_x() {
 
@@ -235,6 +258,10 @@ namespace Malla {
     /* retorna un iterador (un pointer) que almacena su posicion */
     /* https://en.cppreference.com/w/cpp/container/vector/begin */
 
+    asignar_numero_de_nodos(static_cast<int>(x_tmp.size()),Nodos::nx);
+
+    asignar_coordenas_temporales(x_tmp,Nodos::nx);
+
     return x_tmp;
 
   }
@@ -288,16 +315,93 @@ namespace Malla {
     );
 
     // Nodos que deben de ser borrados en y
-    for (int i=0; i<coord_final_y.size()-1; ++i) {
+    for (int i=0; i<(int)coord_final_y.size()-1; ++i) {
       y_tmp.erase
       (
-        std::remove(y_tmp.begin(),y_tmp.end(),coord_final_y[i]),y_tmp.end()
+        std::remove(y_tmp.begin(), y_tmp.end(), coord_final_y[i]), y_tmp.end()
       );
     }
+
+    asignar_numero_de_nodos(static_cast<int>(y_tmp.size()),Nodos::ny);
+
+    asignar_coordenas_temporales(y_tmp,Nodos::ny);
 
     return y_tmp;
 
   }
+
+  std::vector<double> Mallador::obtener_volumenes() const {
+
+    std::vector<double> vol;
+
+    const int nx = static_cast<int>(obtener_el_numero_de_nodos(Nodos::nx));
+    const int ny = static_cast<int>(obtener_el_numero_de_nodos(Nodos::ny));
+
+    for (int j = 0; j < ny; ++j) {
+      for (int i = 0; i < nx; ++i) {
+        vol.push_back(deltax[i] * deltay[j]);
+      }
+    }
+
+    return vol;
+  }
+
+  Mallador::Interpolacion Mallador::obtener_factores_de_interpolacion(const Mallador& malla) {
+
+    Interpolacion inter;
+
+    const int nx = static_cast<int>(malla.obtener_el_numero_de_nodos(Nodos::nx));
+    const int ny = static_cast<int>(malla.obtener_el_numero_de_nodos(Nodos::ny));
+
+    inter.ge.resize(nx * ny, 0.0);
+    inter.gw.resize(nx * ny, 0.0);
+    inter.gn.resize(nx * ny, 0.0);
+    inter.gs.resize(nx * ny, 0.0);
+
+    const std::vector<double> vol = malla.obtener_volumenes();
+
+    for (int j = 1; j < ny - 1; ++j) {
+      for (int i = 1; i < nx - 1; ++i) {
+
+        const int Centro = i + nx * j;
+        const int Este   = (i + 1) + nx * j;
+        const int Oeste  = (i - 1) + nx * j;
+        const int Norte  = i + nx * (j + 1);
+        const int Sur    = i + nx * (j - 1);
+
+        inter.ge[Centro] = (vol[Centro] / (vol[Centro] + vol[Este]));
+        inter.gw[Centro] = (vol[Centro] / (vol[Centro] + vol[Oeste]));
+        inter.gn[Centro] = (vol[Centro] / (vol[Centro] + vol[Norte]));
+        inter.gs[Centro] = (vol[Centro] / (vol[Centro] + vol[Sur]));
+        // printf("%d: %f / (%f + %f) \n",i+nx*j,vol[i+nx*j],vol[i+nx*j],vol[i+1+nx*j]);
+      }
+    }
+
+    return inter;
+
+  }
+
+  void Mallador::asignar_numero_de_nodos(int nn, Nodos nodos) {
+    switch (nodos) {
+      case Nodos::nx:
+        nx = nn;
+        break;
+      case Nodos::ny:
+        ny = nn;
+        break;
+    }
+  }
+
+  int Mallador::obtener_el_numero_de_nodos(const Nodos nodos) const {
+    switch (nodos) {
+      case Nodos::nx:
+        return nx;
+      case Nodos::ny:
+        return ny;
+    }
+    return {};
+  }
+
 
   void Mallador::asignar_coord_pers_x(const std::vector<double>& x_) {
     x=x_;
@@ -307,11 +411,11 @@ namespace Malla {
     y=y_;
   }
 
-  std::vector<double> Mallador::obtener_coord_pers_x() const {
+  const std::vector<double>& Mallador::obtener_coord_pers_x() const {
     return x;
   }
 
-  std::vector<double> Mallador::obtener_coord_pers_y() const {
+  const std::vector<double>& Mallador::obtener_coord_pers_y() const {
     return y;
   }
 
@@ -336,16 +440,6 @@ namespace Malla {
         y.push_back(y_tmp[j]);
       }
     }
-
-    // for (int j = 0; j < ny; ++j) {
-    //   for (int i = 0; i < nx; ++i) {
-    //     printf(
-    //       "x[%d] = %f, y[%d] = %f\n", i+nx*j,
-    //       x[i+nx*j], i+nx*j,
-    //       y[i+nx*j]
-    //     );
-    //   }
-    // }
 
     // Asignacion de coordenadas
     asignar_coord_pers_x(x);
@@ -417,7 +511,9 @@ namespace Malla {
     const int ny=static_cast<int>(this->obtener_coordenadas_tmp_y().size());
 
     // La funcion "cortar_nodos" calcula los limites de las aristas en base a
-    // los nodos cortados
+    // los nodos cortados.
+    // TODO: cambiar de nombre a la funcion "cortar_nodos",
+    // me confundió. Algo mas adecuado sería "calcular_limites"
     if (nodos_x.size()>1) {
       cortar_nodos(nodos_x,lim_inf_nodos_x,lim_sup_nodos_x);
     } else {
