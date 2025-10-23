@@ -347,10 +347,26 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. [ ] Empezar a refactorizar a `flujo_de_masa.cpp::calcular_flujo_de_masa` y `condiciones_de_frontera_MDot.hpp` para no tener problemas con el flujo de masa ante simulaciones que tengan velocidades diferentes de cero en las fronteras.
-2. [ ] Poner en `ecuacion_momentum.cpp` (luego de actualizar las fronteras para el campo de velocidad) la actualización de las condiciones de frontera para el flujo de masa.
+1. [x] Empezar a refactorizar a `flujo_de_masa.cpp::calcular_flujo_de_masa` y `condiciones_de_frontera_MDot.hpp` para no tener problemas con el flujo de masa ante simulaciones que tengan velocidades diferentes de cero en las fronteras.
+2. [x] Poner en `ecuacion_momentum.cpp` (luego de actualizar las fronteras para el campo de velocidad) la actualización de las condiciones de frontera para el flujo de masa.
 
 
-# (poner fecha)
+# 22 octubre 2025
 
-1. Me dí cuenta que sin los vectores normales para el flujo de masa en las fronteras y solo con un balance es posible obtener resultados adecuados, aunque aún tengo que probar esto.
+1. Me dí cuenta que sin los vectores normales para el flujo de masa en las fronteras y solo con un balance es posible obtener resultados adecuados.
+
+
+TODO (para la siguiente sesión):
+
+1. [ ] Implementar una prueba unitaria que verifique para una malla de 5x5 el caso *lid driven cavity*.
+
+
+# 23 octubre 2025
+
+1. Se empezó a codificar a `malla_por_bloques2.0` en `/tests/malla_por_bloques_2/main.cpp`.
+
+
+TODO (para la siguiente sesión):
+
+1. [ ] Implementar una prueba unitaria que verifique para una malla de 5x5 el caso *lid driven cavity*.
+2. [ ] Automatizar el proceso de creación del mallado en `/tests/malla_por_bloques_2/main.cpp`.
