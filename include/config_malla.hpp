@@ -16,7 +16,7 @@ typedef std::vector<std::string> asignacion_de;
 typedef std::vector<Malla::Mallador::Parche> almacenar;
 
 /* Nodos por cada parche en la direccion x */
-inline cantidad_de nodos_en_x = {151};
+inline cantidad_de nodos_en_x = {101};
 
 /* Nodos por cada parche en la direccion y */
 inline cantidad_de nodos_en_y = {75, 26};

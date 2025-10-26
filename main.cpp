@@ -10,7 +10,6 @@
 #include "condiciones_de_frontera_MDot.hpp"
 #include "Campo.hpp"
 #include "reasignacion.hpp"
-#include "utilidades.hpp"
 #include "variables_discretizacion.hpp"
 #include "ecuacion_momentum.hpp"
 #include "correccion_campos.hpp"
@@ -27,14 +26,12 @@
 #include <vector>
 
 constexpr bool debug  = false; // Parches flujo de masa
-constexpr bool debug2 = false; // Listas para las especializaciones y flujo de masa
-constexpr bool debug3 = false;  // Coeficiente_d
-constexpr bool debug4 = false;  // Coeficiente_d central
-constexpr bool debug5 = false;  // Coeficiente_d central
 
 int main() {
 
-    //--------------------------Creacion de la malla----------------------------
+    /*-----------------------------------------------------------------------------
+    -- Creacion de la malla
+    -----------------------------------------------------------------------------*/
 
     // Creacion del objeto que representa la malla actual
     Malla::Mallador malla
@@ -58,17 +55,6 @@ int main() {
     // Numero de nodos en y
     const int ny = malla.obtener_el_numero_de_nodos(Malla::Nodos::ny);
 
-    // for (int i = 0; i < ny; ++i) {
-    //     printf("deltay[%d] = %f\n", i, malla.deltay[i]);
-    // }
-
-    // std::cout << "ge en el main.cpp \n";
-    // for (int j = 0; j < ny; ++j) {
-    //     for (int i = 0; i < nx; ++i) {
-    //         printf("vol[%d] = %f\n", i + nx * j, vol[i + nx * j]);
-    //     }
-    // }
-
     // Coordenadas persistentes
     const std::vector<double> x = malla.obtener_coord_pers_x();
     const std::vector<double> y = malla.obtener_coord_pers_y();
@@ -82,7 +68,11 @@ int main() {
     almacenar Parches_este  = malla.obtener_parches(Malla::Frontera::Este);
     almacenar Parches_oeste = malla.obtener_parches(Malla::Frontera::Oeste);
 
-    //------------------------Fin creacion de la malla--------------------------
+    /*-----------------------------------------------------------------------------
+    -- Fin Creacion de la malla
+    -----------------------------------------------------------------------------*/
+
+
 
     /*-----------------------------------------------------------------------------
                             Parches para el flujo de masa
@@ -168,7 +158,7 @@ int main() {
 
 
     /*-----------------------------------------------------------------------------
-                            Parches para el flujo de masa
+                         Fin Parches para el flujo de masa
     -----------------------------------------------------------------------------*/
 
 
@@ -264,6 +254,9 @@ int main() {
                       Fin asignacion condiciones de frontera
     -----------------------------------------------------------------------------*/
 
+
+
+
     /*-----------------------------------------------------------------------------
                         Condiciones de Frontera de Dirichlet
     -----------------------------------------------------------------------------*/
@@ -333,22 +326,6 @@ int main() {
         // Campo Pprime iniciado en cero cada iteracion
         std::fill(presion.Pprime.begin(), presion.Pprime.end(), 0.0);
 
-        // #define CAMPO_ACTUAL mdotstar.mDotStar_x
-        // #define NOMBRE_CAMPO_ACTUAL "mDotStar_x"
-
-        // for (int j = 0 ; j < ny ; ++j) {
-        //   for (int i = 0 ; i < nx ; ++i) {
-
-        //         const int Centro = i + nx * j;
-        //         // std::cout << NOMBRE_CAMPO_ACTUAL << "[" << Centro  << "] = " << mdotstar.mDotStar_x[Centro] << "\n";
-        //         printf(NOMBRE_CAMPO_ACTUAL"[%d] = %f\n", Centro, CAMPO_ACTUAL[Centro]);
-        //   }
-        // }
-
-        // // if (numit == 2) break;
-
-        // std::cout << "Tamaño: " << CAMPO_ACTUAL.size() << "\n";
-
         // Bucle SIMPLE
         ecuacion_momentum.resolver();
         ecuacion_presion.resolver();
@@ -372,6 +349,12 @@ int main() {
                                Fin Inicio bucle SIMPLE
     -----------------------------------------------------------------------------*/
 
+
+
+    /*-----------------------------------------------------------------------------
+    -- Magnitud de la velocidad
+    -----------------------------------------------------------------------------*/
+
     std::vector<double> Umag(nx * ny, 0.0);
     for (int j = 0 ; j < ny ; ++j) {
       for (int i = 0 ; i < nx ; ++i) {
@@ -383,137 +366,25 @@ int main() {
       }
     }
 
+
+    /*-----------------------------------------------------------------------------
+    -- Fin Magnitud de la velocidad
+    -----------------------------------------------------------------------------*/
+
+
+
+    /*-----------------------------------------------------------------------------
+    -- Escritura a archivos
+    -----------------------------------------------------------------------------*/
+
     escribir("U.dat", "U", x, y, nx, ny, Umag);
     escribir("P.dat", "P", x, y, nx, ny, presion.P_star);
 
+    /*-----------------------------------------------------------------------------
+    -- Fin Escritura a archivos
+    -----------------------------------------------------------------------------*/
 
 
-    // for (int i = 0; i < static_cast<int>(error_mayor_por_campo.size()); ++i) {
-    //     std::cout << "error_mayor_por_campo[" << i << "] = " << error_mayor_por_campo[i] << "\n";
-    // }
-
-
-
-    if (debug2)
-    {
-
-        std::cout << "\n\n";
-        std::cout << "Tamaño de lista_Dirichlet_x: " << mdotstar.lista_Dirichlet_x.size() << "\n";
-        std::cout << "Tamaño de lista_Zero_Neumann_x: " << mdotstar.lista_Zero_Neumann_x.size() << "\n";
-
-        std::cout << "Tamaño de lista_Dirichlet_y: " << mdotstar.lista_Dirichlet_y.size() << "\n";
-        std::cout << "Tamaño de lista_Zero_Neumann_y: " << mdotstar.lista_Zero_Neumann_y.size() << "\n";
-
-        for (int j = 0 ; j < ny ; ++j) {
-            for (int i = 0 ; i < nx ; ++i) {
-                // printf("mDotStar_x[%d] = %f \n", i + nx * j, mdotstar.mDotStar_x[i + nx * j]);
-                printf("mDotStar_y[%d] = %f \n", i + nx * j, mdotstar.mDotStar_y[i + nx * j]);
-            }
-        }
-
-    } // Fin debug2
-
-
-    if (debug3)
-    {
-
-        const auto dC_u = ecuacion_momentum.coef_d.dC_u;
-        const auto dE_u = ecuacion_momentum.coef_d.dE_u;
-        const auto dW_u = ecuacion_momentum.coef_d.dW_u;
-        const auto dC_v = ecuacion_momentum.coef_d.dC_v;
-        const auto dN_v = ecuacion_momentum.coef_d.dN_v;
-        const auto dS_v = ecuacion_momentum.coef_d.dS_v;
-
-        const auto gx = ecuacion_momentum.inter.ge;
-        const auto gw = ecuacion_momentum.inter.gw;
-        const auto gy = ecuacion_momentum.inter.gn;
-        const auto gs = ecuacion_momentum.inter.gs;
-
-        // NOTE: solo habrian dos coeficientes "d" interpolados: "d_x" y "d_y", entonces
-        // creo que sera necesario corregir a `flujo_de_masa.cpp::Coeficiente_d::calcular`
-        std::vector<double> d_x(nx * ny, 0.0);
-        std::vector<double> d_y(nx * ny, 0.0);
-
-        // Fronteras oeste y sur para el flujo de masa
-        for (int j = 1 ; j < ny - 1 ; ++j) {
-
-            const int Centro = 1 + nx * j;
-
-            d_x[Centro] = interpolar(dC_u[Centro], dW_u[Centro], gw[Centro]);
-            // printf("d_x[%d] = %f\n", Centro, d_x[Centro]);
-
-        }
-
-        // std::cout << "\n\n";
-
-        for (int i = 1 ; i < nx - 1 ; ++i) {
-
-            const int Centro = i + nx * 1;
-
-            d_y[Centro] = interpolar(dC_v[Centro], dS_v[Centro], gs[Centro]);
-            // printf("d_y[%d] = %f\n", Centro, d_y[Centro]);
-
-        }
-
-
-        // Flujo de masa en la direccion "x"
-        for (int j = 1 ; j < ny - 1 ; ++j) {
-            for (int i = 1 ; i < nx - 2 ; ++i) {
-
-                const int Centro = i + nx * j;
-                const int Este   = (i + 1) + nx * j;
-
-                // Cara este local
-                d_x[Este] = interpolar(dC_u[Centro], dE_u[Centro], gx[Centro]);
-            }
-        }
-
-        for (int j = 1 ; j < ny - 2 ; ++j) {
-          for (int i = 1 ; i < nx - 1 ; ++i) {
-
-              const int Centro = i + nx * j;
-              const int Norte  = i + nx * (j + 1);
-
-              // Cara norte local
-              d_y[Norte] = interpolar(dC_v[Centro], dN_v[Centro], gy[Centro]);
-
-          }
-        }
-
-
-        for (int j = 0 ; j < ny ; ++j) {
-            for (int i = 0 ; i < nx ; ++i) {
-                printf("d_x[%d] = %f\n", i + nx * j, d_x[i + nx * j]);
-                // printf("d_y[%d] = %f\n", i + nx * j, d_y[i + nx * j]);
-            }
-        }
-
-    } // Fin debug3
-
-
-    if (debug4) {
-
-        for (int j = 0 ; j < ny ; ++j) {
-            for (int i = 0 ; i < nx ; ++i) {
-                printf("dS_v[%d] = %f\n", i + nx * j, ecuacion_momentum.coef_d.dS_v[i + nx * j]);
-                // printf("d_y[%d] = %f\n", i + nx * j, d_y[i + nx * j]);
-            }
-        }
-
-
-    }
-
-    if (debug5) {
-
-        for (int j = 0 ; j < ny ; ++j) {
-            for (int i = 0 ; i < nx ; ++i) {
-                // printf("ap_c[%d] = %f\n", i + nx * j, presion.A_p.ac[i + nx * j]);
-                printf("Pprime[%d] = %f\n", i + nx * j, presion.Pprime[i + nx * j]);
-            }
-        }
-
-
-    }
 
     return 0;
 }

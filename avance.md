@@ -358,7 +358,7 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. [ ] Implementar una prueba unitaria que verifique para una malla de 5x5 el caso *lid driven cavity*.
+1. [x] Implementar una prueba unitaria que verifique para una malla de 5x5 el caso *lid driven cavity*.
 
 
 # 23 octubre 2025
@@ -370,3 +370,4 @@ TODO (para la siguiente sesión):
 
 1. [ ] Implementar una prueba unitaria que verifique para una malla de 5x5 el caso *lid driven cavity*.
 2. [ ] Automatizar el proceso de creación del mallado en `/tests/malla_por_bloques_2/main.cpp`.
+3. [ ] Hacer un test para la nueva función que calcula los nodos frontera del flujo de masa en `main.cpp`.
