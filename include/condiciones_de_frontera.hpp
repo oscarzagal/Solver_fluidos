@@ -142,14 +142,15 @@ namespace Condicion_frontera {
         const std::array<CF_Zero_Neumann, limite_num_parches>& g_zero_neumann
     );
 
-    void construir_CF_flujo_de_masa
-    (
-        const Malla::Mallador& malla,
-        std::vector<double>& u,
-        std::vector<double>& v,
-        std::vector<double>& velface,
-        std::vector<double>& mdotstar
-    );
+// WARN: Creo que esta funcion no se usa, investigar bien para despues remover
+void construir_CF_flujo_de_masa
+(
+    const Malla::Mallador& malla,
+    std::vector<double>& u,
+    std::vector<double>& v,
+    std::vector<double>& velface,
+    std::vector<double>& mdotstar
+);
 
 
 } // Fin namespace Condicion_frontera

@@ -37,7 +37,6 @@ struct CF_Zero_Neumann {
 // WARNING: LOS TIPOS DE PARCHE PARA "u" Y "v" DEBEN DE SER LOS MISMOS, los
 // valores pueden cambiar.
 // TODO: tirar una excepcion cuando lo de arriba no se cumpla
-// NOTE: condiciones de frontera para el caso lid driven cavity
 
 // Condiciones tipo dirichlet para la velocidad en u
 inline std::array<CF_Dirichlet, limite_num_parches> g_dirichlet_u = {

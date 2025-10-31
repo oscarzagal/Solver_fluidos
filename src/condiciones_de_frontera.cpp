@@ -177,7 +177,7 @@ namespace Condicion_frontera {
     )
     {
 
-        // NOTE: yo creo que con un "for" queda
+        // NOTE: yo creo que con un "for" queda, o no???
 
         // Frontera norte
         asignar_condiciones_de_frontera

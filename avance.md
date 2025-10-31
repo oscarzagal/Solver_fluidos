@@ -368,6 +368,40 @@ TODO (para la siguiente sesión):
 
 TODO (para la siguiente sesión):
 
-1. [ ] Implementar una prueba unitaria que verifique para una malla de 5x5 el caso *lid driven cavity*.
-2. [ ] Automatizar el proceso de creación del mallado en `/tests/malla_por_bloques_2/main.cpp`.
-3. [ ] Hacer un test para la nueva función que calcula los nodos frontera del flujo de masa en `main.cpp`.
+1. [ ] Automatizar el proceso de creación del mallado en `/tests/malla_por_bloques_2/main.cpp`.
+2. [ ] Generalizar el proceso de elección de condiciones de frontera (utilizar `std::vector<std::variant>`).
+3. [ ] Implementar una prueba unitaria que verifique para una malla de 5x5 el caso *lid driven cavity*.
+4. [ ] Hacer un test para la nueva función que calcula los nodos frontera del flujo de masa en `main.cpp`.
+
+Ejemplo para `std::vector<std::variant>`:
+
+```C++
+#include <iostream>
+#include <variant>
+#include <array>
+#include <vector>
+
+int main() {
+    using Vec3 = std::array<double, 3>;
+    using Var = std::variant<int, Vec3, std::array<double,2>>;
+
+    std::vector<Var> datos;
+    datos.push_back(42);
+    datos.push_back(Vec3{1.0, 2.0, 3.0});
+
+    // Recuperar el int
+    int numero = std::get<int>(datos[0]);
+    std::cout << "Número: " << numero << '\n';
+
+    // Recuperar el array y usarlo
+    Vec3 v = std::get<Vec3>(datos[1]);
+    std::cout << "Vector: ";
+    for (auto val : v) std::cout << val << ' ';
+    std::cout << '\n';
+
+    // También puedes obtener una referencia directa
+    auto& ref_v = std::get<Vec3>(datos[1]);
+    ref_v[0] = 99.0; // modifica dentro del vector
+    std::cout << "Modificado: " << ref_v[0] << '\n';
+}
+```
