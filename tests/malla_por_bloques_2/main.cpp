@@ -1,5 +1,7 @@
+#include <algorithm>
 #include <cstdio>
 #include <iostream>
+#include <iterator>
 #include <ostream>
 #include <utility>
 #include <vector>
@@ -92,14 +94,14 @@ int main () {
 
     // Deben de ser coincidentes los nodos que comparten caras
 
-    const int uno_nx = 25;
-    const int uno_ny = 25;
+    const int uno_nx = 5;
+    const int uno_ny = 5;
 
-    const int dos_nx = 25;
-    const int dos_ny = 25;
+    const int dos_nx = 5;
+    const int dos_ny = 5;
 
-    const int tres_nx = 25;
-    const int tres_ny = 25;
+    const int tres_nx = 5;
+    const int tres_ny = 5;
 
     std::vector<std::pair<int, int>> nodos = {{uno_nx, uno_ny}, {dos_nx, dos_ny}, {tres_nx, tres_ny}};
 
@@ -164,10 +166,67 @@ int main () {
 
     std::cout << "x.size() = " << x.size() << "\n";
 
+    // Vector que almace las coordenadas por pares
+    std::vector<std::pair<double, double>> coordenadas(x.size());
 
-    // for (int i = 0 ; i < x.size() ; ++i) {
-    //     printf("x[%d] = %f, y[%d] = %f\n", i, x[i], i, y[i]);
+    for (int i = 0 ; i < static_cast<int>(x.size()) ; ++i) {
+        coordenadas[i].first = x[i];
+        coordenadas[i].second = y[i];
+    }
+
+    // TODO: utilizar 2 "std::vector<std::pair<double, double>>"
+    // NOTE: A "coordenadas_tmp" se le aplica "sort" y luego "unique" para
+    // obtener los elementos repetidos. Luego de eso se tiene que formar otro
+    // "std::vector<std::pair<double, double>>" con los elementos duplicados,
+    // para despues usarlo con "remove" y eliminar los elementos coincidentes de
+    // "coordenadas" uno por uno.
+
+    // Coordenadas temporales
+    std::vector<std::pair<double, double>> coordenadas_tmp = coordenadas;
+
+    // Ordenamiento
+    std::sort(coordenadas_tmp.begin(), coordenadas_tmp.end());
+
+
+    // "std::unique" para mover los duplicados al final
+    auto ultimo = std::unique(coordenadas_tmp.begin(), coordenadas_tmp.end());
+
+    // Borrar los duplicados
+    coordenadas_tmp.erase(ultimo, coordenadas_tmp.end());
+
+    // Vector de diferencia
+    std::vector<std::pair<double, double>> diferencia;
+
+
+    // Encontrar la diferencia
+    std::set_difference(coordenadas_tmp.begin(), coordenadas_tmp.end(), coordenadas.begin(), coordenadas.end(), std::back_inserter(diferencia));
+
+    for (const auto dif : diferencia) {
+
+        std::cout << dif.first << " " << dif.second  << "\n";
+
+    }
+
+    for (const auto& dif : diferencia) {
+
+        auto iguales = std::remove(coordenadas.begin(), coordenadas.end(), dif);
+
+        coordenadas.erase(iguales, coordenadas.end());
+
+    }
+
+
+    // for (int i = 0 ; i < static_cast<int>(coordenadas.size()) ; ++i) {
+    //     printf("x[%d] = %f y[%d] = %f\n", i, coordenadas[i].first, i, coordenadas[i].second);
     // }
+
+    x.clear();
+    y.clear();
+
+    for (int i = 0 ; i < static_cast<int>(coordenadas.size()) ; ++i) {
+        x.push_back(coordenadas[i].first);
+        y.push_back(coordenadas[i].second);
+    }
 
     std::cout << "nodos.size() = " << nodos.size() << "\n";
 

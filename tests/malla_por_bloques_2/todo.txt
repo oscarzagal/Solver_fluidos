@@ -1,0 +1,26 @@
+* Cosas por hacer para el mallador por bloques v2.0
+
+
+TODO Lógica del mallador
+===============================================================================
+
+1. [ ] Encontrar una forma de tirar excepciones para cuando el número de nodos
+no sea igual en las interfaces.
+2. [ ] Cortar los nodos de las interfaces.
+3. [ ] Ver si es conveniente dibujar a partir de los cuatro nodos que componen
+a un bloque.
+
+
+
+
+===============================================================================
+
+
+
+TODO Implementación de Raylib
+===============================================================================
+
+1. [ ] Encontrar una manera de dibujar una línea en tiempo de ejecución.
+
+
+===============================================================================
